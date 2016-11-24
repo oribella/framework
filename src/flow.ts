@@ -30,7 +30,7 @@ export class Flow extends EventEmitter {
   removeListeners: Array<() => void> = [];
   allPointers: Map<string, Pointer> = new Map<string, Pointer>();
   currentPointers: Map<string, Pointer> = new Map<string, Pointer>();
-  pointers: { all: Map<string, Pointer>, current: Map<string, Pointer> } = { all: this.allPointers, current: this.currentPointers };
+  pointers: Map<string, Map<string, Pointer>> = new Map<string, Map<string, Pointer>>([['all', this.allPointers], ['current', this.currentPointers]]);
 
   addDOMEventListener(element: Element, event: string, fn: () => void): () => void {
     const proxyFn = (e: Event) => {
