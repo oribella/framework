@@ -15,7 +15,7 @@ describe('Flow', () => {
   };
 
   beforeEach(() => {
-    instance = new Flow();
+    instance = new Flow(config);
     sandbox = sinon.sandbox.create();
   });
 
@@ -113,12 +113,12 @@ describe('Flow', () => {
 
 
   it('should activate start listener and return an array of unlisten functions', () => {
-    config.start = new StartConfig('mousedown');
+    instance.config.start = new StartConfig('mousedown');
     const startListenerSpy = sandbox.spy();
     const removeListenerSpy = sandbox.spy();
     config.element.addEventListener = startListenerSpy;
     config.element.removeEventListener = removeListenerSpy;
-    const remove = instance.activate(config);
+    const remove = instance.activate();
     expect(remove).to.have.length(1);
     remove.forEach(f => f());
     expect(removeListenerSpy).to.have.been.calledWithExactly('mousedown', sinon.match.func, false);

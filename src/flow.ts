@@ -25,12 +25,18 @@ export interface Pointer {
 }
 
 export class Flow extends EventEmitter {
+  config: Config;
   startListen: Array<() => () => void> = [];
   continueListen: Array<() => () => void> = [];
   removeListeners: Array<() => void> = [];
   allPointers: Map<string, Pointer> = new Map<string, Pointer>();
   currentPointers: Map<string, Pointer> = new Map<string, Pointer>();
   pointers: Map<string, Map<string, Pointer>> = new Map<string, Map<string, Pointer>>([['all', this.allPointers], ['current', this.currentPointers]]);
+
+  constructor(config: Config) {
+    super();
+    this.config = config;
+  }
 
   addDOMEventListener(element: Element, event: string, fn: () => void): () => void {
     const proxyFn = (e: Event) => {
@@ -66,8 +72,8 @@ export class Flow extends EventEmitter {
     );
     return { startListen: this.startListen, continueListen: this.continueListen };
   }
-  activate(config: Config) : Array<() => void> {
-    return this.bind(config).startListen.map(f => f());
+  public activate() : Array<() => void> {
+    return this.bind(this.config).startListen.map(f => f());
   }
   setPointers(event: Event) {
     event;
