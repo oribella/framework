@@ -2,7 +2,8 @@ import {EventEmitter} from 'events';
 import {Point} from './point';
 
 export class TypeConfig {
-  constructor(private events: Array<string>){}
+  private events: string[];
+  constructor(...events: string[]){ this.events = events; }
   getEvents() {
     return this.events;
   }
@@ -30,40 +31,38 @@ export class Flow extends EventEmitter {
   private allPointers = new Map<string, Pointer>();
   private currentPointers = new Map<string, Pointer>();
 
-  constructor(private config: Config) {
-    super();
-    this.bind();
-  }
-
   addDOMEventListener(element: Element, event: string, fn: () => void) {
     element.addEventListener(event, fn, false);
-    return this.removeDOMEventListener.bind(null, element, event, fn);
+    return this.removeDOMEventListener.bind(this, element, event, fn);
   }
 
   removeDOMEventListener(element: Element, event: string, fn: () => void) {
     element.removeEventListener(event, fn, false);
   }
 
-  private bind() {
-    this.startListen = this.config.start.getEvents().map(e => {
-      return this.addDOMEventListener.bind(this.config.element, e, this.start.bind(this));
+  bind(config: Config) {
+    this.startListen = config.start.getEvents().map(e => {
+      return this.addDOMEventListener.bind(this, config.element, e, this.start.bind(this));
     });
-    this.continueListen = this.config.update.getEvents().map(e => {
-      return this.addDOMEventListener.bind(this.config.element, e, this.update.bind(this));
+    this.continueListen = config.update.getEvents().map(e => {
+      return this.addDOMEventListener.bind(this, config.element, e, this.update.bind(this));
     });
-    this.continueListen.concat(
-      this.config.end.getEvents().map(e => {
-        return this.addDOMEventListener.bind(this.config.element, e, this.end.bind(this));
+    this.continueListen.push.apply(
+      this.continueListen,
+      config.end.getEvents().map(e => {
+        return this.addDOMEventListener.bind(this, config.element, e, this.end.bind(this));
       })
     );
-    this.continueListen.concat(
-      this.config.cancel.getEvents().map(e => {
-        return this.addDOMEventListener.bind(this.config.element, e, this.cancel.bind(this));
+    this.continueListen.push.apply(
+      this.continueListen,
+      config.cancel.getEvents().map(e => {
+        return this.addDOMEventListener.bind(this, config.element, e, this.cancel.bind(this));
       })
     );
+    return { startListen: this.startListen, continueListen: this.continueListen };
   }
-  activate() : Array<() => void> {
-    return this.startListen.map(f => f());
+  activate(config: Config) : Array<() => void> {
+    return this.bind(config).startListen.map(f => f());
   }
   getPointers(event: Event) {
     event;

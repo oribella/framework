@@ -7,7 +7,6 @@
       "es2017",
       "dom"
     ],
-    "outDir": "dist/amd",
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -19,14 +18,11 @@
     "noEmitHelpers": false,
     "sourceMap": true
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     ".vscode",
     "dist",
     "doc",
     "node_modules",
-    "**/*.spec.ts"
+    "test"
   ]
 }
