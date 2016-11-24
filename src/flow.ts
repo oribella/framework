@@ -25,22 +25,27 @@ export interface Pointer {
 }
 
 export class Flow extends EventEmitter {
-  private startListen: Array<() => () => void>;
-  private continueListen: Array<() => () => void>;
-  private removeListeners: Array<() => void>;
-  private allPointers = new Map<string, Pointer>();
-  private currentPointers = new Map<string, Pointer>();
+  startListen: Array<() => () => void> = [];
+  continueListen: Array<() => () => void> = [];
+  removeListeners: Array<() => void> = [];
+  allPointers: Map<string, Pointer> = new Map<string, Pointer>();
+  currentPointers: Map<string, Pointer> = new Map<string, Pointer>();
+  pointers: { all: Map<string, Pointer>, current: Map<string, Pointer> } = { all: this.allPointers, current: this.currentPointers };
 
-  addDOMEventListener(element: Element, event: string, fn: () => void) {
-    element.addEventListener(event, fn, false);
-    return this.removeDOMEventListener.bind(this, element, event, fn);
+  addDOMEventListener(element: Element, event: string, fn: () => void): () => void {
+    const proxyFn = (e: Event) => {
+      this.setPointers(e);
+      fn();
+    };
+    element.addEventListener(event, proxyFn, false);
+    return this.removeDOMEventListener.bind(this, element, event, proxyFn);
   }
 
   removeDOMEventListener(element: Element, event: string, fn: () => void) {
     element.removeEventListener(event, fn, false);
   }
 
-  bind(config: Config) {
+  bind(config: Config): { startListen: Array<() => () => void>, continueListen: Array<() => () => void> } {
     this.startListen = config.start.getEvents().map(e => {
       return this.addDOMEventListener.bind(this, config.element, e, this.start.bind(this));
     });
@@ -64,24 +69,23 @@ export class Flow extends EventEmitter {
   activate(config: Config) : Array<() => void> {
     return this.bind(config).startListen.map(f => f());
   }
-  getPointers(event: Event) {
+  setPointers(event: Event) {
     event;
-    return [this.allPointers, this.currentPointers];
   }
   start(event: Event) {
-    this.emit('start', event, ...this.getPointers(event));
+    this.emit('start', event, this.pointers);
   }
   update(event: Event) {
-    this.emit('update', event, ...this.getPointers(event));
+    this.emit('update', event, this.pointers);
   }
   end(event: Event) {
-    this.emit('end', event, ...this.getPointers(event));
+    this.emit('end', event, this.pointers);
     if(this.allPointers.size === 0) {
       this.stop();
     }
   }
   cancel(event: Event) {
-    this.emit('cancel', event, ...this.getPointers(event));
+    this.emit('cancel', event, this.pointers);
     this.stop();
   }
   continue() {
@@ -89,6 +93,7 @@ export class Flow extends EventEmitter {
   }
   stop() {
     this.removeListeners.forEach(remove => remove());
+    this.removeListeners = [];
     this.emit('stop');
   }
 }
