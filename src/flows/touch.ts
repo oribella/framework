@@ -1,5 +1,6 @@
-import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig, Pointer} from '../flow';
+import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../flow';
 import {Point} from '../point';
+import {Pointer} from '../utils';
 
 export class TouchFlow extends Flow {
   constructor(
@@ -29,8 +30,8 @@ export class TouchFlow extends Flow {
   }
   setPointers(event: TouchEvent) {
     this.allPointers.clear();
-    this.currentPointers.clear();
+    this.changedPointers.clear();
     this.setPointerMapFromList(event.touches, this.allPointers);
-    this.setPointerMapFromList(event.changedTouches, this.currentPointers);
+    this.setPointerMapFromList(event.changedTouches, this.changedPointers);
   }
 }

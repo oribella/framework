@@ -18,12 +18,12 @@ export class PointerFlow extends Flow {
     });
   }
   setPointers(event: PointerEvent) {
-    this.currentPointers.clear();
+    this.changedPointers.clear();
     const page = new Point(event.pageX, event.pageY);
     const client = new Point(event.clientX, event.clientY);
     const pointerId = event.pointerId.toString();
     const pointers = { page: page, client: client };
-    this.currentPointers.set(pointerId, pointers);
+    this.changedPointers.set(pointerId, pointers);
 
     switch (event.type) {
       case "pointerdown":

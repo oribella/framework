@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {Registry, DefaultGesture} from '../src/registry';
+import {GESTURE_STRATEGY_FLAG} from '../src/utils';
 
 describe('Registry', () => {
   let instance: Registry;
@@ -14,18 +15,19 @@ describe('Registry', () => {
 
   it('should create gesture', () => {
     instance.register('test', DefaultGesture);
-    const gesture = instance.create('test', {}, <Element>{});
+    const gesture = instance.create('test', {}, {} as Element);
     expect(gesture).to.be.an.instanceOf(DefaultGesture);
   });
 
   it('should create default options', () => {
     instance.register('test', DefaultGesture);
     const subscriber = { options: undefined };
-    instance.create('test', subscriber, <Element>{});
+    instance.create('test', subscriber, {} as Element);
     expect(subscriber.options).to.deep.equal({
       pointers: 1,
       which: 1,
-      prio: 100
+      prio: 100,
+      strategy: GESTURE_STRATEGY_FLAG.KEEP
     });
   });
 
@@ -36,7 +38,8 @@ describe('Registry', () => {
     expect(subscriber.options).to.deep.equal({
       pointers: 2,
       which: 1,
-      prio: 100
+      prio: 100,
+      strategy: GESTURE_STRATEGY_FLAG.KEEP
     });
   });
 

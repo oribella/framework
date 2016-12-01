@@ -29,18 +29,18 @@ describe('MouseFlow', () => {
     const event = { type: 'mousedown', pageX: 1, pageY: 2, clientX: 3, clientY: 4 } as MouseEvent;
     instance.setPointers(event)
     expect(instance.allPointers.get('1')).deep.equal({ page: new Point(1, 2), client: new Point(3, 4) });
-    expect(instance.allPointers).to.deep.equal(instance.currentPointers);
-    expect(instance.pointers.get('all')).to.equal(instance.allPointers);
-    expect(instance.pointers.get('current')).to.equal(instance.currentPointers);
+    expect(instance.allPointers).to.deep.equal(instance.changedPointers);
+    expect(instance.pointers.all).to.equal(instance.allPointers);
+    expect(instance.pointers.changed).to.equal(instance.changedPointers);
   });
 
   it('should setPointers on mousemove', () => {
     const event = { type: 'mousemove', pageX: 5, pageY: 6, clientX: 7, clientY: 8 } as MouseEvent;
     instance.setPointers(event)
     expect(instance.allPointers.get('1')).deep.equal({ page: new Point(5, 6), client: new Point(7, 8) });
-    expect(instance.allPointers).to.deep.equal(instance.currentPointers);
-    expect(instance.pointers.get('all')).to.equal(instance.allPointers);
-    expect(instance.pointers.get('current')).to.equal(instance.currentPointers);
+    expect(instance.allPointers).to.deep.equal(instance.changedPointers);
+    expect(instance.pointers.all).to.equal(instance.allPointers);
+    expect(instance.pointers.changed).to.equal(instance.changedPointers);
   });
 
   it('should setPointers on mouseup', () => {

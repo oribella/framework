@@ -12,12 +12,10 @@ describe("Handle", () => {
     const element = {};
     const type = "foo";
     const subscriber = {};
-    const active = false;
-    const handle = new Handle(<Element>element, type, <DefaultSubscriber>subscriber, active);
+    const handle = new Handle(element as Element, type, subscriber as DefaultSubscriber);
     expect(handle.element).to.equal(element);
     expect(handle.type).to.equal(type);
     expect(handle.subscriber).to.equal(subscriber);
-    expect(handle.active).to.equal(active);
   });
 
 });
