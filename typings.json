@@ -1,6 +1,6 @@
 {
   "name": "ts-seed",
-  "main": "dist/amd/ts-seed.d.ts",
+  "main": "dist/amd/index.d.ts",
   "globalDevDependencies": {
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "mocha": "registry:env/mocha#2.2.5+20160926180742",
