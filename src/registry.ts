@@ -27,7 +27,7 @@ export class DefaultGesture {
   start(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
   update(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
   end(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
-  cancel() {}
+  cancel(): number { return 0; }
 }
 
 export class DefaultSubscriber {
@@ -41,15 +41,18 @@ export class DefaultSubscriber {
 }
 
 export class Registry {
-  private gestures: { [key: string]: typeof DefaultGesture } = {};
+  private gestures: Map<string, typeof DefaultGesture> = new Map<string, typeof DefaultGesture>();
   register(type: string, Gesture: typeof DefaultGesture) {
-    this.gestures[type] = Gesture;
+    this.gestures.set(type, Gesture);
   }
   getTypes() {
     return Object.keys(this.gestures);
   }
   create(type: string, subscriber: any, element: Element) {
-    const Gesture = this.gestures[type];
+    const Gesture = this.gestures.get(type);
+    if(!Gesture) {
+      throw new Error(`The type ${type} has not been registered`);
+    }
     subscriber.options = Object.create(Gesture.options,
       getOwnPropertyDescriptors(subscriber.options));
     return new Gesture(subscriber as DefaultSubscriber, element);

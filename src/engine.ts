@@ -12,25 +12,25 @@ export type PointersDelta = { all: number, changed: number };
 export type ExecStrategy = (event: Event, gestures: Array<DefaultGesture>, gesture: DefaultGesture, pointers: Pointers, pointersDelta: PointersDelta) => number;
 
 export class Engine {
-  element: Element;
   flows: Array<Flow> = [];
   activeFlow: Flow | null = null;
   handles: Array<Handle> = [];
   gestures: Array<DefaultGesture> = [];
   composedGestures: Array<DefaultGesture> = [];
 
-  constructor(private registry: Registry, private supports: Supports, element: Element) {
-    this.element = element;
-  }
+  constructor(private registry: Registry, private supports: Supports, public element: Element) {}
+
   registerGesture(type: string, Gesture: typeof DefaultGesture) {
     this.registry.register(type, Gesture);
   }
-  registerFlow(flow: Flow) {
-    this.flows.push(flow);
-    flow.on('start', (e: Event, p: Pointers) => this.start(flow, e, p));
-    flow.on('update', (e: Event, p: Pointers) => this.update(flow, e, p));
-    flow.on('end', (e: Event, p: Pointers) => this.end(flow, e, p));
-    flow.on('cancel', (e: Event, p: Pointers) => this.cancel(flow, e, p));
+  registerFlows(...flows: Array<Flow>) {
+    this.flows.push.apply(this.flows, flows);
+    flows.forEach(flow => {
+      flow.on('start', (e: Event, p: Pointers) => this.start(flow, e, p));
+      flow.on('update', (e: Event, p: Pointers) => this.update(flow, e, p));
+      flow.on('end', (e: Event, p: Pointers) => this.end(flow, e, p));
+      flow.on('cancel', (e: Event, p: Pointers) => this.cancel(flow, e, p));
+    });
   }
   canActivateFlow(flow: Flow) {
     return (this.activeFlow === null || this.activeFlow === flow);
@@ -93,6 +93,19 @@ export class Engine {
     if(flag & RETURN_FLAG.START_EMITTED) {
       gesture.startEmitted = true;
     }
+    if(flag & RETURN_FLAG.REMOVE) {
+      this.removeGesture(gesture, this.gestures, this.composedGestures);
+    }
+    if(flag & RETURN_FLAG.REMOVE_OTHERS) {
+      const others = this.gestures.slice();
+      let otherGesture;
+      while(otherGesture = others.shift()) {
+        if(gesture === otherGesture) {
+          continue;
+        }
+        this.removeGesture(otherGesture, this.gestures, this.composedGestures);
+      }
+    }
   }
   forGestures(
     event: Event,
@@ -106,7 +119,7 @@ export class Engine {
       const pointersDelta = this.getPointersDelta(event, pointerMaps, pointers, which);
       const enterFlag = this.execEnterStrategies(event, gestures, gesture, pointerMaps, pointersDelta);
       if(enterFlag & RETURN_FLAG.REMOVE_AND_CONTINUE) {
-        this.removeGesture(gesture, this.gestures);
+        this.removeGesture(gesture, this.gestures, this.composedGestures);
         continue;
       }
       const execFlag = execStrategy(event, gestures, gesture, pointerMaps, pointersDelta);
@@ -133,12 +146,12 @@ export class Engine {
   }
   getPointers(map: PointerMap, pointerIds: Array<string>): Array<Pointer> {
     return pointerIds.map((pointerId) => {
-      return Object.create(map.get(pointerId) as Pointer);
+      return map.get(pointerId) as Pointer;
     });
   }
   hasPointer(gesture: DefaultGesture, map: PointerMap): boolean {
     const lockedPointers = this.getPointerIds(gesture);
-    const changed = Array.prototype.slice.call(map);
+    const changed = Array.prototype.slice.call(map.keys());
     let pointerId;
     while(pointerId = changed.shift()) {
       if(lockedPointers.indexOf(pointerId) !== -1) {
@@ -191,6 +204,15 @@ export class Engine {
     }
     return gesture.end(event, this.getPointers(pointers.changed, removedPointerIds));
   }
+  cancelStrategy(
+    gestures: Array<DefaultGesture>,
+    gesture: DefaultGesture,
+    pointers: Pointers,
+    pointersDelta: PointersDelta): number {
+    gestures;gesture;pointers;pointersDelta;
+
+    return gesture.cancel(/*event, this.getPointers(pointers.all, gesture.__POINTERS__)*/);
+  }
   start(flow: Flow, event: Event, pointers: Pointers): boolean {
     if(!this.canActivateFlow(flow)) {
       return false;
@@ -208,18 +230,28 @@ export class Engine {
       return false; //No match don't continue
     }
 
-    this.forGestures(event, this.gestures, pointers, this.startStrategy.bind(this));
+    this.forGestures(event, this.gestures.slice(), pointers, this.startStrategy.bind(this));
 
     return true;
   }
   update(flow: Flow, event: Event, pointers: Pointers) {
-    flow; event; pointers;
+    if (this.activeFlow !== flow) {
+      return;
+    }
+    this.forGestures(event, this.gestures.slice(), pointers, this.updateStrategy.bind(this));
   }
   end(flow: Flow, event: Event, pointers: Pointers) {
-    flow; event; pointers;
+    if (this.activeFlow !== flow) {
+      return;
+    }
+    this.forGestures(event, this.gestures.slice(), pointers, this.endStrategy.bind(this));
   }
   cancel(flow: Flow, event: Event, pointers: Pointers) {
     flow; event; pointers;
+    if (this.activeFlow !== flow) {
+      return;
+    }
+    this.forGestures(event, this.gestures, pointers, this.cancelStrategy.bind(this));
   }
 
   addHandle(element: Element, type: string, subscriber: DefaultSubscriber): () => void {

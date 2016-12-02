@@ -19,6 +19,10 @@ describe('Registry', () => {
     expect(gesture).to.be.an.instanceOf(DefaultGesture);
   });
 
+  it('should throw if type is not registered when trying to create gesture', () => {
+    expect(instance.create.bind(instance, 'test', {}, {} as Element)).to.throw;
+  });
+
   it('should create default options', () => {
     instance.register('test', DefaultGesture);
     const subscriber = { options: undefined };
