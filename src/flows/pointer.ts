@@ -1,21 +1,15 @@
-import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../flow';
+import {Flow, FlowConfig, EventConfig} from '../flow';
 import {Point} from '../point';
 
+export const PointerConfig = {
+  start: new EventConfig('pointerdown'),
+  update: new EventConfig('pointermove'),
+  end: new EventConfig('pointerup'),
+  cancel: new EventConfig('pointercancel', 'dragstart')
+}
 export class PointerFlow extends Flow {
-  constructor(
-    element: Element,
-    start: StartConfig = new StartConfig('pointerdown'),
-    update: UpdateConfig = new UpdateConfig('pointermove'),
-    end: EndConfig = new EndConfig('pointerup'),
-    cancel: CancelConfig = new CancelConfig('pointercancel', 'dragstart')
-    ) {
-    super({
-      element: element,
-      start: start,
-      update: update,
-      end: end,
-      cancel: cancel
-    });
+  constructor(element: Element, config: FlowConfig = PointerConfig) {
+    super(element, config);
   }
   setPointers(event: PointerEvent) {
     this.changedPointers.clear();

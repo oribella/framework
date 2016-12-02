@@ -1,14 +1,14 @@
-import {StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../flow';
+import {EventConfig} from '../flow';
 import {PointerFlow} from './pointer';
 
+export const MSPointerConfig = {
+  start: new EventConfig('MSPointerDown'),
+  update: new EventConfig('MSPointerMove'),
+  end: new EventConfig('MSPointerUp'),
+  cancel: new EventConfig('MSPointerCancel', 'dragstart')
+}
 export class MSPointerFlow extends PointerFlow {
   constructor(element: Element) {
-    super(
-      element,
-      new StartConfig('MSPointerDown'),
-      new UpdateConfig('MSPointerMove'),
-      new EndConfig('MSPointerUp'),
-      new CancelConfig('MSPointerCancel', 'dragstart')
-    );
+    super(element, MSPointerConfig);
   }
 }

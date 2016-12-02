@@ -18,7 +18,6 @@ describe('MouseFlow', () => {
   });
 
   it('should set config', () => {
-    expect(instance.config.element).to.equal(element);
     expect(instance.config.start.getEvents()).to.deep.equal(['mousedown']);
     expect(instance.config.update.getEvents()).to.deep.equal(['mousemove']);
     expect(instance.config.end.getEvents()).to.deep.equal(['mouseup']);

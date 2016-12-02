@@ -1,15 +1,16 @@
-import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../flow';
+import {Flow, EventConfig} from '../flow';
 import {Point} from '../point';
+
+export const MouseConfig = {
+  start: new EventConfig('mousedown'),
+  update: new EventConfig('mousemove'),
+  end: new EventConfig('mouseup'),
+  cancel: new EventConfig('dragstart', 'contextmenu')
+}
 
 export class MouseFlow extends Flow {
   constructor(element: Element) {
-    super({
-      element: element,
-      start: new StartConfig('mousedown'),
-      update: new UpdateConfig('mousemove'),
-      end: new EndConfig('mouseup'),
-      cancel: new CancelConfig('dragstart', 'contextmenu')
-    });
+    super(element, MouseConfig);
   }
   setPointers(event: MouseEvent) {
     const page = new Point(event.pageX, event.pageY);

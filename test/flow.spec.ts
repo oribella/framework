@@ -1,22 +1,22 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../src/flow';
+import {Flow, EventConfig} from '../src/flow';
 import {EventEmitter} from 'events';
 import {Pointer} from '../src/utils';
 
 describe('Flow', () => {
   let instance: Flow;
   let sandbox: Sinon.SinonSandbox;
-  let config = {
-    element: {} as Element,
-    start: new StartConfig(),
-    update: new UpdateConfig(),
-    end: new EndConfig(),
-    cancel: new CancelConfig()
+  const element = {} as Element;
+  const config = {
+    start: new EventConfig(),
+    update: new EventConfig(),
+    end: new EventConfig(),
+    cancel: new EventConfig()
   };
 
   beforeEach(() => {
-    instance = new Flow(config);
+    instance = new Flow(element, config);
     sandbox = sinon.sandbox.create();
   });
 
@@ -29,42 +29,42 @@ describe('Flow', () => {
   })
 
   it('should bind start', () => {
-    config.start = new StartConfig('mousedown');
+    config.start = new EventConfig('mousedown');
     const getEvents = sandbox.spy(config.start, 'getEvents');
     const bind = sandbox.spy(instance.addDOMEventListener, 'bind');
     instance.bind(config);
     expect(getEvents).to.have.been.calledOnce;
-    expect(bind).to.have.been.calledWithExactly(instance, config.element, 'mousedown', sinon.match.func);
+    expect(bind).to.have.been.calledWithExactly(instance, element, 'mousedown', sinon.match.func);
   });
 
   it('should return start function', () => {
-    config.start = new StartConfig('mousedown');
+    config.start = new EventConfig('mousedown');
     const startListen = instance.bind(config).startListen;
     expect(startListen).to.have.length(1);
   });
 
   it('should return continue function', () => {
-    config.update = new UpdateConfig('mousemove');
-    config.end = new EndConfig('mouseup');
-    config.cancel = new CancelConfig('cancel');
+    config.update = new EventConfig('mousemove');
+    config.end = new EventConfig('mouseup');
+    config.cancel = new EventConfig('cancel');
     const continueListen = instance.bind(config).continueListen;
     expect(continueListen).to.have.length(3);
   });
 
   it('should add start listeners', () => {
-    config.start = new StartConfig('mousedown');
+    config.start = new EventConfig('mousedown');
     const listenerSpy = sandbox.spy();
-    config.element.addEventListener = listenerSpy;
+    element.addEventListener = listenerSpy;
     const startListen = instance.bind(config).startListen;
     startListen.forEach(f => f());
     expect(listenerSpy).to.have.been.calledWithExactly('mousedown', sinon.match.func, false);
   });
 
   it('should call setPointers for events', () => {
-    config.start = new StartConfig('mousedown');
+    config.start = new EventConfig('mousedown');
     const listenerSpy = sandbox.spy();
     const setPointersSpy = sandbox.spy(instance, 'setPointers');
-    config.element.addEventListener = listenerSpy;
+    element.addEventListener = listenerSpy;
     const startListen = instance.bind(config).startListen;
     startListen.forEach(f => f());
     listenerSpy.callArg(1);
@@ -72,11 +72,11 @@ describe('Flow', () => {
   });
 
   it('should add continue listeners', () => {
-    config.update = new UpdateConfig('mousemove');
-    config.end = new EndConfig('mouseup');
-    config.cancel = new CancelConfig('cancel');
+    config.update = new EventConfig('mousemove');
+    config.end = new EventConfig('mouseup');
+    config.cancel = new EventConfig('cancel');
     const listenerSpy = sandbox.spy();
-    config.element.addEventListener = listenerSpy;
+    element.addEventListener = listenerSpy;
     const continueListen = instance.bind(config).continueListen;
     continueListen.forEach(f => f());
 
@@ -86,39 +86,39 @@ describe('Flow', () => {
   });
 
   it('should bind update', () => {
-    config.start = new UpdateConfig('mousemove');
+    config.start = new EventConfig('mousemove');
     const getEvents = sandbox.spy(config.update, 'getEvents');
     const bind = sandbox.spy(instance.addDOMEventListener, 'bind');
     instance.bind(config);
     expect(getEvents).to.have.been.calledOnce;
-    expect(bind).to.have.been.calledWithExactly(instance, config.element, 'mousemove', sinon.match.func);
+    expect(bind).to.have.been.calledWithExactly(instance, element, 'mousemove', sinon.match.func);
   });
 
   it('should bind end', () => {
-    config.start = new EndConfig('mouseup');
+    config.start = new EventConfig('mouseup');
     const getEvents = sandbox.spy(config.end, 'getEvents');
     const bind = sandbox.spy(instance.addDOMEventListener, 'bind');
     instance.bind(config);
     expect(getEvents).to.have.been.calledOnce;
-    expect(bind).to.have.been.calledWithExactly(instance, config.element, 'mouseup', sinon.match.func);
+    expect(bind).to.have.been.calledWithExactly(instance, element, 'mouseup', sinon.match.func);
   });
 
   it('should bind cancel', () => {
-    config.start = new CancelConfig('cancel');
+    config.start = new EventConfig('cancel');
     const getEvents = sandbox.spy(config.cancel, 'getEvents');
     const bind = sandbox.spy(instance.addDOMEventListener, 'bind');
     instance.bind(config);
     expect(getEvents).to.have.been.calledOnce;
-    expect(bind).to.have.been.calledWithExactly(instance, config.element, 'cancel', sinon.match.func);
+    expect(bind).to.have.been.calledWithExactly(instance, element, 'cancel', sinon.match.func);
   });
 
 
   it('should activate start listener and return an array of unlisten functions', () => {
-    instance.config.start = new StartConfig('mousedown');
+    instance.config.start = new EventConfig('mousedown');
     const startListenerSpy = sandbox.spy();
     const removeListenerSpy = sandbox.spy();
-    config.element.addEventListener = startListenerSpy;
-    config.element.removeEventListener = removeListenerSpy;
+    element.addEventListener = startListenerSpy;
+    element.removeEventListener = removeListenerSpy;
     const remove = instance.activate();
     expect(remove).to.have.length(1);
     remove.forEach(f => f());

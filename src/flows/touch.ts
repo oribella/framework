@@ -1,22 +1,17 @@
-import {Flow, StartConfig, UpdateConfig, EndConfig, CancelConfig} from '../flow';
+import {Flow, EventConfig} from '../flow';
 import {Point} from '../point';
 import {Pointer} from '../utils';
 
+export const TouchConfig = {
+  start: new EventConfig('touchstart'),
+  update: new EventConfig('touchmove'),
+  end: new EventConfig('touchend'),
+  cancel: new EventConfig('touchcancel', 'dragstart')
+}
+
 export class TouchFlow extends Flow {
-  constructor(
-    element: Element,
-    start: StartConfig = new StartConfig('touchstart'),
-    update: UpdateConfig = new UpdateConfig('touchmove'),
-    end: EndConfig = new EndConfig('touchend'),
-    cancel: CancelConfig = new CancelConfig('touchcancel', 'dragstart')
-    ) {
-    super({
-      element: element,
-      start: start,
-      update: update,
-      end: end,
-      cancel: cancel
-    });
+  constructor(element: Element) {
+    super(element, TouchConfig);
   }
   setPointerMapFromList(list: TouchList, pointerMap: Map<string, Pointer>) {
     for(let i = 0, len = list.length; i < len; ++i) {

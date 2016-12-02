@@ -12,13 +12,13 @@ export type PointersDelta = { all: number, changed: number };
 export type ExecStrategy = (event: Event, gestures: Array<DefaultGesture>, gesture: DefaultGesture, pointers: Pointers, pointersDelta: PointersDelta) => number;
 
 export class Engine {
-  flows: Array<Flow> = [];
-  activeFlow: Flow | null = null;
-  handles: Array<Handle> = [];
-  gestures: Array<DefaultGesture> = [];
-  composedGestures: Array<DefaultGesture> = [];
+  private flows: Array<Flow> = [];
+  private activeFlow: Flow | null = null;
+  private handles: Array<Handle> = [];
+  private gestures: Array<DefaultGesture> = [];
+  private composedGestures: Array<DefaultGesture> = [];
 
-  constructor(private registry: Registry, private supports: Supports, public element: Element) {}
+  constructor(private registry: Registry, private supports: Supports, private element: Element) {}
 
   registerGesture(type: string, Gesture: typeof DefaultGesture) {
     this.registry.register(type, Gesture);
@@ -32,11 +32,12 @@ export class Engine {
       flow.on('cancel', (e: Event, p: Pointers) => this.cancel(flow, e, p));
     });
   }
-  canActivateFlow(flow: Flow) {
-    return (this.activeFlow === null || this.activeFlow === flow);
-  }
   activate() {
     return this.flows.map(f => f.activate());
+  }
+
+  private canActivateFlow(flow: Flow) {
+    return (this.activeFlow === null || this.activeFlow === flow);
   }
   getPointersDelta(
     event: Event,

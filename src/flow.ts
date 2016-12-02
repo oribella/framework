@@ -1,27 +1,23 @@
 import {EventEmitter} from 'events';
 import {Pointer, Pointers} from './utils';
 
-export class TypeConfig {
+export class EventConfig {
   private events: string[];
   constructor(...events: string[]){ this.events = events; }
   getEvents() {
     return this.events;
   }
 }
-export class StartConfig extends TypeConfig {}
-export class UpdateConfig extends TypeConfig {}
-export class EndConfig extends TypeConfig {}
-export class CancelConfig extends TypeConfig {}
-export interface Config {
-  element: Element;
-  start: StartConfig;
-  update: UpdateConfig;
-  end: EndConfig;
-  cancel: CancelConfig;
+
+export interface FlowConfig {
+  start: EventConfig;
+  update: EventConfig;
+  end: EventConfig;
+  cancel: EventConfig;
 }
 
 export class Flow extends EventEmitter {
-  config: Config;
+  config: FlowConfig;
   startListen: Array<() => () => void> = [];
   continueListen: Array<() => () => void> = [];
   removeListeners: Array<() => void> = [];
@@ -29,7 +25,7 @@ export class Flow extends EventEmitter {
   changedPointers: Map<string, Pointer> = new Map<string, Pointer>();
   pointers: Pointers = { all: this.allPointers, changed: this.changedPointers };
 
-  constructor(config: Config) {
+  constructor(private element: Element, config: FlowConfig) {
     super();
     this.config = config;
   }
@@ -47,23 +43,23 @@ export class Flow extends EventEmitter {
     element.removeEventListener(event, fn, false);
   }
 
-  bind(config: Config): { startListen: Array<() => () => void>, continueListen: Array<() => () => void> } {
+  bind(config: FlowConfig): { startListen: Array<() => () => void>, continueListen: Array<() => () => void> } {
     this.startListen = config.start.getEvents().map(e => {
-      return this.addDOMEventListener.bind(this, config.element, e, this.start.bind(this));
+      return this.addDOMEventListener.bind(this, this.element, e, this.start.bind(this));
     });
     this.continueListen = config.update.getEvents().map(e => {
-      return this.addDOMEventListener.bind(this, config.element, e, this.update.bind(this));
+      return this.addDOMEventListener.bind(this, this.element, e, this.update.bind(this));
     });
     this.continueListen.push.apply(
       this.continueListen,
       config.end.getEvents().map(e => {
-        return this.addDOMEventListener.bind(this, config.element, e, this.end.bind(this));
+        return this.addDOMEventListener.bind(this, this.element, e, this.end.bind(this));
       })
     );
     this.continueListen.push.apply(
       this.continueListen,
       config.cancel.getEvents().map(e => {
-        return this.addDOMEventListener.bind(this, config.element, e, this.cancel.bind(this));
+        return this.addDOMEventListener.bind(this, this.element, e, this.cancel.bind(this));
       })
     );
     return { startListen: this.startListen, continueListen: this.continueListen };
