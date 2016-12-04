@@ -24,9 +24,9 @@ export class DefaultGesture {
     element; add; remove;
   }
   unbind() {}
-  start(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
-  update(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
-  end(event: Event, pointers: Array<Pointer>): number { event; pointers; return 0; }
+  start(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
+  update(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
+  end(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
   cancel(): number { return 0; }
 }
 

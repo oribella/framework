@@ -42,22 +42,22 @@ export const RETURN_FLAG = {
   REMOVE_AND_CONTINUE: 8
 };
 
-export function isMouse(supports: any, event: any) {
-  if (supports.MSPointerEvent && event.pointerType === event.MSPOINTER_TYPE_MOUSE) { //IE10
+export function isMouse(supports: any, evt: any) {
+  if (supports.MSPointerEvent && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { //IE10
     return true;
   }
-  if (supports.PointerEvent && event.pointerType === 'mouse') { //IE11
+  if (supports.PointerEvent && evt.pointerType === 'mouse') { //IE11
     return true;
   }
-  if (event.type.indexOf('mouse') !== -1) {
+  if (evt.type.indexOf('mouse') !== -1) {
     return true;
   }
   return false;
 }
 
-export function isValidMouseButton(event: MouseEvent, allowedBtn: Array<number>|number) {
-  const btn = event.button;
-  const which = event.which;
+export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|number) {
+  const btn = evt.button;
+  const which = evt.which;
   let  actualBtn: number;
 
   actualBtn = (!which && btn !== undefined) ?

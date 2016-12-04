@@ -30,17 +30,17 @@ export class Flow extends EventEmitter {
     this.config = config;
   }
 
-  addDOMEventListener(element: Element, event: string, fn: () => void): () => void {
+  addDOMEventListener(element: Element, evt: string, fn: () => void): () => void {
     const proxyFn = (e: Event) => {
       this.setPointers(e);
       fn();
     };
-    element.addEventListener(event, proxyFn, false);
-    return this.removeDOMEventListener.bind(this, element, event, proxyFn);
+    element.addEventListener(evt, proxyFn, false);
+    return this.removeDOMEventListener.bind(this, element, evt, proxyFn);
   }
 
-  removeDOMEventListener(element: Element, event: string, fn: () => void) {
-    element.removeEventListener(event, fn, false);
+  removeDOMEventListener(element: Element, evt: string, fn: () => void) {
+    element.removeEventListener(evt, fn, false);
   }
 
   bind(config: FlowConfig): { startListen: Array<() => () => void>, continueListen: Array<() => () => void> } {
@@ -67,23 +67,23 @@ export class Flow extends EventEmitter {
   public activate() : Array<() => void> {
     return this.bind(this.config).startListen.map(f => f());
   }
-  setPointers(event: Event) {
-    event;
+  setPointers(evt: Event) {
+    evt;
   }
-  start(event: Event) {
-    this.emit('start', event, this.pointers);
+  start(evt: Event) {
+    this.emit('start', evt, this.pointers);
   }
-  update(event: Event) {
-    this.emit('update', event, this.pointers);
+  update(evt: Event) {
+    this.emit('update', evt, this.pointers);
   }
-  end(event: Event) {
-    this.emit('end', event, this.pointers);
+  end(evt: Event) {
+    this.emit('end', evt, this.pointers);
     if(this.allPointers.size === 0) {
       this.stop();
     }
   }
-  cancel(event: Event) {
-    this.emit('cancel', event, this.pointers);
+  cancel(evt: Event) {
+    this.emit('cancel', evt, this.pointers);
     this.stop();
   }
   continue() {

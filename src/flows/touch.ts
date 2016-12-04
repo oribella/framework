@@ -23,10 +23,10 @@ export class TouchFlow extends Flow {
       pointerMap.set(pointerId, pointers);
     }
   }
-  setPointers(event: TouchEvent) {
+  setPointers(evt: TouchEvent) {
     this.allPointers.clear();
     this.changedPointers.clear();
-    this.setPointerMapFromList(event.touches, this.allPointers);
-    this.setPointerMapFromList(event.changedTouches, this.changedPointers);
+    this.setPointerMapFromList(evt.touches, this.allPointers);
+    this.setPointerMapFromList(evt.changedTouches, this.changedPointers);
   }
 }
