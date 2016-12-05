@@ -1,6 +1,6 @@
 import {Flow, EventConfig} from '../flow';
 import {Point} from '../point';
-import {Pointer} from '../utils';
+import {PointerData} from '../utils';
 
 export const TouchConfig = {
   start: new EventConfig('touchstart'),
@@ -13,7 +13,7 @@ export class TouchFlow extends Flow {
   constructor(element: Element) {
     super(element, TouchConfig);
   }
-  setPointerMapFromList(list: TouchList, pointerMap: Map<string, Pointer>) {
+  setPointerMapFromList(list: TouchList, pointerMap: Map<string, PointerData>) {
     for(let i = 0, len = list.length; i < len; ++i) {
       const touch = list[i];
       const page = new Point(touch.pageX, touch.pageY);

@@ -68,6 +68,6 @@ export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|nu
   }) : actualBtn === allowedBtn;
 }
 
-export type PointerMap = Map<string, Pointer>
-export type Pointers = { all: PointerMap, changed: PointerMap }
-export type Pointer = { page: Point, client: Point }
+export type PointerDataMap = Map<string, PointerData>
+export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
+export type PointerData = { page: Point, client: Point }

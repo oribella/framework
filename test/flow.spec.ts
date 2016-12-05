@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import * as sinon from 'sinon';
 import {Flow, EventConfig} from '../src/flow';
 import {EventEmitter} from 'events';
-import {Pointer} from '../src/utils';
+import {PointerData} from '../src/utils';
 
 describe('Flow', () => {
   let instance: Flow;
@@ -129,14 +129,14 @@ describe('Flow', () => {
     const emitSpy = sandbox.spy(instance, 'emit');
     const e = {} as Event;
     instance.start(e);
-    expect(emitSpy).to.have.been.calledWithExactly('start', e, { all: new Map<string, Pointer>(), changed: new Map<string, Pointer>() });
+    expect(emitSpy).to.have.been.calledWithExactly('start', e, { all: new Map<string, PointerData>(), changed: new Map<string, PointerData>() });
   });
 
   it('should emit update', () => {
     const emitSpy = sandbox.spy(instance, 'emit');
     const e = {} as Event;
     instance.update(e);
-    expect(emitSpy).to.have.been.calledWithExactly('update', e, { all: new Map<string, Pointer>(), changed: new Map<string, Pointer>() });
+    expect(emitSpy).to.have.been.calledWithExactly('update', e, { all: new Map<string, PointerData>(), changed: new Map<string, PointerData>() });
   });
 
   it('should emit end', () => {
@@ -144,7 +144,7 @@ describe('Flow', () => {
     const e = {} as Event;
     instance.allPointers.set('dummy');
     instance.end(e);
-    expect(emitSpy).to.have.been.calledWithExactly('end', e, { all: new Map<string, Pointer>(), changed: new Map<string, Pointer>() });
+    expect(emitSpy).to.have.been.calledWithExactly('end', e, { all: new Map<string, PointerData>(), changed: new Map<string, PointerData>() });
   });
 
   it('should emit end and call stop', () => {
@@ -153,7 +153,7 @@ describe('Flow', () => {
     const e = {} as Event;
     instance.allPointers.clear();
     instance.end(e);
-    expect(emitSpy).to.have.been.calledWithExactly('end', e, { all: new Map<string, Pointer>(), changed: new Map<string, Pointer>() });
+    expect(emitSpy).to.have.been.calledWithExactly('end', e, { all: new Map<string, PointerData>(), changed: new Map<string, PointerData>() });
     expect(stopSpy).to.have.been.calledOnce;
   });
 
@@ -162,7 +162,7 @@ describe('Flow', () => {
     const stopSpy = sandbox.spy(instance, 'stop');
     const e = {} as Event;
     instance.cancel(e);
-    expect(emitSpy).to.have.been.calledWithExactly('cancel', e, { all: new Map<string, Pointer>(), changed: new Map<string, Pointer>() });
+    expect(emitSpy).to.have.been.calledWithExactly('cancel', e, { all: new Map<string, PointerData>(), changed: new Map<string, PointerData>() });
     expect(stopSpy).to.have.been.calledOnce;
   });
 

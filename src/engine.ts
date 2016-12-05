@@ -1,6 +1,6 @@
 import {Registry, DefaultGesture, DefaultSubscriber} from './registry';
 import {Flow} from  './flow';
-import {Pointers, PointerMap,Pointer, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
+import {Pointers, PointerDataMap,PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
 import {Handle} from './handle';
 
 export interface Supports {
@@ -93,7 +93,7 @@ export class Engine {
       }
     }
   }
-  private forGestures(
+  private whileGestures(
     evt: Event,
     gestures: Array<DefaultGesture>,
     pointers: Pointers,
@@ -115,33 +115,27 @@ export class Engine {
     gesture.__POINTERS__.push(pointerId);
   }
   private removePointerIds(gesture: DefaultGesture, changed: Array<string>): Array<string> {
-    const pointerIds = [];
+    const pointerIds = this.getPointerIds(gesture);
+    const removedPointerIds = [];
     let pointerId;
     while(pointerId = changed.shift()) {
-      const ix = gesture.__POINTERS__.indexOf(pointerId);
+      const ix = pointerIds.indexOf(pointerId);
       if(ix !== -1) {
-        const removed = gesture.__POINTERS__.splice(ix, 1)[0];
-        pointerIds.push(removed);
+        const removed = pointerIds.splice(ix, 1)[0];
+        removedPointerIds.push(removed);
       }
     }
-    return pointerIds;
+    return removedPointerIds;
   }
   private getPointerIds(gesture: DefaultGesture) {
     return gesture.__POINTERS__;
   }
-  private getPointers(map: PointerMap, pointerIds: Array<string>): Array<Pointer> {
-    return pointerIds.map((pointerId) => map.get(pointerId) as Pointer);
+  private getPointers(map: PointerDataMap, pointerIds: Array<string>): Array<PointerData> {
+    return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
   }
-  private hasPointer(gesture: DefaultGesture, map: PointerMap): boolean {
+  private hasPointer(gesture: DefaultGesture, map: PointerDataMap): boolean {
     const pointerIds = this.getPointerIds(gesture);
-    const changed = Array.prototype.slice.call(map.keys());
-    let pointerId;
-    while(pointerId = changed.shift()) {
-      if(pointerIds.indexOf(pointerId) !== -1) {
-        return true;
-      }
-    }
-    return false;
+    return !!pointerIds.filter(pointerId => map.has(pointerId)).length;
   }
   private startStrategy(state: ExecStrategyState): number {
     if(state.pointersDelta.all !== 0) {
@@ -149,21 +143,20 @@ export class Engine {
     }
     //Lock pointer ids on gesture
     state.pointers.all.forEach((_, pointerId) => this.addPointerId(state.gesture, pointerId));
-    return state.gesture.start(state.evt, this.getPointers(state.pointers.all, state.gesture.__POINTERS__));
+    return state.gesture.start(state.evt, this.getPointers(state.pointers.all, this.getPointerIds(state.gesture)));
   }
   private updateStrategy(state: ExecStrategyState): number {
     if(!this.hasPointer(state.gesture, state.pointers.changed)) {
       return RETURN_FLAG.IDLE;
     };
-    return state.gesture.update(state.evt, this.getPointers(state.pointers.all, state.gesture.__POINTERS__));
+    return state.gesture.update(state.evt, this.getPointers(state.pointers.all, this.getPointerIds(state.gesture)));
   }
   private endStrategy(state: ExecStrategyState): number {
     if(!state.gesture.startEmitted) {
       return RETURN_FLAG.REMOVE;
     }
-
     const removedPointerIds = this.removePointerIds(state.gesture, Array.prototype.slice.call(state.pointers.changed.keys()));
-    if(state.gesture.__POINTERS__.length !== 0) {
+    if(this.getPointerIds(state.gesture).length !== 0) {
       return RETURN_FLAG.REMOVE;
     }
     return state.gesture.end(state.evt, this.getPointers(state.pointers.changed, removedPointerIds));
@@ -188,7 +181,7 @@ export class Engine {
       return false; //No match don't continue
     }
 
-    this.forGestures(evt, this.gestures.slice(), pointers, this.startStrategy.bind(this));
+    this.whileGestures(evt, this.gestures.slice(), pointers, this.startStrategy.bind(this));
 
     return true;
   }
@@ -196,19 +189,19 @@ export class Engine {
     if (this.activeFlow !== flow) {
       return;
     }
-    this.forGestures(evt, this.gestures.slice(), pointers, this.updateStrategy.bind(this));
+    this.whileGestures(evt, this.gestures.slice(), pointers, this.updateStrategy.bind(this));
   }
   private end(flow: Flow, evt: Event, pointers: Pointers) {
     if (this.activeFlow !== flow) {
       return;
     }
-    this.forGestures(evt, this.gestures.slice(), pointers, this.endStrategy.bind(this));
+    this.whileGestures(evt, this.gestures.slice(), pointers, this.endStrategy.bind(this));
   }
   private cancel(flow: Flow, evt: Event, pointers: Pointers) {
     if (this.activeFlow !== flow) {
       return;
     }
-    this.forGestures(evt, this.gestures, pointers, this.cancelStrategy.bind(this));
+    this.whileGestures(evt, this.gestures, pointers, this.cancelStrategy.bind(this));
   }
   private addHandle(element: Element, type: string, subscriber: DefaultSubscriber): () => void {
     const handle = new Handle(element, type, subscriber);

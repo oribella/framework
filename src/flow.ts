@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import {Pointer, Pointers} from './utils';
+import {PointerData, Pointers} from './utils';
 
 export class EventConfig {
   private events: string[];
@@ -21,8 +21,8 @@ export class Flow extends EventEmitter {
   startListen: Array<() => () => void> = [];
   continueListen: Array<() => () => void> = [];
   removeListeners: Array<() => void> = [];
-  allPointers: Map<string, Pointer> = new Map<string, Pointer>();
-  changedPointers: Map<string, Pointer> = new Map<string, Pointer>();
+  allPointers: Map<string, PointerData> = new Map<string, PointerData>();
+  changedPointers: Map<string, PointerData> = new Map<string, PointerData>();
   pointers: Pointers = { all: this.allPointers, changed: this.changedPointers };
 
   constructor(private element: Element, config: FlowConfig) {

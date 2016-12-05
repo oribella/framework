@@ -1,4 +1,4 @@
-import {getOwnPropertyDescriptors, Pointer, GESTURE_STRATEGY_FLAG} from './utils';
+import {getOwnPropertyDescriptors, PointerData, GESTURE_STRATEGY_FLAG} from './utils';
 
 export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
 export class DefaultGesture {
@@ -24,9 +24,9 @@ export class DefaultGesture {
     element; add; remove;
   }
   unbind() {}
-  start(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
-  update(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
-  end(evt: Event, pointers: Array<Pointer>): number { evt; pointers; return 0; }
+  start(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
+  update(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
+  end(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
   cancel(): number { return 0; }
 }
 
