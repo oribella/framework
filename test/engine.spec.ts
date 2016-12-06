@@ -193,7 +193,7 @@ describe('Engine', () => {
     instance['addPointerId'](gesture, 'foo');
     instance['addPointerId'](gesture, 'bar');
     instance['addPointerId'](gesture, 'baz');
-    expect(instance['removePointerIds'](gesture, ['foo','baz'])).to.deep.equal(['foo', 'baz']);
+    expect(instance['removePointerIds'](gesture, ['foo','baz', 'foobar'])).to.deep.equal(['foo', 'baz']);
     expect(instance['getPointerIds'](gesture)).to.deep.equal(['bar']);
   });
 
@@ -333,6 +333,111 @@ describe('Engine', () => {
       const state = { gesture } as ExecStrategyState;
       instance['cancelStrategy'](state);
       expect(gesture.cancel).to.have.been.calledWithExactly();
+    });
+
+  });
+
+  describe('On start', () => {
+
+    it('should return false if flow can not be activated', () => {
+      sandbox.stub(instance, 'canActivateFlow').returns(false);;
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      expect(instance['onStart'](flow, evt, pointers)).to.be.false;
+    });
+
+    it('should return false if no gestures are matched', () => {
+      sandbox.stub(instance, 'canActivateFlow').returns(true);
+      sandbox.stub(instance, 'match').returns([]);
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      expect(instance['onStart'](flow, evt, pointers)).to.be.false;
+    });
+
+    it('should call whileGestures', () => {
+      const g1 = new DefaultGesture({ options: { prio: 1 } } as DefaultSubscriber, {} as Element);
+      const g2 = new DefaultGesture({ options: { prio: 1 } } as DefaultSubscriber, {} as Element);
+      const g3 = new DefaultGesture({ options: { prio: 1 } } as DefaultSubscriber, {} as Element);
+      sandbox.stub(instance, 'canActivateFlow').returns(true);
+      const gestures = [g1, g2, g3];
+      sandbox.stub(instance, 'match').returns(gestures);
+      const whileGestures = sandbox.stub(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      expect(instance['onStart'](flow, evt, pointers)).to.be.true;
+      expect(whileGestures).to.have.been.calledWithExactly(evt, gestures, pointers, sinon.match.func);
+    });
+
+  });
+
+  describe('On update', () => {
+
+    it('should return if not the same flow', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onUpdate'](flow, evt, pointers);
+      expect(whileGestures).to.not.have.been.called;
+    });
+
+    it('should call whileGestures', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      instance['activeFlow'] = flow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onUpdate'](flow, evt, pointers);
+      expect(whileGestures).to.have.been.calledWithExactly(evt, instance['gestures'], pointers, sinon.match.func);
+    });
+
+  });
+
+  describe('On end', () => {
+
+    it('should return if not the same flow', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onEnd'](flow, evt, pointers);
+      expect(whileGestures).to.not.have.been.called;
+    });
+
+    it('should call whileGestures', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      instance['activeFlow'] = flow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onEnd'](flow, evt, pointers);
+      expect(whileGestures).to.have.been.calledWithExactly(evt, instance['gestures'], pointers, sinon.match.func);
+    });
+
+  });
+
+  describe('On cancel', () => {
+
+    it('should return if not the same flow', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onCancel'](flow, evt, pointers);
+      expect(whileGestures).to.not.have.been.called;
+    });
+
+    it('should call whileGestures', () => {
+      const whileGestures = sandbox.spy(instance, 'whileGestures');
+      const flow = {} as MouseFlow;
+      instance['activeFlow'] = flow;
+      const evt = {} as Event;
+      const pointers = {} as Pointers;
+      instance['onCancel'](flow, evt, pointers);
+      expect(whileGestures).to.have.been.calledWithExactly(evt, instance['gestures'], pointers, sinon.match.func);
     });
 
   });

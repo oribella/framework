@@ -33,10 +33,10 @@ export class Engine {
   registerFlows(...flows: Array<Flow>) {
     this.flows.push.apply(this.flows, flows);
     flows.forEach(flow => {
-      flow.on('start', (e: Event, p: Pointers) => this.start(flow, e, p));
-      flow.on('update', (e: Event, p: Pointers) => this.update(flow, e, p));
-      flow.on('end', (e: Event, p: Pointers) => this.end(flow, e, p));
-      flow.on('cancel', (e: Event, p: Pointers) => this.cancel(flow, e, p));
+      flow.on('start', (e: Event, p: Pointers) => this.onStart(flow, e, p));
+      flow.on('update', (e: Event, p: Pointers) => this.onUpdate(flow, e, p));
+      flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
+      flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
     });
   }
   activate() {
@@ -164,7 +164,7 @@ export class Engine {
   private cancelStrategy(state: ExecStrategyState): number {
     return state.gesture.cancel();
   }
-  private start(flow: Flow, evt: Event, pointers: Pointers): boolean {
+  private onStart(flow: Flow, evt: Event, pointers: Pointers): boolean {
     if(!this.canActivateFlow(flow)) {
       return false;
     }
@@ -185,23 +185,23 @@ export class Engine {
 
     return true;
   }
-  private update(flow: Flow, evt: Event, pointers: Pointers) {
+  private onUpdate(flow: Flow, evt: Event, pointers: Pointers) {
     if (this.activeFlow !== flow) {
       return;
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.updateStrategy.bind(this));
   }
-  private end(flow: Flow, evt: Event, pointers: Pointers) {
+  private onEnd(flow: Flow, evt: Event, pointers: Pointers) {
     if (this.activeFlow !== flow) {
       return;
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.endStrategy.bind(this));
   }
-  private cancel(flow: Flow, evt: Event, pointers: Pointers) {
+  private onCancel(flow: Flow, evt: Event, pointers: Pointers) {
     if (this.activeFlow !== flow) {
       return;
     }
-    this.whileGestures(evt, this.gestures, pointers, this.cancelStrategy.bind(this));
+    this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
   private addHandle(element: Element, type: string, subscriber: DefaultSubscriber): () => void {
     const handle = new Handle(element, type, subscriber);

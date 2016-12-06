@@ -49,10 +49,7 @@ export function isMouse(supports: any, evt: any) {
   if (supports.PointerEvent && evt.pointerType === 'mouse') { //IE11
     return true;
   }
-  if (evt.type.indexOf('mouse') !== -1) {
-    return true;
-  }
-  return false;
+  return evt.type.indexOf('mouse') !== -1;
 }
 
 export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|number) {
@@ -63,7 +60,7 @@ export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|nu
   actualBtn = (!which && btn !== undefined) ?
                 (btn & 1 ? 1 : (btn & 2 ? 3 : (btn & 4 ? 2 : 0))) :
                 which;
-  return Array.isArray(allowedBtn) ? allowedBtn.some(function (val) {
+  return Array.isArray(allowedBtn) ? allowedBtn.some(val => {
     return actualBtn === val;
   }) : actualBtn === allowedBtn;
 }
