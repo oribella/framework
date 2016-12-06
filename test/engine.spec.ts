@@ -281,7 +281,58 @@ describe('Engine', () => {
       instance['addPointerId'](gesture, 'bar');
       instance['addPointerId'](gesture, 'baz');
       instance['updateStrategy'](state);
-      expect(gesture.update).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer])
+      expect(gesture.update).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer]);
+    });
+
+  });
+
+  describe('End strategy', () => {
+
+    it('should remove gesture if start has not been emitted', () => {
+      const gesture = new DefaultGesture({} as DefaultSubscriber, {} as Element);
+      const state = { gesture } as ExecStrategyState;
+      expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.REMOVE);
+    });
+
+    it('should remove gesture if no pointers was removed', () => {
+      const gesture = new DefaultGesture({} as DefaultSubscriber, {} as Element);
+      gesture.startEmitted = true;
+      sandbox.stub(instance, 'removePointerIds').returns([]);
+      const pointers = { changed: new Map<string, PointerData>() } as Pointers;
+      const state = { gesture, pointers } as ExecStrategyState;
+      expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.REMOVE);
+    });
+
+    it('should call end', () => {
+      const gesture = new DefaultGesture({} as DefaultSubscriber, {} as Element);
+      gesture.startEmitted = true;
+      gesture.end = sandbox.spy();
+      const fooPointer = { page: new Point(1, 2), client: new Point(3, 4)};
+      const barPointer = { page: new Point(5, 6), client: new Point(7, 8)};
+      const bazPointer = { page: new Point(9, 10), client: new Point(11, 12)};
+      const pointers = { changed: new Map<string, PointerData>([
+        ['foo', fooPointer ],
+        ['bar', barPointer ],
+        ['baz', bazPointer ]
+      ]) } as Pointers;
+      const state = { gesture, pointers } as ExecStrategyState;
+      instance['addPointerId'](gesture, 'foo');
+      instance['addPointerId'](gesture, 'bar');
+      instance['addPointerId'](gesture, 'baz');
+      instance['endStrategy'](state);
+      expect(gesture.end).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer]);
+    });
+
+  });
+
+  describe('Cancel strategy', () => {
+
+    it('should call cancel', () => {
+      const gesture = new DefaultGesture({} as DefaultSubscriber, {} as Element);
+      gesture.cancel = sandbox.spy();
+      const state = { gesture } as ExecStrategyState;
+      instance['cancelStrategy'](state);
+      expect(gesture.cancel).to.have.been.calledWithExactly();
     });
 
   });

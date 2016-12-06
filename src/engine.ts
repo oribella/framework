@@ -155,8 +155,8 @@ export class Engine {
     if(!state.gesture.startEmitted) {
       return RETURN_FLAG.REMOVE;
     }
-    const removedPointerIds = this.removePointerIds(state.gesture, Array.prototype.slice.call(state.pointers.changed.keys()));
-    if(this.getPointerIds(state.gesture).length !== 0) {
+    const removedPointerIds = this.removePointerIds(state.gesture, Array.from(state.pointers.changed.keys()));
+    if(removedPointerIds.length === 0) {
       return RETURN_FLAG.REMOVE;
     }
     return state.gesture.end(state.evt, this.getPointers(state.pointers.changed, removedPointerIds));
@@ -221,7 +221,7 @@ export class Engine {
     return gesture;
   }
   private match(startElement: Node): Array<DefaultGesture> {
-    let gestures: Array<DefaultGesture> = [];
+    const gestures: Array<DefaultGesture> = [];
 
     for (let element = startElement; element !== this.element; element = element.parentNode) {
       for (let i = 0; i < this.handles.length; ++i) { //Always evaluate length since gestures could bind gestures
