@@ -10,15 +10,15 @@ export class DefaultGesture {
   }
   __POINTERS__: Array<string> = [];
   startEmitted: boolean = false;
-  subscriber: DefaultSubscriber;
+  subscriber: DefaultListener;
   element: Element;
-  constructor(subscriber: DefaultSubscriber, element: Element) {
+  constructor(subscriber: DefaultListener, element: Element) {
     this.subscriber  = subscriber;
     this.element = element;
   }
   bind(
     element: Element,
-    add: (element: Element, type: string, subscriber: DefaultSubscriber) => () => void,
+    add: (element: Element, type: string, subscriber: DefaultListener) => () => void,
     remove: (gesture: DefaultGesture, ...arr: Array<DefaultGesture>) => void
     ) {
     element; add; remove;
@@ -30,7 +30,7 @@ export class DefaultGesture {
   cancel(): number { return 0; }
 }
 
-export class DefaultSubscriber {
+export class DefaultListener {
   options: GestureOptions;
   selector: string;
   down() {}
@@ -55,6 +55,6 @@ export class Registry {
     }
     subscriber.options = Object.create(Gesture.options,
       getOwnPropertyDescriptors(subscriber.options));
-    return new Gesture(subscriber as DefaultSubscriber, element);
+    return new Gesture(subscriber as DefaultListener, element);
   }
 }

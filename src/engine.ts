@@ -1,4 +1,4 @@
-import {Registry, DefaultGesture, DefaultSubscriber} from './registry';
+import {Registry, DefaultGesture, DefaultListener} from './registry';
 import {Flow} from  './flow';
 import {Pointers, PointerDataMap,PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
 import {Handle} from './handle';
@@ -203,7 +203,7 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  private addHandle(element: Element, type: string, subscriber: DefaultSubscriber): () => void {
+  private addHandle(element: Element, type: string, subscriber: DefaultListener): () => void {
     const handle = new Handle(element, type, subscriber);
 
     this.handles.push(handle);

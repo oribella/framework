@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {Handle} from "../src/handle";
-import {DefaultSubscriber} from '../src/registry';
+import {DefaultListener} from '../src/registry';
 
 describe("Handle", () => {
 
@@ -12,7 +12,7 @@ describe("Handle", () => {
     const element = {};
     const type = "foo";
     const subscriber = {};
-    const handle = new Handle(element as Element, type, subscriber as DefaultSubscriber);
+    const handle = new Handle(element as Element, type, subscriber as DefaultListener);
     expect(handle.element).to.equal(element);
     expect(handle.type).to.equal(type);
     expect(handle.subscriber).to.equal(subscriber);
