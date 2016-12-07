@@ -4,6 +4,7 @@ import {Engine, Supports, ExecStrategy, ExecStrategyState} from '../src/engine';
 import {Registry} from '../src/registry';
 import {DefaultGesture} from '../src/default-gesture';
 import {DefaultListener} from '../src/default-listener';
+import {ListenerHandle} from '../src/listener-handle';
 import {MouseFlow} from '../src/flows/mouse';
 import {TouchFlow} from '../src/flows/touch';
 import {PointerFlow} from '../src/flows/pointer';
@@ -469,8 +470,31 @@ describe('Engine', () => {
       expect(instance['handles']).to.have.length(0)
     })
 
-
-
   });
+
+  describe('Add gesture', () => {
+
+    it('should create a gesture from registry', () => {
+      const element = {} as Element;
+      const listener = new DefaultListener();
+      const gesture = new DefaultGesture(listener, element);
+      const create = sandbox.stub(instance['registry'], 'create').returns(gesture);
+      const handle = new ListenerHandle(element, 'foo', listener);
+      instance['addGesture'](handle, element);
+      expect(create).to.have.been.calledWithExactly(handle.type, handle.listener, element);
+    });
+
+    it('should call gesture bind', () => {
+      const element = {} as Element;
+      const listener = new DefaultListener();
+      const gesture = new DefaultGesture(listener, element);
+      const bind = sandbox.stub(gesture, 'bind');
+      sandbox.stub(instance['registry'], 'create').returns(gesture);
+      const handle = new ListenerHandle(element, 'foo', listener);
+      instance['addGesture'](handle, element);
+      expect(bind).to.have.been.calledWithExactly(handle.element, sinon.match.func, sinon.match.func);
+    });
+
+  })
 
 });
