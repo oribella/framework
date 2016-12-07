@@ -1,7 +1,9 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
 import {Engine, Supports, ExecStrategy, ExecStrategyState} from '../src/engine';
-import {Registry, DefaultGesture, DefaultListener} from '../src/registry';
+import {Registry} from '../src/registry';
+import {DefaultGesture} from '../src/default-gesture';
+import {DefaultListener} from '../src/default-listener';
 import {MouseFlow} from '../src/flows/mouse';
 import {TouchFlow} from '../src/flows/touch';
 import {PointerFlow} from '../src/flows/pointer';
@@ -442,12 +444,12 @@ describe('Engine', () => {
 
   });
 
-  describe('Handle', () => {
+  describe('Listener handle', () => {
     const add = () => {
       const element = {} as Element;
       const type = 'foo';
       const subscriber = {} as DefaultListener;
-      return instance['addHandle'](element, type, subscriber);
+      return instance['addListener'](element, type, subscriber);
     }
     it('should add a handle', () => {
       add();

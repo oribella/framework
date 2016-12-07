@@ -1,5 +1,6 @@
 import {expect} from 'chai';
-import {Registry, DefaultGesture} from '../src/registry';
+import {Registry} from '../src/registry';
+import {DefaultGesture} from '../src/default-gesture';
 import {GESTURE_STRATEGY_FLAG} from '../src/utils';
 
 describe('Registry', () => {

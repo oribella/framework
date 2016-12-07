@@ -1,7 +1,9 @@
-import {Registry, DefaultGesture, DefaultListener} from './registry';
+import {Registry} from './registry';
+import {DefaultGesture} from './default-gesture';
+import {DefaultListener} from './default-listener';
 import {Flow} from  './flow';
 import {Pointers, PointerDataMap,PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
-import {Handle} from './handle';
+import {ListenerHandle} from './listener-handle';
 
 export interface Supports {
   MSPointerEvent: boolean;
@@ -21,7 +23,7 @@ export type ExecStrategy = (state: ExecStrategyState) => number;
 export class Engine {
   private flows: Array<Flow> = [];
   private activeFlow: Flow | null = null;
-  private handles: Array<Handle> = [];
+  private handles: Array<ListenerHandle> = [];
   private gestures: Array<DefaultGesture> = [];
   private composedGestures: Array<DefaultGesture> = [];
 
@@ -101,9 +103,9 @@ export class Engine {
 
     let gesture;
     while(gesture = gestures.shift()) {
-      const { pointers: configuredPointers, which } = gesture.subscriber.options;
+      const { pointers: configuredPointers, which } = gesture.listener.options;
       const pointersDelta = this.getPointersDelta(evt, pointers, configuredPointers, which);
-      if(pointersDelta.all > 0 && gesture.subscriber.options.strategy === GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT) {
+      if(pointersDelta.all > 0 && gesture.listener.options.strategy === GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT) {
         this.removeGesture(gesture, this.gestures, this.composedGestures);
         continue;
       }
@@ -173,8 +175,8 @@ export class Engine {
     this.gestures = this.gestures
                       .concat(this.match(evt.target as Node))
                       .sort( (g1, g2) => {
-                        return g1.subscriber.options.prio -
-                          g2.subscriber.options.prio;
+                        return g1.listener.options.prio -
+                          g2.listener.options.prio;
                       });
 
     if (!this.gestures.length) {
@@ -203,8 +205,8 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  private addHandle(element: Element, type: string, subscriber: DefaultListener): () => void {
-    const handle = new Handle(element, type, subscriber);
+  private addListener(element: Element, type: string, listener: DefaultListener): () => void {
+    const handle = new ListenerHandle(element, type, listener);
 
     this.handles.push(handle);
 
@@ -215,9 +217,9 @@ export class Engine {
       }
     };
   }
-  private addGesture(handle: Handle, element: Element): DefaultGesture {
-    const gesture = this.registry.create(handle.type, handle.subscriber, element);
-    gesture.bind(handle.element, this.addHandle.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
+  private addGesture(handle: ListenerHandle, element: Element): DefaultGesture {
+    const gesture = this.registry.create(handle.type, handle.listener, element);
+    gesture.bind(handle.element, this.addListener.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
     return gesture;
   }
   private match(startElement: Node): Array<DefaultGesture> {
@@ -226,7 +228,7 @@ export class Engine {
     for (let element = startElement; element !== this.element; element = element.parentNode) {
       for (let i = 0; i < this.handles.length; ++i) { //Always evaluate length since gestures could bind gestures
         const handle = this.handles[i];
-        const selector = handle.subscriber.selector;
+        const selector = handle.listener.selector;
         let matched = false;
 
         if (!handle.element.contains(element) || (selector && handle.element === element)) {
@@ -243,7 +245,7 @@ export class Engine {
         if (matched) {
           let gesture;
           while (gesture = this.composedGestures.shift()) {
-            if (gesture.subscriber === handle.subscriber) {
+            if (gesture.listener === handle.listener) {
               break;
             }
           }

@@ -68,3 +68,4 @@ export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|nu
 export type PointerDataMap = Map<string, PointerData>
 export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
 export type PointerData = { page: Point, client: Point }
+export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
