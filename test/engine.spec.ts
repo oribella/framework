@@ -11,6 +11,7 @@ import {PointerFlow} from '../src/flows/pointer';
 import {MSPointerFlow} from '../src/flows/ms-pointer';
 import {RETURN_FLAG, PointerData, Pointers, GESTURE_STRATEGY_FLAG} from '../src/utils';
 import {Point} from '../src/point';
+import {load} from 'cheerio';
 
 describe('Engine', () => {
   let instance: Engine;
@@ -497,4 +498,23 @@ describe('Engine', () => {
 
   })
 
+  describe.only('Match', () => {
+
+    const $ = load(`
+      <div>
+        <div></div>
+        <div>
+          <div class="target"></div>
+        </div>
+      </div>
+    `);
+    const target = $('.target').get(0) as any;
+
+    it('should call matchHandles', () => {
+      const matchHandles = sandbox.stub(instance, 'matchHandles');
+      instance['element'] = $.root() as any;
+      instance['match'](target);
+      expect(matchHandles.callCount).to.equal(3);
+    });
+  });
 });

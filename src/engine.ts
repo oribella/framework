@@ -222,41 +222,55 @@ export class Engine {
     gesture.bind(handle.element, this.addListener.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
     return gesture;
   }
-  private match(startElement: Node): Array<DefaultGesture> {
-    const gestures: Array<DefaultGesture> = [];
-
-    for (let element = startElement; element !== this.element; element = element.parentNode) {
-      for (let i = 0; i < this.handles.length; ++i) { //Always evaluate length since gestures could bind gestures
-        const handle = this.handles[i];
-        const selector = handle.listener.selector;
-        let matched = false;
-
-        if (!handle.element.contains(element) || (selector && handle.element === element)) {
-          continue;
-        }
-
-        if (!selector && element === handle.element) {
-          matched = true;
-        } else if (selector) {
-          if (this.matchesSelector(element, selector)) {
-            matched = true;
-          }
-        }
-        if (matched) {
-          let gesture;
-          while (gesture = this.composedGestures.shift()) {
-            if (gesture.listener === handle.listener) {
-              break;
-            }
-          }
-          if (!gesture) {
-            gesture = this.addGesture(handle, element as Element);
-          }
-          gestures.push(gesture);
-        }
+  private composeGesture(element: Element, handle: ListenerHandle): DefaultGesture {
+    let gesture;
+    while (gesture = this.composedGestures.shift()) {
+      if (gesture.listener === handle.listener) {
+        break;
       }
     }
+    if (!gesture) {
+      gesture = this.addGesture(handle, element);
+    }
+    return gesture;
+  }
+  private matchesHandle(element: Element, handle: ListenerHandle): boolean {
+    const selector = handle.listener.selector;
 
+    if(!handle.element.contains(element)) {
+      return false;
+    }
+    if(selector && handle.element === element) {
+      return false;
+    }
+    if(selector && !this.matchesSelector(element, selector)) {
+      return false;
+    }
+    if(!selector && element !== handle.element) {
+      return false;
+    }
+    return true;
+  }
+  private matchHandle(element: Element, handle: ListenerHandle): DefaultGesture|undefined {
+    if(!this.matchesHandle(element, handle)) {
+      return;
+    }
+    return this.composeGesture(element, handle);
+  }
+  private matchHandles(element: Element, gestures: Array<DefaultGesture>): Array<DefaultGesture> {
+    for (let i = 0; i < this.handles.length; ++i) { //Always evaluate length since gestures could bind gestures
+      const gesture = this.matchHandle(element, this.handles[i]);
+      if(gesture) {
+        gestures.push(gesture);
+      }
+    }
+    return gestures;
+  }
+  private match(target: Node): Array<DefaultGesture> {
+    const gestures: Array<DefaultGesture> = [];
+    for (let node = target; node && node !== this.element; node = node.parentNode) {
+      this.matchHandles(node as Element, gestures);
+    }
     return gestures;
   }
   private matchesSelector(element: any, selector: string) {
