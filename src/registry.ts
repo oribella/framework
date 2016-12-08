@@ -8,7 +8,7 @@ export class Registry {
     this.gestures.set(type, Gesture);
   }
   getTypes() {
-    return Object.keys(this.gestures);
+    return Array.from(this.gestures.keys());
   }
   create(type: string, listener: any, element: Element) {
     const Gesture = this.gestures.get(type);
