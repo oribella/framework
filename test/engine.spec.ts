@@ -27,12 +27,14 @@ describe('Engine', () => {
   let sandbox: Sinon.SinonSandbox;
 
   beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    element.addEventListener = sandbox.spy();
+    element.removeEventListener = sandbox.spy();
     instance = new Engine(registry, supports, element);
     mouseFlow = new MouseFlow(element);
     touchFlow = new TouchFlow(element);
     pointerFlow = new PointerFlow(element);
     msPointerFlow = new MSPointerFlow(element);
-    sandbox = sinon.sandbox.create();
   });
 
   afterEach(() => {
@@ -52,6 +54,47 @@ describe('Engine', () => {
   it('should register flows', () => {
     instance.registerFlows(mouseFlow, touchFlow, pointerFlow, msPointerFlow);
     expect(instance['flows']).to.have.length(4);
+  });
+
+  it('should call onStart', () => {
+    const onStart = sandbox.stub(instance, 'onStart');
+    instance.registerFlows(mouseFlow);
+    const evt = {} as Event;
+    const pointers = {} as Pointers;
+    mouseFlow.emit('start', evt, pointers);
+    expect(onStart).to.have.been.calledWithExactly(mouseFlow, evt, pointers);
+  });
+
+  it('should call onUpdate', () => {
+    const onStart = sandbox.stub(instance, 'onUpdate');
+    instance.registerFlows(mouseFlow);
+    const evt = {} as Event;
+    const pointers = {} as Pointers;
+    mouseFlow.emit('update', evt, pointers);
+    expect(onStart).to.have.been.calledWithExactly(mouseFlow, evt, pointers);
+  });
+
+  it('should call onEnd', () => {
+    const onStart = sandbox.stub(instance, 'onEnd');
+    instance.registerFlows(mouseFlow);
+    const evt = {} as Event;
+    const pointers = {} as Pointers;
+    mouseFlow.emit('end', evt, pointers);
+    expect(onStart).to.have.been.calledWithExactly(mouseFlow, evt, pointers);
+  });
+
+  it('should call onCancel', () => {
+    const onStart = sandbox.stub(instance, 'onCancel');
+    instance.registerFlows(mouseFlow);
+    const evt = {} as Event;
+    const pointers = {} as Pointers;
+    mouseFlow.emit('cancel', evt, pointers);
+    expect(onStart).to.have.been.calledWithExactly(mouseFlow, evt, pointers);
+  });
+
+  it('should activate', () => {
+    instance.registerFlows(mouseFlow, touchFlow, pointerFlow, msPointerFlow);
+    expect(instance.activate()).to.have.length(4);
   });
 
   it('should activate flow', () => {
@@ -498,23 +541,173 @@ describe('Engine', () => {
 
   })
 
-  describe.only('Match', () => {
-
-    const $ = load(`
-      <div>
-        <div></div>
-        <div>
-          <div class="target"></div>
-        </div>
-      </div>
-    `);
-    const target = $('.target').get(0) as any;
+  describe('Match', () => {
 
     it('should call matchHandles', () => {
+      const $ = load(`
+        <div>
+          <div></div>
+          <div>
+            <div class="target"></div>
+          </div>
+        </div>
+      `);
+      const target = $('.target').get(0) as any;
       const matchHandles = sandbox.stub(instance, 'matchHandles');
       instance['element'] = $.root() as any;
       instance['match'](target);
       expect(matchHandles.callCount).to.equal(3);
     });
+
+    it('should call matchHandle', () => {
+      const element = {} as Element;
+      const gestures = [] as Array<DefaultGesture>;
+      const listener = {} as DefaultListener;
+      instance['addListener'](element, 'foo', listener);
+      const matchHandle = sandbox.stub(instance, 'matchHandle');
+      instance['matchHandles'](element, gestures)
+      expect(matchHandle).to.have.been.calledWithExactly(element, instance['handles'][0]);
+    });
+
+    it('should add gesture', () => {
+      const element = {} as Element;
+      const gesture = {} as DefaultGesture;
+      const gestures = [] as Array<DefaultGesture>;
+      const listener = {} as DefaultListener;
+      instance['addListener'](element, 'foo', listener);
+      sandbox.stub(instance, 'matchHandle').returns(gesture);
+      expect(instance['matchHandles'](element, gestures)).to.equal(gestures);
+      expect(gestures).to.have.length(1);
+      expect(gestures[0]).to.equal(gesture);
+    });
+
+    it('should return undefined if not matches handle', () => {
+      const element = {} as Element;
+      const handle = {} as ListenerHandle;
+      sandbox.stub(instance, 'matchesHandle').returns(false);
+      expect(instance['matchHandle'](element, handle)).be.undefined;
+    });
+
+    it('should call composeGesture', () => {
+      const element = {} as Element;
+      const handle = {} as ListenerHandle;
+      sandbox.stub(instance, 'matchesHandle').returns(true);
+      const composeGesture = sandbox.stub(instance, 'composeGesture');
+      instance['matchHandle'](element, handle);
+      expect(composeGesture).to.have.been.calledWithExactly(element, handle);
+    });
+
+    describe('Matches handle', () => {
+
+      it('should return false if the handle element does not contain the current element', () => {
+        const element = {} as Element;
+        const refElement = {} as Element;
+        refElement.contains = sandbox.stub().returns(false);;
+        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        expect(instance['matchesHandle'](element, handle)).to.be.false;
+      });
+
+      it('should return false if a selector is defined and the handle element is the current element', () => {
+        const refElement = {} as Element;
+        refElement.contains = sandbox.stub().returns(true);;
+        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
+        expect(instance['matchesHandle'](refElement, handle)).to.be.false;
+      });
+
+      it('should return false if a selector is defined and the current element does not match', () => {
+        const element = {} as Element;
+        const refElement = {} as Element;
+        refElement.contains = sandbox.stub().returns(true);;
+        sandbox.stub(instance, 'matchesSelector').returns(false);
+        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
+        expect(instance['matchesHandle'](element, handle)).to.be.false;
+      });
+
+      it('should return false if no selector and the current element does not match', () => {
+        const element = {} as Element;
+        const refElement = {} as Element;
+        refElement.contains = sandbox.stub().returns(true);;
+        sandbox.stub(instance, 'matchesSelector').returns(true);
+        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        expect(instance['matchesHandle'](element, handle)).to.be.false;
+      });
+
+      it('should return true if matches', () => {
+        const refElement = {} as Element;
+        refElement.contains = sandbox.stub().returns(true);;
+        sandbox.stub(instance, 'matchesSelector').returns(true);
+        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        expect(instance['matchesHandle'](refElement, handle)).to.be.true;
+      });
+
+    });
+
+    describe('Compose gesture', () => {
+
+      it('should use gesture that wants to be composed', () => {
+        const element = {} as Element;
+        const listener = {} as DefaultListener;
+        const handle = { listener: listener } as ListenerHandle;
+        const gesture = { listener: listener } as DefaultGesture;
+        instance['composedGestures'].push(gesture);
+        expect(instance['composeGesture'](element, handle)).to.equal(gesture);;
+      });
+
+      it('should add gesture if no gesture wants to be composed', () => {
+        const element = {} as Element;
+        const listener = {} as DefaultListener;
+        const handle = { listener: listener } as ListenerHandle;
+        const gesture = {} as DefaultGesture;
+        sandbox.stub(instance, 'addGesture').returns(gesture);
+        instance['composedGestures'].push(gesture);
+        expect(instance['composeGesture'](element, handle)).to.equal(gesture);;
+      });
+
+      it('should add gesture', () => {
+        const element = {} as Element;
+        const handle = {} as ListenerHandle;
+        const gesture = {} as DefaultGesture;
+        const addGesture = sandbox.stub(instance, 'addGesture').returns(gesture);
+        expect(instance['composeGesture'](element, handle)).to.equal(gesture);
+        expect(addGesture).to.have.been.calledWithExactly(element, handle);
+      });
+
+    });
+
+    describe('Matches selector', () => {
+
+      it('should call native matchesSelector', () => {
+        const element = { matchesSelector: sandbox.spy() };
+        instance['matchesSelector'](element, 'foo');
+        expect(element.matchesSelector).to.have.been.calledWithExactly('foo');
+      });
+
+      it('should call native webkit matchesSelector', () => {
+        const element = { webkitMatchesSelector: sandbox.spy() };
+        instance['matchesSelector'](element, 'foo');
+        expect(element.webkitMatchesSelector).to.have.been.calledWithExactly('foo');
+      });
+
+      it('should call native moz matchesSelector', () => {
+        const element = { mozMatchesSelector: sandbox.spy() };
+        instance['matchesSelector'](element, 'foo');
+        expect(element.mozMatchesSelector).to.have.been.calledWithExactly('foo');
+      });
+
+      it('should call native ms matchesSelector', () => {
+        const element = { msMatchesSelector: sandbox.spy() };
+        instance['matchesSelector'](element, 'foo');
+        expect(element.msMatchesSelector).to.have.been.calledWithExactly('foo');
+      });
+
+      it('should call native o matchesSelector', () => {
+        const element = { oMatchesSelector: sandbox.spy() };
+        instance['matchesSelector'](element, 'foo');
+        expect(element.oMatchesSelector).to.have.been.calledWithExactly('foo');
+      });
+
+    });
+
   });
+
 });

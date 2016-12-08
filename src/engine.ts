@@ -235,18 +235,18 @@ export class Engine {
     return gesture;
   }
   private matchesHandle(element: Element, handle: ListenerHandle): boolean {
-    const selector = handle.listener.selector;
+    const { element: refElement, listener: { selector } } = handle;
 
-    if(!handle.element.contains(element)) {
+    if(!refElement.contains(element)) {
       return false;
     }
-    if(selector && handle.element === element) {
+    if(selector && refElement === element) {
       return false;
     }
     if(selector && !this.matchesSelector(element, selector)) {
       return false;
     }
-    if(!selector && element !== handle.element) {
+    if(!selector && element !== refElement) {
       return false;
     }
     return true;
@@ -268,7 +268,7 @@ export class Engine {
   }
   private match(target: Node): Array<DefaultGesture> {
     const gestures: Array<DefaultGesture> = [];
-    for (let node = target; node && node !== this.element; node = node.parentNode) {
+    for (let node = target; node && node.nodeType === 1 && node !== this.element; node = node.parentNode) {
       this.matchHandles(node as Element, gestures);
     }
     return gestures;
