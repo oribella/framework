@@ -23,7 +23,7 @@ describe('Registry', () => {
 
   it('should create gesture', () => {
     instance.register('foo', DefaultGesture);
-    const gesture = instance.create('foo', {}, {} as Element);
+    const gesture = instance.create({} as Element, 'foo', {});
     expect(gesture).to.be.an.instanceOf(DefaultGesture);
   });
 
@@ -33,26 +33,22 @@ describe('Registry', () => {
 
   it('should create default options', () => {
     instance.register('foo', DefaultGesture);
-    const subscriber = { options: undefined };
-    instance.create('foo', subscriber, {} as Element);
-    expect(subscriber.options).to.deep.equal({
-      pointers: 1,
-      which: 1,
-      prio: 100,
-      strategy: GESTURE_STRATEGY_FLAG.KEEP
-    });
+    const subscriber = {};
+    const gesture = instance.create({} as Element, 'foo', subscriber);
+    expect(gesture.listener.pointers).to.equal(1);
+    expect(gesture.listener.which).to.equal(1);
+    expect(gesture.listener.prio).to.equal(100);
+    expect(gesture.listener.strategy).to.equal(GESTURE_STRATEGY_FLAG.KEEP);
   });
 
   it('should create custom options', () => {
     instance.register('foo', DefaultGesture);
-    const subscriber = { options: { pointers: 2 } };
-    instance.create('foo', subscriber, <Element>{});
-    expect(subscriber.options).to.deep.equal({
-      pointers: 2,
-      which: 1,
-      prio: 100,
-      strategy: GESTURE_STRATEGY_FLAG.KEEP
-    });
+    const subscriber = { pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT };
+    const gesture = instance.create({} as Element, 'foo', subscriber);
+    expect(gesture.listener.pointers).to.equal(100);
+    expect(gesture.listener.which).to.equal(3);
+    expect(gesture.listener.prio).to.equal(2);
+    expect(gesture.listener.strategy).to.equal(GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT);
   });
 
 });

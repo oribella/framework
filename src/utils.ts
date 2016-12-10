@@ -1,19 +1,8 @@
 import {Point} from './point';
 
-export function getOwnPropertyDescriptors(src: {} = {}) {
-  const descriptors: { [key: string]: any } = {};
-  Object.keys(src).forEach((key: string) => descriptors[key] = Object.getOwnPropertyDescriptor(src, key));
-  return descriptors;
-}
-
 export const GESTURE_STRATEGY_FLAG = {
   KEEP: 0,
   REMOVE_IF_POINTERS_GT: 1
-};
-
-export const STRATEGY_RETURN_FLAG = {
-  CALL: 1,
-  REMOVE: 2
 };
 
 export const RETURN_FLAG = {
@@ -42,7 +31,7 @@ export const RETURN_FLAG = {
   REMOVE_AND_CONTINUE: 8
 };
 
-export function isMouse(supports: any, evt: any) {
+export function isMouse(supports: Supports, evt: any) {
   if (supports.MSPointerEvent && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { //IE10
     return true;
   }
@@ -52,13 +41,9 @@ export function isMouse(supports: any, evt: any) {
   return evt.type.indexOf('mouse') !== -1;
 }
 
-export function isValidMouseButton(evt: MouseEvent, allowedBtn: Array<number>|number) {
-  const btn = evt.button;
-  const which = evt.which;
-  let  actualBtn: number;
-
-  actualBtn = (!which && btn !== undefined) ?
-                (btn & 1 ? 1 : (btn & 2 ? 3 : (btn & 4 ? 2 : 0))) :
+export function isValidMouseButton({ button, which }: { button?: number|undefined, which?: number|undefined}, allowedBtn: Array<number>|number) {
+  const actualBtn = (!which && button !== undefined) ?
+                (button & 1 ? 1 : (button & 2 ? 3 : (button & 4 ? 2 : 0))) :
                 which;
   return Array.isArray(allowedBtn) ? allowedBtn.some(val => {
     return actualBtn === val;
@@ -69,3 +54,7 @@ export type PointerDataMap = Map<string, PointerData>
 export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
 export type PointerData = { page: Point, client: Point }
 export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
+export interface Supports {
+  MSPointerEvent: boolean;
+  PointerEvent: boolean;
+}

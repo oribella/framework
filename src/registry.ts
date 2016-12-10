@@ -1,4 +1,3 @@
-import {getOwnPropertyDescriptors} from './utils';
 import {DefaultGesture} from './default-gesture';
 import {DefaultListener} from './default-listener';
 
@@ -10,13 +9,11 @@ export class Registry {
   getTypes() {
     return Array.from(this.gestures.keys());
   }
-  create(type: string, listener: any, element: Element) {
+  create(element: Element, type: string, listener: Partial<DefaultListener>) {
     const Gesture = this.gestures.get(type);
     if(!Gesture) {
       throw new Error(`The type ${type} has not been registered`);
     }
-    listener.options = Object.create(Gesture.options,
-      getOwnPropertyDescriptors(listener.options));
-    return new Gesture(listener as DefaultListener, element);
+    return new Gesture(element, new DefaultListener(Gesture.options, listener));
   }
 }

@@ -10,12 +10,7 @@ export class DefaultGesture {
   }
   __POINTERS__: Array<string> = [];
   startEmitted: boolean = false;
-  listener: DefaultListener;
-  element: Element;
-  constructor(listener: DefaultListener, element: Element) {
-    this.listener  = listener;
-    this.element = element;
-  }
+  constructor(public element: Element, public listener: DefaultListener) { this.element; this.listener; }
   bind(
     element: Element,
     addListener: (element: Element, type: string, listener: DefaultListener) => () => void,

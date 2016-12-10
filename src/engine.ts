@@ -4,11 +4,7 @@ import {DefaultListener} from './default-listener';
 import {Flow} from  './flow';
 import {Pointers, PointerDataMap,PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
 import {ListenerHandle} from './listener-handle';
-
-export interface Supports {
-  MSPointerEvent: boolean;
-  PointerEvent: boolean;
-}
+import {Supports} from './utils';
 
 export type PointersDelta = { all: number, changed: number };
 export interface ExecStrategyState {
@@ -50,8 +46,8 @@ export class Engine {
   private getPointersDelta(
     evt: Event,
     pointers: Pointers,
-    configuredPointers: number,
-    configuredWhich: Array<number>|number) : PointersDelta {
+    configuredPointers: number = 1,
+    configuredWhich: Array<number>|number = 1) : PointersDelta {
 
     if (isMouse(this.supports, evt) &&
       !isValidMouseButton(evt as MouseEvent, configuredWhich)) {
@@ -103,9 +99,9 @@ export class Engine {
 
     let gesture;
     while(gesture = gestures.shift()) {
-      const { pointers: configuredPointers, which } = gesture.listener.options;
+      const { pointers: configuredPointers, which, strategy } = gesture.listener;
       const pointersDelta = this.getPointersDelta(evt, pointers, configuredPointers, which);
-      if(pointersDelta.all > 0 && gesture.listener.options.strategy === GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT) {
+      if(pointersDelta.all > 0 && strategy === GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT) {
         this.removeGesture(gesture, this.gestures, this.composedGestures);
         continue;
       }
@@ -175,8 +171,8 @@ export class Engine {
     this.gestures = this.gestures
                       .concat(this.match(evt.target as Node))
                       .sort( (g1, g2) => {
-                        return g1.listener.options.prio -
-                          g2.listener.options.prio;
+                        return g1.listener.prio -
+                          g2.listener.prio;
                       });
 
     if (!this.gestures.length) {
@@ -217,8 +213,8 @@ export class Engine {
       }
     };
   }
-  private addGesture(handle: ListenerHandle, element: Element): DefaultGesture {
-    const gesture = this.registry.create(handle.type, handle.listener, element);
+  private addGesture(element: Element, handle: ListenerHandle): DefaultGesture {
+    const gesture = this.registry.create(element, handle.type, handle.listener);
     gesture.bind(handle.element, this.addListener.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
     return gesture;
   }
@@ -230,7 +226,7 @@ export class Engine {
       }
     }
     if (!gesture) {
-      gesture = this.addGesture(handle, element);
+      gesture = this.addGesture(element, handle);
     }
     return gesture;
   }
@@ -268,7 +264,7 @@ export class Engine {
   }
   private match(target: Node): Array<DefaultGesture> {
     const gestures: Array<DefaultGesture> = [];
-    for (let node = target; node && node.nodeType === 1 && node !== this.element; node = node.parentNode) {
+    for (let node: Node | null = target; node && node.nodeType === 1 && node !== this.element; node = node.parentNode) {
       this.matchHandles(node as Element, gestures);
     }
     return gestures;
