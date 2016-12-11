@@ -1,7 +1,17 @@
 import {expect} from 'chai';
-import {RETURN_FLAG, isMouse, isValidMouseButton} from '../src/utils';
+import {RETURN_FLAG, isMouse, isValidMouseButton, matchesSelector} from '../src/utils';
+import * as sinon from 'sinon';
 
-describe("Default listener", () => {
+describe("Utils", () => {
+  let sandbox: Sinon.SinonSandbox;
+
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
 
   it('should map return flag', () => {
     expect(RETURN_FLAG.map(true)).to.equal(RETURN_FLAG.REMOVE_OTHERS);
@@ -43,6 +53,40 @@ describe("Default listener", () => {
 
     let evt1 = { which: 1000 };
     expect(isValidMouseButton(evt1, [1000])).to.equal(true);
+
+  });
+
+  describe('Matches selector', () => {
+
+    it('should call native matchesSelector', () => {
+      const element = { matchesSelector: sandbox.spy() };
+      matchesSelector(element, 'foo');
+      expect(element.matchesSelector).to.have.been.calledWithExactly('foo');
+    });
+
+    it('should call native webkit matchesSelector', () => {
+      const element = { webkitMatchesSelector: sandbox.spy() };
+      matchesSelector(element, 'foo');
+      expect(element.webkitMatchesSelector).to.have.been.calledWithExactly('foo');
+    });
+
+    it('should call native moz matchesSelector', () => {
+      const element = { mozMatchesSelector: sandbox.spy() };
+      matchesSelector(element, 'foo');
+      expect(element.mozMatchesSelector).to.have.been.calledWithExactly('foo');
+    });
+
+    it('should call native ms matchesSelector', () => {
+      const element = { msMatchesSelector: sandbox.spy() };
+      matchesSelector(element, 'foo');
+      expect(element.msMatchesSelector).to.have.been.calledWithExactly('foo');
+    });
+
+    it('should call native o matchesSelector', () => {
+      const element = { oMatchesSelector: sandbox.spy() };
+      matchesSelector(element, 'foo');
+      expect(element.oMatchesSelector).to.have.been.calledWithExactly('foo');
+    });
 
   });
 

@@ -52,13 +52,16 @@ describe('Engine', () => {
   });
 
   it('should register flows', () => {
-    instance.registerFlows(mouseFlow, touchFlow, pointerFlow, msPointerFlow);
+    instance.registerFlow(mouseFlow);
+    instance.registerFlow(touchFlow);
+    instance.registerFlow(msPointerFlow);
+    instance.registerFlow(pointerFlow);
     expect(instance['flows']).to.have.length(4);
   });
 
   it('should call onStart', () => {
     const onStart = sandbox.stub(instance, 'onStart');
-    instance.registerFlows(mouseFlow);
+    instance.registerFlow(mouseFlow);
     const evt = {} as Event;
     const pointers = {} as Pointers;
     mouseFlow.emit('start', evt, pointers);
@@ -67,7 +70,7 @@ describe('Engine', () => {
 
   it('should call onUpdate', () => {
     const onStart = sandbox.stub(instance, 'onUpdate');
-    instance.registerFlows(mouseFlow);
+    instance.registerFlow(mouseFlow);
     const evt = {} as Event;
     const pointers = {} as Pointers;
     mouseFlow.emit('update', evt, pointers);
@@ -76,7 +79,7 @@ describe('Engine', () => {
 
   it('should call onEnd', () => {
     const onStart = sandbox.stub(instance, 'onEnd');
-    instance.registerFlows(mouseFlow);
+    instance.registerFlow(mouseFlow);
     const evt = {} as Event;
     const pointers = {} as Pointers;
     mouseFlow.emit('end', evt, pointers);
@@ -85,7 +88,7 @@ describe('Engine', () => {
 
   it('should call onCancel', () => {
     const onStart = sandbox.stub(instance, 'onCancel');
-    instance.registerFlows(mouseFlow);
+    instance.registerFlow(mouseFlow);
     const evt = {} as Event;
     const pointers = {} as Pointers;
     mouseFlow.emit('cancel', evt, pointers);
@@ -93,7 +96,10 @@ describe('Engine', () => {
   });
 
   it('should activate', () => {
-    instance.registerFlows(mouseFlow, touchFlow, pointerFlow, msPointerFlow);
+    instance.registerFlow(mouseFlow);
+    instance.registerFlow(touchFlow);
+    instance.registerFlow(msPointerFlow);
+    instance.registerFlow(pointerFlow);
     expect(instance.activate()).to.have.length(4);
   });
 
@@ -599,6 +605,24 @@ describe('Engine', () => {
 
     describe('Matches handle', () => {
 
+      it('should return false if a selector is defined and the current element does not match', () => {
+        const element = {} as Element;
+        const refElement = {} as Element;
+        element.webkitMatchesSelector = sandbox.stub().returns(false);
+        refElement.contains = sandbox.stub().returns(true);
+        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
+        expect(instance['matchesHandle'](element, handle)).to.be.false;
+      });
+
+      it('should return false if no selector and the current element does not match', () => {
+        const element = {} as Element;
+        const refElement = {} as Element;
+        element.webkitMatchesSelector = sandbox.stub().returns(true);
+        refElement.contains = sandbox.stub().returns(true);
+        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        expect(instance['matchesHandle'](element, handle)).to.be.false;
+      });
+
       it('should return false if the handle element does not contain the current element', () => {
         const element = {} as Element;
         const refElement = {} as Element;
@@ -614,28 +638,10 @@ describe('Engine', () => {
         expect(instance['matchesHandle'](refElement, handle)).to.be.false;
       });
 
-      it('should return false if a selector is defined and the current element does not match', () => {
-        const element = {} as Element;
-        const refElement = {} as Element;
-        refElement.contains = sandbox.stub().returns(true);;
-        sandbox.stub(instance, 'matchesSelector').returns(false);
-        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
-        expect(instance['matchesHandle'](element, handle)).to.be.false;
-      });
-
-      it('should return false if no selector and the current element does not match', () => {
-        const element = {} as Element;
-        const refElement = {} as Element;
-        refElement.contains = sandbox.stub().returns(true);;
-        sandbox.stub(instance, 'matchesSelector').returns(true);
-        const handle = { element: refElement, listener: {} } as ListenerHandle;
-        expect(instance['matchesHandle'](element, handle)).to.be.false;
-      });
-
       it('should return true if matches', () => {
         const refElement = {} as Element;
+        refElement.webkitMatchesSelector = sandbox.stub().returns(true);
         refElement.contains = sandbox.stub().returns(true);;
-        sandbox.stub(instance, 'matchesSelector').returns(true);
         const handle = { element: refElement, listener: {} } as ListenerHandle;
         expect(instance['matchesHandle'](refElement, handle)).to.be.true;
       });
@@ -670,40 +676,6 @@ describe('Engine', () => {
         const addGesture = sandbox.stub(instance, 'addGesture').returns(gesture);
         expect(instance['composeGesture'](element, handle)).to.equal(gesture);
         expect(addGesture).to.have.been.calledWithExactly(element, handle);
-      });
-
-    });
-
-    describe('Matches selector', () => {
-
-      it('should call native matchesSelector', () => {
-        const element = { matchesSelector: sandbox.spy() };
-        instance['matchesSelector'](element, 'foo');
-        expect(element.matchesSelector).to.have.been.calledWithExactly('foo');
-      });
-
-      it('should call native webkit matchesSelector', () => {
-        const element = { webkitMatchesSelector: sandbox.spy() };
-        instance['matchesSelector'](element, 'foo');
-        expect(element.webkitMatchesSelector).to.have.been.calledWithExactly('foo');
-      });
-
-      it('should call native moz matchesSelector', () => {
-        const element = { mozMatchesSelector: sandbox.spy() };
-        instance['matchesSelector'](element, 'foo');
-        expect(element.mozMatchesSelector).to.have.been.calledWithExactly('foo');
-      });
-
-      it('should call native ms matchesSelector', () => {
-        const element = { msMatchesSelector: sandbox.spy() };
-        instance['matchesSelector'](element, 'foo');
-        expect(element.msMatchesSelector).to.have.been.calledWithExactly('foo');
-      });
-
-      it('should call native o matchesSelector', () => {
-        const element = { oMatchesSelector: sandbox.spy() };
-        instance['matchesSelector'](element, 'foo');
-        expect(element.oMatchesSelector).to.have.been.calledWithExactly('foo');
       });
 
     });

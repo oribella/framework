@@ -4,7 +4,7 @@ import {DefaultListener} from './default-listener';
 import {Flow} from  './flow';
 import {Pointers, PointerDataMap,PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG} from './utils';
 import {ListenerHandle} from './listener-handle';
-import {Supports} from './utils';
+import {Supports, matchesSelector} from './utils';
 
 export type PointersDelta = { all: number, changed: number };
 export interface ExecStrategyState {
@@ -24,22 +24,20 @@ export class Engine {
   private composedGestures: Array<DefaultGesture> = [];
 
   constructor(
-    private element: Element | Document = document,
-    private supports: Supports = { touchEnabled: ('ontouchstart' in window), pointerEnabled: (window && window.navigator.pointerEnabled), msPointerEnabled: (window && window.navigator.msPointerEnabled) },
+    private element: Element | Document,
+    private supports: Supports,
     private registry: Registry = new Registry(),
     ) {}
 
   registerGesture(type: string, Gesture: typeof DefaultGesture) {
     this.registry.register(type, Gesture);
   }
-  registerFlows(...flows: Array<Flow>) {
-    this.flows.push.apply(this.flows, flows);
-    this.flows.forEach(flow => {
-      flow.on('start', (e: Event, p: Pointers) => this.onStart(flow, e, p));
-      flow.on('update', (e: Event, p: Pointers) => this.onUpdate(flow, e, p));
-      flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
-      flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
-    });
+  registerFlow(flow: Flow) {
+    this.flows.push(flow);
+    flow.on('start', (e: Event, p: Pointers) => this.onStart(flow, e, p));
+    flow.on('update', (e: Event, p: Pointers) => this.onUpdate(flow, e, p));
+    flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
+    flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
   }
   activate() {
     return this.flows.map(f => f.activate());
@@ -205,7 +203,7 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  private addListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
+  addListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
     const handle = new ListenerHandle(element, type, listener);
 
     this.handles.push(handle);
@@ -243,7 +241,7 @@ export class Engine {
     if(selector && refElement === element) {
       return false;
     }
-    if(selector && !this.matchesSelector(element, selector)) {
+    if(selector && !matchesSelector(element, selector)) {
       return false;
     }
     if(!selector && element !== refElement) {
@@ -272,13 +270,5 @@ export class Engine {
       this.matchHandles(node as Element, gestures);
     }
     return gestures;
-  }
-  private matchesSelector(element: any, selector: string) {
-    return (element.matchesSelector ||
-      element.webkitMatchesSelector ||
-      element.mozMatchesSelector ||
-      element.msMatchesSelector ||
-      element.oMatchesSelector
-    ).call(element, selector);
   }
 }

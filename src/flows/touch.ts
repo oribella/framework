@@ -10,7 +10,7 @@ export const TouchConfig = {
 }
 
 export class TouchFlow extends Flow {
-  constructor(element: Element) {
+  constructor(element: Element | Document) {
     super(element, TouchConfig);
   }
   setPointerMapFromList(list: TouchList, pointerMap: Map<string, PointerData>) {
@@ -19,7 +19,7 @@ export class TouchFlow extends Flow {
       const page = new Point(touch.pageX, touch.pageY);
       const client = new Point(touch.clientX, touch.clientY);
       const pointerId = touch.identifier.toString();
-      const pointers = { page: page, client: client };
+      const pointers = { page, client };
       pointerMap.set(pointerId, pointers);
     }
   }

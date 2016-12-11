@@ -50,6 +50,16 @@ export function isValidMouseButton({ button, which }: { button?: number|undefine
   }) : actualBtn === allowedBtn;
 }
 
+
+export function matchesSelector(element: any, selector: string) {
+  return (element.matchesSelector ||
+    element.webkitMatchesSelector ||
+    element.mozMatchesSelector ||
+    element.msMatchesSelector ||
+    element.oMatchesSelector
+  ).call(element, selector);
+}
+
 export type PointerDataMap = Map<string, PointerData>
 export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
 export type PointerData = { page: Point, client: Point }

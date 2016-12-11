@@ -8,7 +8,7 @@ export const MSPointerConfig = {
   cancel: new EventConfig('MSPointerCancel', 'dragstart')
 }
 export class MSPointerFlow extends PointerFlow {
-  constructor(element: Element) {
+  constructor(element: Element | Document) {
     super(element, MSPointerConfig);
   }
 }

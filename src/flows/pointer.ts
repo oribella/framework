@@ -8,7 +8,7 @@ export const PointerConfig = {
   cancel: new EventConfig('pointercancel', 'dragstart')
 }
 export class PointerFlow extends Flow {
-  constructor(element: Element, config: FlowConfig = PointerConfig) {
+  constructor(element: Element | Document, config: FlowConfig = PointerConfig) {
     super(element, config);
   }
   setPointers(evt: PointerEvent) {
@@ -16,7 +16,7 @@ export class PointerFlow extends Flow {
     const page = new Point(evt.pageX, evt.pageY);
     const client = new Point(evt.clientX, evt.clientY);
     const pointerId = evt.pointerId.toString();
-    const pointers = { page: page, client: client };
+    const pointers = { page, client };
     this.changedPointers.set(pointerId, pointers);
 
     switch (evt.type) {

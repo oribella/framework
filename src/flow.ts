@@ -25,7 +25,7 @@ export class Flow extends EventEmitter {
   changedPointers: Map<string, PointerData> = new Map<string, PointerData>();
   pointers: Pointers = { all: this.allPointers, changed: this.changedPointers };
 
-  constructor(private element: Element, config: FlowConfig) {
+  constructor(private element: Element | Document, config: FlowConfig) {
     super();
     this.config = config;
   }
