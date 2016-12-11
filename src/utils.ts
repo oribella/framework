@@ -32,10 +32,10 @@ export const RETURN_FLAG = {
 };
 
 export function isMouse(supports: Supports, evt: any) {
-  if (supports.MSPointerEvent && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { //IE10
+  if (supports.msPointerEnabled && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { //IE10
     return true;
   }
-  if (supports.PointerEvent && evt.pointerType === 'mouse') { //IE11
+  if (supports.pointerEnabled && evt.pointerType === 'mouse') { //IE11
     return true;
   }
   return evt.type.indexOf('mouse') !== -1;
@@ -55,6 +55,7 @@ export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
 export type PointerData = { page: Point, client: Point }
 export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
 export interface Supports {
-  MSPointerEvent: boolean;
-  PointerEvent: boolean;
+  msPointerEnabled: boolean;
+  pointerEnabled: boolean;
+  touchEnabled: boolean;
 }

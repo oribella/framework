@@ -21,7 +21,7 @@ describe('Engine', () => {
   let msPointerFlow: MSPointerFlow;
 
   const registry = new Registry();
-  const supports = { MSPointerEvent: false, PointerEvent: false } as Supports;
+  const supports = { msPointerEnabled: false, pointerEnabled: false } as Supports;
   const element = {} as Element;
 
   let sandbox: Sinon.SinonSandbox;
@@ -30,7 +30,7 @@ describe('Engine', () => {
     sandbox = sinon.sandbox.create();
     element.addEventListener = sandbox.spy();
     element.removeEventListener = sandbox.spy();
-    instance = new Engine(registry, supports, element);
+    instance = new Engine(element, supports, registry);
     mouseFlow = new MouseFlow(element);
     touchFlow = new TouchFlow(element);
     pointerFlow = new PointerFlow(element);

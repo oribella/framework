@@ -23,14 +23,18 @@ export class Engine {
   private gestures: Array<DefaultGesture> = [];
   private composedGestures: Array<DefaultGesture> = [];
 
-  constructor(private registry: Registry, private supports: Supports, private element: Element) {}
+  constructor(
+    private element: Element | Document = document,
+    private supports: Supports = { touchEnabled: ('ontouchstart' in window), pointerEnabled: (window && window.navigator.pointerEnabled), msPointerEnabled: (window && window.navigator.msPointerEnabled) },
+    private registry: Registry = new Registry(),
+    ) {}
 
   registerGesture(type: string, Gesture: typeof DefaultGesture) {
     this.registry.register(type, Gesture);
   }
   registerFlows(...flows: Array<Flow>) {
     this.flows.push.apply(this.flows, flows);
-    flows.forEach(flow => {
+    this.flows.forEach(flow => {
       flow.on('start', (e: Event, p: Pointers) => this.onStart(flow, e, p));
       flow.on('update', (e: Event, p: Pointers) => this.onUpdate(flow, e, p));
       flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
@@ -46,8 +50,8 @@ export class Engine {
   private getPointersDelta(
     evt: Event,
     pointers: Pointers,
-    configuredPointers: number = 1,
-    configuredWhich: Array<number>|number = 1) : PointersDelta {
+    configuredPointers: number,
+    configuredWhich: Array<number>|number) : PointersDelta {
 
     if (isMouse(this.supports, evt) &&
       !isValidMouseButton(evt as MouseEvent, configuredWhich)) {
@@ -201,7 +205,7 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  private addListener(element: Element, type: string, listener: DefaultListener): () => void {
+  private addListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
     const handle = new ListenerHandle(element, type, listener);
 
     this.handles.push(handle);

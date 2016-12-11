@@ -14,17 +14,17 @@ describe("Default listener", () => {
   });
 
   it('should detect mouse IE10', () => {
-    const supports = { MSPointerEvent: true, PointerEvent: false };
+    const supports = { msPointerEnabled: true, pointerEnabled: false, touchEnabled: false };
     expect(isMouse(supports, { pointerType: 'foo', MSPOINTER_TYPE_MOUSE: 'foo' })).to.equal(true);
   });
 
   it('should detect mouse IE11', () => {
-    const supports = { MSPointerEvent: false, PointerEvent: true };
+    const supports = { msPointerEnabled: false, pointerEnabled: true, touchEnabled: false };
     expect(isMouse(supports, { pointerType: 'mouse' })).to.equal(true);
   });
 
   it('should detect mouse', () => {
-    const supports = { MSPointerEvent: false, PointerEvent: false };
+    const supports = { msPointerEnabled: false, pointerEnabled: false, touchEnabled: false };
     expect(isMouse(supports, { type: 'mouse' })).to.equal(true);
   });
 
