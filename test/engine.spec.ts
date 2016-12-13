@@ -500,7 +500,7 @@ describe('Engine', () => {
       const element = {} as Element;
       const type = 'foo';
       const subscriber = {} as DefaultListener;
-      return instance['addListener'](element, type, subscriber);
+      return instance['registerListener'](element, type, subscriber);
     }
     it('should add a handle', () => {
       add();
@@ -569,7 +569,7 @@ describe('Engine', () => {
       const element = {} as Element;
       const gestures = [] as Array<DefaultGesture>;
       const listener = {} as DefaultListener;
-      instance['addListener'](element, 'foo', listener);
+      instance['registerListener'](element, 'foo', listener);
       const matchHandle = sandbox.stub(instance, 'matchHandle');
       instance['matchHandles'](element, gestures)
       expect(matchHandle).to.have.been.calledWithExactly(element, instance['handles'][0]);
@@ -580,7 +580,7 @@ describe('Engine', () => {
       const gesture = {} as DefaultGesture;
       const gestures = [] as Array<DefaultGesture>;
       const listener = {} as DefaultListener;
-      instance['addListener'](element, 'foo', listener);
+      instance['registerListener'](element, 'foo', listener);
       sandbox.stub(instance, 'matchHandle').returns(gesture);
       expect(instance['matchHandles'](element, gestures)).to.equal(gestures);
       expect(gestures).to.have.length(1);

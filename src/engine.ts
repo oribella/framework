@@ -39,6 +39,18 @@ export class Engine {
     flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
     flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
   }
+  registerListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
+    const handle = new ListenerHandle(element, type, listener);
+
+    this.handles.push(handle);
+
+    return () => {
+      const ix = this.handles.indexOf(handle);
+      if (ix !== -1) {
+        this.handles.splice(ix, 1);
+      }
+    };
+  }
   activate() {
     return this.flows.map(f => f.activate());
   }
@@ -112,7 +124,7 @@ export class Engine {
     }
   }
   private addPointerId(gesture: DefaultGesture, pointerId: string) {
-    gesture.__POINTERS__.push(pointerId);
+    gesture.__POINTERIDS__.push(pointerId);
   }
   private removePointerIds(gesture: DefaultGesture, changed: string[]): string[] {
     const pointerIds = this.getPointerIds(gesture);
@@ -128,7 +140,7 @@ export class Engine {
     return removedPointerIds;
   }
   private getPointerIds(gesture: DefaultGesture) {
-    return gesture.__POINTERS__;
+    return gesture.__POINTERIDS__;
   }
   private getPointers(map: PointerDataMap, pointerIds: string[]): PointerData[] {
     return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
@@ -203,21 +215,9 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  addListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
-    const handle = new ListenerHandle(element, type, listener);
-
-    this.handles.push(handle);
-
-    return () => {
-      const ix = this.handles.indexOf(handle);
-      if (ix !== -1) {
-        this.handles.splice(ix, 1);
-      }
-    };
-  }
   private addGesture(element: Element, handle: ListenerHandle): DefaultGesture {
     const gesture = this.registry.create(element, handle.type, handle.listener);
-    gesture.bind(handle.element, this.addListener.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
+    gesture.bind(handle.element, this.registerListener.bind(this), this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
     return gesture;
   }
   private composeGesture(element: Element, handle: ListenerHandle): DefaultGesture {

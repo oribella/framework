@@ -110,11 +110,11 @@ describe("Oribella", () => {
     expect(activate).to.not.have.been.called;
   });
 
-  it('should add listeners', () => {
+  it('should register listeners', () => {
     const element = {} as Element;
     const type = 'foo' as string;
     const listener = {};
-    const addListener = sandbox.stub(instance['engine'], 'addListener');
+    const addListener = sandbox.stub(instance['engine'], 'registerListener');
     instance.on(element, type, listener);
     expect(addListener).to.have.been.calledWithExactly(element, type, listener);
   })

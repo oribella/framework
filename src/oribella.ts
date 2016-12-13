@@ -42,6 +42,6 @@ export class Oribella {
     }
   }
   on(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
-    return this.engine.addListener(element, type, listener);
+    return this.engine.registerListener(element, type, listener);
   }
 }
