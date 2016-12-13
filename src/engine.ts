@@ -9,7 +9,7 @@ import {Supports, matchesSelector} from './utils';
 export type PointersDelta = { all: number, changed: number };
 export interface ExecStrategyState {
   evt: Event;
-  gestures: Array<DefaultGesture>;
+  gestures: DefaultGesture[];
   gesture: DefaultGesture;
   pointers: Pointers;
   pointersDelta: PointersDelta;
@@ -17,11 +17,11 @@ export interface ExecStrategyState {
 export type ExecStrategy = (state: ExecStrategyState) => number;
 
 export class Engine {
-  private flows: Array<Flow> = [];
+  private flows: Flow[] = [];
   private activeFlow: Flow | null = null;
-  private handles: Array<ListenerHandle> = [];
-  private gestures: Array<DefaultGesture> = [];
-  private composedGestures: Array<DefaultGesture> = [];
+  private handles: ListenerHandle[] = [];
+  private gestures: DefaultGesture[] = [];
+  private composedGestures: DefaultGesture[] = [];
 
   constructor(
     private element: Element | Document,
@@ -49,7 +49,7 @@ export class Engine {
     evt: Event,
     pointers: Pointers,
     configuredPointers: number,
-    configuredWhich: Array<number>|number) : PointersDelta {
+    configuredWhich: number[]|number) : PointersDelta {
 
     if (isMouse(this.supports, evt) &&
       !isValidMouseButton(evt as MouseEvent, configuredWhich)) {
@@ -62,7 +62,7 @@ export class Engine {
       changed: changed
     };
   }
-  private removeGesture(gesture: DefaultGesture, ...arr: Array<Array<DefaultGesture>>) {
+  private removeGesture(gesture: DefaultGesture, ...arr: Array<DefaultGesture[]>) {
     if(gesture.startEmitted) {
       gesture.cancel();
     }
@@ -75,7 +75,7 @@ export class Engine {
       }
     }
   }
-  private evaluateStrategyReturnFlag(gestures: Array<DefaultGesture>, gesture: DefaultGesture, flag: number) {
+  private evaluateStrategyReturnFlag(gestures: DefaultGesture[], gesture: DefaultGesture, flag: number) {
     if(flag & RETURN_FLAG.START_EMITTED) {
       gesture.startEmitted = true;
     }
@@ -95,7 +95,7 @@ export class Engine {
   }
   private whileGestures(
     evt: Event,
-    gestures: Array<DefaultGesture>,
+    gestures: DefaultGesture[],
     pointers: Pointers,
     execStrategy: ExecStrategy) {
 
@@ -114,7 +114,7 @@ export class Engine {
   private addPointerId(gesture: DefaultGesture, pointerId: string) {
     gesture.__POINTERS__.push(pointerId);
   }
-  private removePointerIds(gesture: DefaultGesture, changed: Array<string>): Array<string> {
+  private removePointerIds(gesture: DefaultGesture, changed: string[]): string[] {
     const pointerIds = this.getPointerIds(gesture);
     const removedPointerIds = [];
     let pointerId;
@@ -130,7 +130,7 @@ export class Engine {
   private getPointerIds(gesture: DefaultGesture) {
     return gesture.__POINTERS__;
   }
-  private getPointers(map: PointerDataMap, pointerIds: Array<string>): Array<PointerData> {
+  private getPointers(map: PointerDataMap, pointerIds: string[]): PointerData[] {
     return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
   }
   private hasPointer(gesture: DefaultGesture, map: PointerDataMap): boolean {
@@ -255,7 +255,7 @@ export class Engine {
     }
     return this.composeGesture(element, handle);
   }
-  private matchHandles(element: Element, gestures: Array<DefaultGesture>): Array<DefaultGesture> {
+  private matchHandles(element: Element, gestures: DefaultGesture[]): DefaultGesture[] {
     for (let i = 0; i < this.handles.length; ++i) { //Always evaluate length since gestures could bind gestures
       const gesture = this.matchHandle(element, this.handles[i]);
       if(gesture) {
@@ -264,8 +264,8 @@ export class Engine {
     }
     return gestures;
   }
-  private match(target: Node): Array<DefaultGesture> {
-    const gestures: Array<DefaultGesture> = [];
+  private match(target: Node): DefaultGesture[] {
+    const gestures: DefaultGesture[] = [];
     for (let node: Node | null = target; node && node.nodeType === 1 && node !== this.element; node = node.parentNode) {
       this.matchHandles(node as Element, gestures);
     }

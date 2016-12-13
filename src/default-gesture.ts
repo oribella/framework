@@ -8,19 +8,19 @@ export class DefaultGesture {
     prio: 100,
     strategy: GESTURE_STRATEGY_FLAG.KEEP
   }
-  __POINTERS__: Array<string> = [];
+  __POINTERS__: string[] = [];
   startEmitted: boolean = false;
   constructor(public element: Element, public listener: DefaultListener) { this.element; this.listener; }
   bind(
     element: Element,
     addListener: (element: Element, type: string, listener: DefaultListener) => () => void,
-    remove: (gesture: DefaultGesture, ...arr: Array<DefaultGesture>) => void
+    remove: (gesture: DefaultGesture, ...arr: DefaultGesture[]) => void
     ) {
     element; addListener; remove;
   }
   unbind() {}
-  start(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
-  update(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
-  end(evt: Event, pointers: Array<PointerData>): number { evt; pointers; return 0; }
+  start(evt: Event, pointers: PointerData[]): number { evt; pointers; return 0; }
+  update(evt: Event, pointers: PointerData[]): number { evt; pointers; return 0; }
+  end(evt: Event, pointers: PointerData[]): number { evt; pointers; return 0; }
   cancel(): number { return 0; }
 }

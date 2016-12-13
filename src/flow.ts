@@ -18,9 +18,9 @@ export interface FlowConfig {
 
 export class Flow extends EventEmitter {
   config: FlowConfig;
-  startListen: Array<() => () => void> = [];
-  continueListen: Array<() => () => void> = [];
-  removeListeners: Array<() => void> = [];
+  startListen: (() => () => void)[] = [];
+  continueListen: (() => () => void)[] = [];
+  removeListeners: (() => void)[] = [];
   allPointers: Map<string, PointerData> = new Map<string, PointerData>();
   changedPointers: Map<string, PointerData> = new Map<string, PointerData>();
   pointers: Pointers = { all: this.allPointers, changed: this.changedPointers };
@@ -43,7 +43,7 @@ export class Flow extends EventEmitter {
     element.removeEventListener(evt, fn, false);
   }
 
-  bind(config: FlowConfig): { startListen: Array<() => () => void>, continueListen: Array<() => () => void> } {
+  bind(config: FlowConfig): { startListen: (() => () => void)[], continueListen: (() => () => void)[] } {
     this.startListen = config.start.getEvents().map(e => {
       return this.addDOMEventListener.bind(this, this.element, e, this.start.bind(this));
     });
@@ -64,7 +64,7 @@ export class Flow extends EventEmitter {
     );
     return { startListen: this.startListen, continueListen: this.continueListen };
   }
-  public activate() : Array<() => void> {
+  public activate(): (() => void)[] {
     return this.bind(this.config).startListen.map(f => f());
   }
   setPointers(evt: Event) {

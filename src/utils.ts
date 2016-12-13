@@ -41,7 +41,7 @@ export function isMouse(supports: Supports, evt: any) {
   return evt.type.indexOf('mouse') !== -1;
 }
 
-export function isValidMouseButton({ button, which }: { button?: number|undefined, which?: number|undefined}, allowedBtn: Array<number>|number) {
+export function isValidMouseButton({ button, which }: { button?: number|undefined, which?: number|undefined}, allowedBtn: number[]|number) {
   const actualBtn = (!which && button !== undefined) ?
                 (button & 1 ? 1 : (button & 2 ? 3 : (button & 4 ? 2 : 0))) :
                 which;
