@@ -62,7 +62,7 @@ export class Engine {
       changed: changed
     };
   }
-  private removeGesture(gesture: DefaultGesture, ...arr: Array<DefaultGesture[]>) {
+  private removeGesture(gesture: DefaultGesture, ...arr: DefaultGesture[][]) {
     if(gesture.startEmitted) {
       gesture.cancel();
     }
