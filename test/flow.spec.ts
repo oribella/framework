@@ -1,7 +1,6 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {Flow, EventConfig} from '../src/flow';
-import {EventEmitter} from 'events';
+import {EventEmitter, Flow, EventConfig} from '../src/flow';
 import {PointerData} from '../src/utils';
 
 describe('Flow', () => {

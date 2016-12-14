@@ -5,8 +5,10 @@
     "chai": "registry:dt/chai#3.4.0+20160601211834",
     "cheerio": "registry:dt/cheerio#0.17.0+20160930124405",
     "mocha": "registry:env/mocha#2.2.5+20160926180742",
-    "node": "registry:dt/node#6.0.0+20161110151007",
-    "sinon": "registry:dt/sinon#1.16.0+20160924120326",
-    "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160317120654"
+    "node": "registry:dt/node#6.0.0+20161212163245",
+    "sinon": "registry:dt/sinon#1.16.1+20161208163514"
+  },
+  "devDependencies": {
+    "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160628004037"
   }
 }

@@ -1,5 +1,28 @@
-import {EventEmitter} from 'events';
 import {PointerData, Pointers} from './utils';
+
+export class EventEmitter {
+  private listenerMap: Map<string, Function[]> = new Map();
+
+  on(event: string, listener: Function): this {
+    let listeners = this.listenerMap.get(event);
+    if(!listeners) {
+      listeners = [];
+    }
+    listeners.push(listener);
+    this.listenerMap.set(event, listeners);
+    return this;
+  }
+  emit(event: string, ...args: any[]): boolean {
+    const listeners = this.listenerMap.get(event) || [];
+    listeners.forEach(listener => listener.apply(null, args));
+    return true;
+  }
+  // removeAllListeners(event?: string): this {
+  //   event === undefined ? this.listenerMap.clear() :
+  //     this.listenerMap.delete(event);
+  //   return this;
+  // }
+}
 
 export class EventConfig {
   private events: string[];
@@ -64,7 +87,7 @@ export class Flow extends EventEmitter {
     );
     return { startListen: this.startListen, continueListen: this.continueListen };
   }
-  public activate(): (() => void)[] {
+  activate(): (() => void)[] {
     return this.bind(this.config).startListen.map(f => f());
   }
   setPointers(evt: Event) {
