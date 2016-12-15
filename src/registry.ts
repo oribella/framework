@@ -2,8 +2,8 @@ import {DefaultGesture} from './default-gesture';
 import {DefaultListener} from './default-listener';
 
 export class Registry {
-  private gestures: Map<string, typeof DefaultGesture> = new Map<string, typeof DefaultGesture>();
-  register(type: string, Gesture: typeof DefaultGesture) {
+  private gestures: Map<string, typeof DefaultGesture | Partial<DefaultGesture & { options: {}}>> = new Map<string, typeof DefaultGesture>();
+  register(type: string, Gesture: typeof DefaultGesture | Partial<DefaultGesture>) {
     this.gestures.set(type, Gesture);
   }
   getTypes() {
@@ -14,6 +14,8 @@ export class Registry {
     if(!Gesture) {
       throw new Error(`The type ${type} has not been registered`);
     }
-    return new Gesture(element, new DefaultListener(Gesture.options, listener));
+    return typeof Gesture === 'function' ?
+      new Gesture(element, new DefaultListener(Gesture.options, listener)) :
+      new DefaultGesture(element, new DefaultListener(Gesture.options, listener), Gesture);
   }
 }

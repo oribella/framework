@@ -79,7 +79,7 @@ describe("Oribella", () => {
   it('should register gestures', () => {
     const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
     const gesture = {} as typeof DefaultGesture;
-    instance.registerGesture('foo', gesture);
+    instance.registerGesture({ type: 'foo', gesture });
     expect(registerGesture).to.have.been.calledWithExactly('foo', gesture);
   });
 
@@ -113,10 +113,11 @@ describe("Oribella", () => {
   it('should register listeners', () => {
     const element = {} as Element;
     const type = 'foo' as string;
-    const listener = {};
+    const handleGesture = {};
     const addListener = sandbox.stub(instance['engine'], 'registerListener');
-    instance.on(element, type, listener);
-    expect(addListener).to.have.been.calledWithExactly(element, type, listener);
+    instance.on(element, { type, handleGesture }, { type: 'bar', handleGesture });
+    expect(addListener.firstCall).to.have.been.calledWithExactly(element, type, handleGesture);
+    expect(addListener.secondCall).to.have.been.calledWithExactly(element, 'bar', handleGesture);
   })
 
 });

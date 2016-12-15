@@ -29,7 +29,7 @@ export class Engine {
     private registry: Registry = new Registry(),
     ) {}
 
-  registerGesture(type: string, Gesture: typeof DefaultGesture) {
+  registerGesture(type: string, Gesture: typeof DefaultGesture | Partial<DefaultGesture>) {
     this.registry.register(type, Gesture);
   }
   registerFlow(flow: Flow) {

@@ -7,6 +7,9 @@ import {Supports} from './utils';
 import {DefaultGesture} from './default-gesture';
 import {DefaultListener} from './default-listener';
 
+export type ListenerType = { type: string, handleGesture: Partial<DefaultListener> };
+export type GestureType = { type: string, gesture: Partial<DefaultGesture> };
+
 export class Oribella {
   private engine: Engine;
   private deactivateFlows: (() => void)[][] | null = null;
@@ -29,8 +32,8 @@ export class Oribella {
     }
     this.engine.registerFlow(new MouseFlow(this.element));
   }
-  registerGesture(type: string, Gesture: typeof DefaultGesture) {
-    this.engine.registerGesture(type, Gesture);
+  registerGesture(...gestures: GestureType[]) {
+    gestures.forEach(g => this.engine.registerGesture(g.type, g.gesture))
   }
   activate() {
     this.deactivateFlows = this.engine.activate();
@@ -41,7 +44,7 @@ export class Oribella {
       this.deactivateFlows = null;
     }
   }
-  on(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
-    return this.engine.registerListener(element, type, listener);
+  on(element: Element, ...listeners: ListenerType[]) {
+    return listeners.map(l => this.engine.registerListener(element, l.type, l.handleGesture));
   }
 }

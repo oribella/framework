@@ -10,7 +10,10 @@ export class DefaultGesture {
   }
   __POINTERIDS__: string[] = [];
   startEmitted: boolean = false;
-  constructor(public element: Element, public listener: DefaultListener) { this.element; this.listener; }
+  constructor(public element: Element, public listener: DefaultListener, gesture?: Partial<DefaultGesture>) {
+    this.element; this.listener;
+    Object.assign(this, gesture);
+  }
   bind(
     element: Element,
     registerListener: (element: Element, type: string, listener: DefaultListener) => () => void,

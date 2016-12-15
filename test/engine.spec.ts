@@ -11,7 +11,7 @@ import {PointerFlow} from '../src/flows/pointer';
 import {MSPointerFlow} from '../src/flows/ms-pointer';
 import {RETURN_FLAG, Supports, PointerData, Pointers, GESTURE_STRATEGY_FLAG} from '../src/utils';
 import {Point} from '../src/point';
-import {load} from 'cheerio';
+import {jsdom} from 'jsdom';
 
 describe('Engine', () => {
   let instance: Engine;
@@ -550,19 +550,25 @@ describe('Engine', () => {
   describe('Match', () => {
 
     it('should call matchHandles', () => {
-      const $ = load(`
-        <div>
-          <div></div>
-          <div>
-            <div class="target"></div>
-          </div>
-        </div>
-      `);
-      const target = $('.target').get(0) as any;
+      const html = `
+        <html>
+          <body>
+            <div>
+              <div></div>
+              <div>
+                <div class="target"></div>
+              </div>
+            </div>
+          </body>
+        </html>
+      `;
+      const doc = jsdom(html);
+      const target = doc.querySelector('.target');
+      if(!target) throw new Error(`target not found ${html}`);
       const matchHandles = sandbox.stub(instance, 'matchHandles');
-      instance['element'] = $.root() as any;
+      instance['element'] = doc;
       instance['match'](target);
-      expect(matchHandles.callCount).to.equal(3);
+      expect(matchHandles.callCount).to.equal(5);
     });
 
     it('should call matchHandle', () => {

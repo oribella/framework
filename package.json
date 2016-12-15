@@ -16,15 +16,15 @@
     "commonjs": "npm run compile -- --module commonjs --outDir dist/commonjs",
     "amd": "npm run compile -- --module amd --outDir dist/amd",
     "system": "npm run compile -- --module system --outDir dist/system",
-    "es2015": "npm run compile -- --module es2015 --outDir dist/es2015",
+    "es2015": "npm run compile -- --module es2015 --outDir dist/es2015 --target es2015",
     "build": "npm-run-all -n clean --parallel commonjs amd system es2015"
   },
   "author": "Christoffer Åström",
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
-    "cheerio": "^0.22.0",
     "coveralls": "^2.11.15",
+    "jsdom": "^9.8.3",
     "mocha": "^3.2.0",
     "npm-run-all": "^3.1.1",
     "nyc": "^10.0.0",
@@ -36,7 +36,6 @@
     "typings": "^2.0.0"
   },
   "nyc": {
-    "all": true,
     "include": [
       "src/*"
     ],
@@ -47,14 +46,13 @@
       "dist",
       "typings"
     ],
-    "require": [
-      "ts-node/register"
-    ],
     "reporter": [
       "text-summary",
       "html"
     ],
-    "sourceMap": true,
-    "instrument": true
+    "all": true,
+    "cache": true,
+    "sourceMap": false,
+    "instrument": false
   }
 }

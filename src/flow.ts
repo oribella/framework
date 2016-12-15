@@ -4,10 +4,7 @@ export class EventEmitter {
   private listenerMap: Map<string, Function[]> = new Map();
 
   on(event: string, listener: Function): this {
-    let listeners = this.listenerMap.get(event);
-    if(!listeners) {
-      listeners = [];
-    }
+    const listeners = this.listenerMap.get(event) || [];
     listeners.push(listener);
     this.listenerMap.set(event, listeners);
     return this;
