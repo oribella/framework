@@ -46,16 +46,12 @@
       "dist",
       "typings"
     ],
-    "require": [
-      "ts-node/register"
-    ],
     "reporter": [
       "text-summary",
       "html"
     ],
     "all": true,
-    "cache": true,
-    "sourceMap": false,
-    "instrument": false
+    "sourceMap": true,
+    "instrument": true
   }
 }
