@@ -9,7 +9,7 @@
   "main": "dist/commonjs/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "scripts": {
-    "test": "nyc _mocha --recursive --compilers ts:ts-node/register --require test/setup.ts",
+    "test": "nyc mocha --recursive --compilers ts:ts-node/register --require test/setup.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "clean": "rimraf dist",
     "compile": "tsc -p tsconfig.build.json",
@@ -45,6 +45,9 @@
     "exclude": [
       "dist",
       "typings"
+    ],
+    "require": [
+      "ts-node/register"
     ],
     "reporter": [
       "text-summary",
