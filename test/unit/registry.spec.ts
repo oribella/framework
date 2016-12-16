@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {Registry} from '../src/registry';
-import {DefaultGesture} from '../src/default-gesture';
-import {GESTURE_STRATEGY_FLAG} from '../src/utils';
-import {Point} from '../src/point';
+import {Registry} from '../../src/registry';
+import {DefaultGesture} from '../../src/default-gesture';
+import {GESTURE_STRATEGY_FLAG} from '../../src/utils';
+import {Point} from '../../src/point';
 
 describe('Registry', () => {
   let instance: Registry;
@@ -16,7 +16,7 @@ describe('Registry', () => {
 
   afterEach(() => {
     sandbox.restore();
-  })
+  });
 
   it('should not have any registered gestures', () => {
     expect(instance.getTypes()).to.have.length(0);

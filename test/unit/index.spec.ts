@@ -1,7 +1,7 @@
 import {expect} from 'chai';
-import {Point, GESTURE_STRATEGY_FLAG, RETURN_FLAG, matchesSelector} from '../src/index';
+import {Point, GESTURE_STRATEGY_FLAG, RETURN_FLAG, matchesSelector} from '../../src/index';
 
-describe("Index", () => {
+describe('Index', () => {
 
   it('should export Point, GESTURE_STRATEGY_FLAG, RETURN_FLAG, matchesSelector', () => {
     expect(Point).to.be.a('function');

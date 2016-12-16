@@ -7,14 +7,14 @@ export const TouchConfig = {
   update: new EventConfig('touchmove'),
   end: new EventConfig('touchend'),
   cancel: new EventConfig('touchcancel', 'dragstart')
-}
+};
 
 export class TouchFlow extends Flow {
   constructor(element: Element | Document) {
     super(element, TouchConfig);
   }
-  setPointerMapFromList(list: TouchList, pointerMap: Map<string, PointerData>) {
-    for(let i = 0, len = list.length; i < len; ++i) {
+  public setPointerMapFromList(list: TouchList, pointerMap: Map<string, PointerData>) {
+    for (let i = 0, len = list.length; i < len; ++i) {
       const touch = list[i];
       const page = new Point(touch.pageX, touch.pageY);
       const client = new Point(touch.clientX, touch.clientY);
@@ -23,7 +23,7 @@ export class TouchFlow extends Flow {
       pointerMap.set(pointerId, pointers);
     }
   }
-  setPointers(evt: TouchEvent) {
+  public setPointers(evt: TouchEvent) {
     this.allPointers.clear();
     this.changedPointers.clear();
     this.setPointerMapFromList(evt.touches, this.allPointers);

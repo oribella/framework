@@ -1,9 +1,9 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {DefaultListener} from '../src/default-listener';
-import {GESTURE_STRATEGY_FLAG} from '../src/utils';
+import {DefaultListener} from '../../src/default-listener';
+import {GESTURE_STRATEGY_FLAG} from '../../src/utils';
 
-describe("Default listener", () => {
+describe('Default listener', () => {
   let instance: DefaultListener;
   let sandbox: Sinon.SinonSandbox;
 
@@ -34,7 +34,7 @@ describe("Default listener", () => {
       which: 1,
       prio: 100,
       strategy: GESTURE_STRATEGY_FLAG.KEEP
-    }
+    };
     const listener = {
       pointers: 10,
       which: 3,

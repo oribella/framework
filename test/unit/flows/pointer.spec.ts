@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {PointerFlow} from '../../src/flows/pointer';
-import {Point} from '../../src/point';
+import {PointerFlow} from '../../../src/flows/pointer';
+import {Point} from '../../../src/point';
 
 describe('PointerFlow', () => {
   let instance: PointerFlow;
@@ -28,7 +28,7 @@ describe('PointerFlow', () => {
 
   it('should set pointers on pointermove', () => {
     const evt = { type: 'pointermove', pointerId: 1, pageX: 5, pageY: 6, clientX: 7, clientY: 8 } as PointerEvent;
-    instance.setPointers(evt)
+    instance.setPointers(evt);
     expect(instance.allPointers.get('1')).deep.equal({ page: new Point(5, 6), client: new Point(7, 8) });
     expect(instance.allPointers).to.deep.equal(instance.changedPointers);
     expect(instance.pointers.all).to.equal(instance.allPointers);
@@ -37,7 +37,7 @@ describe('PointerFlow', () => {
 
   it('should set pointers on pointerup', () => {
     const evt = { type: 'pointerup', pointerId: 1, pageX: 9, pageY: 10, clientX: 11, clientY: 12 } as PointerEvent;
-    instance.setPointers(evt)
+    instance.setPointers(evt);
     expect(instance.allPointers.size).to.equal(0);
   });
 

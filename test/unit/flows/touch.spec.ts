@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {TouchFlow} from '../../src/flows/touch';
-import {Point} from '../../src/point';
-import {PointerData} from '../../src/utils';
+import {TouchFlow} from '../../../src/flows/touch';
+import {Point} from '../../../src/point';
+import {PointerData} from '../../../src/utils';
 
 describe('TouchFlow', () => {
   let instance: TouchFlow;

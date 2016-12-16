@@ -32,24 +32,24 @@ export const RETURN_FLAG = {
 };
 
 export function isMouse(supports: Supports, evt: any) {
-  if (supports.msPointerEnabled && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { //IE10
+  if (supports.msPointerEnabled && evt.pointerType === evt.MSPOINTER_TYPE_MOUSE) { // IE10
     return true;
   }
-  if (supports.pointerEnabled && evt.pointerType === 'mouse') { //IE11
+  if (supports.pointerEnabled && evt.pointerType === 'mouse') { // E11
     return true;
   }
   return evt.type.indexOf('mouse') !== -1;
 }
 
-export function isValidMouseButton({ button, which }: { button?: number|undefined, which?: number|undefined}, allowedBtn: number[]|number) {
+export function isValidMouseButton(
+  { button, which }: { button?: number|undefined, which?: number|undefined }, allowedBtn: number[]|number) {
   const actualBtn = (!which && button !== undefined) ?
                 (button & 1 ? 1 : (button & 2 ? 3 : (button & 4 ? 2 : 0))) :
                 which;
-  return Array.isArray(allowedBtn) ? allowedBtn.some(val => {
+  return Array.isArray(allowedBtn) ? allowedBtn.some((val) => {
     return actualBtn === val;
   }) : actualBtn === allowedBtn;
 }
-
 
 export function matchesSelector(element: any, selector: string) {
   return (element.matchesSelector ||
@@ -60,9 +60,9 @@ export function matchesSelector(element: any, selector: string) {
   ).call(element, selector);
 }
 
-export type PointerDataMap = Map<string, PointerData>
-export type Pointers = { all: PointerDataMap, changed: PointerDataMap }
-export type PointerData = { page: Point, client: Point }
+export type PointerDataMap = Map<string, PointerData>;
+export type Pointers = { all: PointerDataMap, changed: PointerDataMap };
+export type PointerData = { page: Point, client: Point };
 export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
 export interface Supports {
   msPointerEnabled: boolean;

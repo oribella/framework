@@ -9,6 +9,8 @@
   "main": "dist/commonjs/index.js",
   "typings": "dist/commonjs/index.d.ts",
   "scripts": {
+    "lint": "tslint -c tslint.json --project tsconfig.json",
+    "pretest": "npm run lint",
     "test": "nyc mocha --recursive --compilers ts:ts-node/register --require test/setup.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "clean": "rimraf dist",
@@ -32,6 +34,7 @@
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
     "ts-node": "^1.7.0",
+    "tslint": "^4.0.2",
     "typescript": "^2.1.4",
     "typings": "^2.0.0"
   },

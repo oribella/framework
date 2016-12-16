@@ -1,17 +1,19 @@
 import {GESTURE_STRATEGY_FLAG} from './utils';
 
-export class DefaultListener {;
-  pointers: number = 1;
-  which: number = 1;
-  prio: number = 100;
-  strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
-  selector: string;
+export class DefaultListener {
+  public pointers: number = 1;
+  public which: number = 1;
+  public prio: number = 100;
+  public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
+  public selector: string;
+
   constructor(defaultOptions?: Partial<DefaultListener>, listener?: Partial<DefaultListener>) {
     Object.assign(this, defaultOptions, listener);
   }
-  down(): number { return 0; }
-  start(): number { return 0; }
-  update(): number { return 0; }
-  end(): number { return 0; }
-  cancel(): number { return 0; }
+
+  public down(): number { return 0; }
+  public start(): number { return 0; }
+  public update(): number { return 0; }
+  public end(): number { return 0; }
+  public cancel(): number { return 0; }
 }

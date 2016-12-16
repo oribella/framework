@@ -8,5 +8,6 @@
     "**/coverage": true,
     "**/typings": true,
     "**/.nyc_output": true
-  }
+  },
+  "tslint.autoFixOnSave": true
 }

@@ -1,12 +1,12 @@
 import {expect} from 'chai';
 import * as sinon from 'sinon';
-import {Oribella} from '../src/oribella';
-import {MSPointerFlow} from '../src/flows/ms-pointer';
-import {PointerFlow} from '../src/flows/pointer';
-import {TouchFlow} from '../src/flows/touch';
-import {DefaultGesture} from '../src/default-gesture';
+import {Oribella} from '../../src/oribella';
+import {MSPointerFlow} from '../../src/flows/ms-pointer';
+import {PointerFlow} from '../../src/flows/pointer';
+import {TouchFlow} from '../../src/flows/touch';
+import {DefaultGesture} from '../../src/default-gesture';
 
-describe("Oribella", () => {
+describe('Oribella', () => {
   let instance: Oribella;
   let sandbox: Sinon.SinonSandbox;
   let document: Document;
@@ -19,10 +19,10 @@ describe("Oribella", () => {
     const g = global as any;
     g.window = {
       ontouchstart: '',
-      document: document,
+      document,
       navigator: {
-        msPointerEnabled: msPointerEnabled,
-        pointerEnabled: pointerEnabled
+        msPointerEnabled,
+        pointerEnabled
       }
     };
     instance = new Oribella();
@@ -84,7 +84,7 @@ describe("Oribella", () => {
   });
 
   it('should activate', () => {
-    const deactivateFlows: (() => void)[][] = [];
+    const deactivateFlows: Array<Array<() => void>> = [];
     const activate = sandbox.stub(instance['engine'], 'activate').returns(deactivateFlows);
     instance.activate();
     expect(activate).to.have.been.calledWithExactly();
@@ -95,7 +95,7 @@ describe("Oribella", () => {
     const f1 =  sandbox.spy();
     const f2 =  sandbox.spy();
     const f3 =  sandbox.spy();
-    const deactivateFlows: (() => void)[][] = [[f1, f2, f3]];
+    const deactivateFlows: Array<Array<() => void>> = [[f1, f2, f3]];
     sandbox.stub(instance['engine'], 'activate').returns(deactivateFlows);
     instance.activate();
     instance.deactivate();
@@ -118,6 +118,6 @@ describe("Oribella", () => {
     instance.on(element, { type, handleGesture }, { type: 'bar', handleGesture });
     expect(addListener.firstCall).to.have.been.calledWithExactly(element, type, handleGesture);
     expect(addListener.secondCall).to.have.been.calledWithExactly(element, 'bar', handleGesture);
-  })
+  });
 
 });
