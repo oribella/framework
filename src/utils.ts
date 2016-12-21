@@ -6,7 +6,7 @@ export const GESTURE_STRATEGY_FLAG = {
 };
 
 export const RETURN_FLAG = {
-  map(result: number|boolean) {
+  map(result: number|boolean): number {
     switch (result) {
     case true:
       result = this.REMOVE_OTHERS;
@@ -22,7 +22,7 @@ export const RETURN_FLAG = {
       result = 0;
     }
 
-    return result;
+    return result as number;
   },
   IDLE: 0,
   START_EMITTED: 1,
@@ -69,3 +69,10 @@ export interface Supports {
   pointerEnabled: boolean;
   touchEnabled: boolean;
 }
+
+export class DefaultGestureOptions {
+  public pointers: number = 1;
+  public which: number = 1;
+  public prio: number = 100;
+  public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
+};

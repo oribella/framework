@@ -52,8 +52,8 @@ describe('Registry', () => {
 
   it('should create default options', () => {
     instance.register('foo', DefaultGesture);
-    const subscriber = {};
-    const gesture = instance.create({} as Element, 'foo', subscriber);
+    const listener = {};
+    const gesture = instance.create({} as Element, 'foo', listener);
     expect(gesture.listener.pointers).to.equal(1);
     expect(gesture.listener.which).to.equal(1);
     expect(gesture.listener.prio).to.equal(100);
@@ -62,8 +62,8 @@ describe('Registry', () => {
 
   it('should create custom options', () => {
     instance.register('foo', DefaultGesture);
-    const subscriber = { pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT };
-    const gesture = instance.create({} as Element, 'foo', subscriber);
+    const listener = { pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT };
+    const gesture = instance.create({} as Element, 'foo', listener);
     expect(gesture.listener.pointers).to.equal(100);
     expect(gesture.listener.which).to.equal(3);
     expect(gesture.listener.prio).to.equal(2);

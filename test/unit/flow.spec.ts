@@ -59,15 +59,23 @@ describe('Flow', () => {
     expect(listenerSpy).to.have.been.calledWithExactly('mousedown', sinon.match.func, false);
   });
 
+  it('should proxy', () => {
+    const spy = sandbox.spy();
+    const evt = {} as Event;
+    instance['proxy'](spy, evt);
+    expect(spy).to.have.been.calledWithExactly(evt);
+  });
+
   it('should call setPointers for events', () => {
     config.start = new EventConfig('mousedown');
     const listenerSpy = sandbox.spy();
+    const evt = {} as Event;
     const setPointersSpy = sandbox.spy(instance, 'setPointers');
     element.addEventListener = listenerSpy;
     const startListen = instance.bind(config).startListen;
     startListen.forEach((f) => f());
-    listenerSpy.callArg(1);
-    expect(setPointersSpy).to.have.been.calledOnce;
+    listenerSpy.callArgWith(1, evt);
+    expect(setPointersSpy).to.have.been.calledWithExactly(evt);
   });
 
   it('should add continue listeners', () => {

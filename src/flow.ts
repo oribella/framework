@@ -52,13 +52,14 @@ export class Flow extends EventEmitter {
     this.config = config;
   }
 
-  public addDOMEventListener(element: Element, evt: string, fn: () => void): () => void {
-    const proxyFn = (e: Event) => {
-      this.setPointers(e);
-      fn();
-    };
-    element.addEventListener(evt, proxyFn, false);
-    return this.removeDOMEventListener.bind(this, element, evt, proxyFn);
+  private proxy(fn: (evt: Event) => void, evt: Event) {
+    this.setPointers(evt);
+    fn(evt);
+  }
+  public addDOMEventListener(element: Element, evt: string, fn: (evt: Event) => void): () => void {
+    const proxy = this.proxy.bind(this, fn);
+    element.addEventListener(evt, proxy, false);
+    return this.removeDOMEventListener.bind(this, element, evt, proxy);
   }
 
   public removeDOMEventListener(element: Element, evt: string, fn: () => void) {

@@ -17,3 +17,11 @@ export class DefaultListener {
   public end(): number { return 0; }
   public cancel(): number { return 0; }
 }
+
+// tslint:disable-next-line:max-classes-per-file
+export class Listener<TOptions> {
+  public options: TOptions;
+  constructor(options?: TOptions, listener?: Partial<Listener<TOptions>>) {
+    Object.assign(this, options, listener);
+  }
+}

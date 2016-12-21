@@ -7,7 +7,7 @@ import {Supports} from './utils';
 import {DefaultGesture} from './default-gesture';
 import {DefaultListener} from './default-listener';
 
-export type ListenerType = { type: string, handleGesture: Partial<DefaultListener> };
+export type ListenerType = { type: string, listener: Partial<DefaultListener> };
 export type GestureType = { type: string, gesture: Partial<DefaultGesture> };
 
 export class Oribella {
@@ -48,6 +48,6 @@ export class Oribella {
     }
   }
   public on(element: Element, ...listeners: ListenerType[]) {
-    return listeners.map((l) => this.engine.registerListener(element, l.type, l.handleGesture));
+    return listeners.map((l) => this.engine.registerListener(element, l.type, l.listener));
   }
 }

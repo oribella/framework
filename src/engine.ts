@@ -27,7 +27,7 @@ export class Engine {
     private element: Element | Document,
     private supports: Supports,
     private registry: Registry = new Registry(),
-    ) {}
+  ) {}
 
   public registerGesture(type: string, Gesture: typeof DefaultGesture | Partial<DefaultGesture>) {
     this.registry.register(type, Gesture);

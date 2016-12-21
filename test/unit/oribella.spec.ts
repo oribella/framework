@@ -113,11 +113,11 @@ describe('Oribella', () => {
   it('should register listeners', () => {
     const element = {} as Element;
     const type = 'foo' as string;
-    const handleGesture = {};
+    const listener = {};
     const addListener = sandbox.stub(instance['engine'], 'registerListener');
-    instance.on(element, { type, handleGesture }, { type: 'bar', handleGesture });
-    expect(addListener.firstCall).to.have.been.calledWithExactly(element, type, handleGesture);
-    expect(addListener.secondCall).to.have.been.calledWithExactly(element, 'bar', handleGesture);
+    instance.on(element, { type, listener }, { type: 'bar', listener });
+    expect(addListener.firstCall).to.have.been.calledWithExactly(element, type, listener);
+    expect(addListener.secondCall).to.have.been.calledWithExactly(element, 'bar', listener);
   });
 
 });
