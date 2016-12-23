@@ -1,4 +1,8 @@
-import {GESTURE_STRATEGY_FLAG} from './utils';
+import {GESTURE_STRATEGY_FLAG, PointerData} from './utils';
+
+export interface ListenerData {
+  pointers: PointerData[];
+}
 
 export class DefaultListener {
   public pointers: number = 1;
@@ -12,7 +16,11 @@ export class DefaultListener {
   }
 
   public down(): number { return 0; }
+  public start(evt: Event, data: ListenerData, target: Element): number;
+  public start(): number;
   public start(): number { return 0; }
+  public update(evt: Event, data: ListenerData, target: Element): number;
+  public update(): number;
   public update(): number { return 0; }
   public end(): number { return 0; }
   public cancel(): number { return 0; }

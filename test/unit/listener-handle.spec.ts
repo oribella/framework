@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import {ListenerHandle} from '../../src/listener-handle';
 import {DefaultListener} from '../../src/default-listener';
+import {DefaultGesture} from '../../src/default-gesture';
 
 describe('Listener handle', () => {
 
@@ -10,11 +11,11 @@ describe('Listener handle', () => {
 
   it('should set element, type, subscriber, active', () => {
     const element = {};
-    const type = 'foo';
     const subscriber = {};
-    const handle = new ListenerHandle(element as Element, type, subscriber as DefaultListener);
+    // class Foo extends DefaultGesture {};
+    const handle = new ListenerHandle(DefaultGesture, element as Element, subscriber as DefaultListener);
     expect(handle.element).to.equal(element);
-    expect(handle.type).to.equal(type);
+    expect(handle.Type).to.equal(DefaultGesture);
     expect(handle.listener).to.equal(subscriber);
   });
 

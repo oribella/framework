@@ -19,7 +19,7 @@ export type ExecStrategy = (state: ExecStrategyState) => number;
 export class Engine {
   private flows: Flow[] = [];
   private activeFlow: Flow | null = null;
-  private handles: ListenerHandle[] = [];
+  private handles: Array<ListenerHandle<& typeof DefaultGesture>> = [];
   private gestures: DefaultGesture[] = [];
   private composedGestures: DefaultGesture[] = [];
 
@@ -29,8 +29,8 @@ export class Engine {
     private registry: Registry = new Registry(),
   ) {}
 
-  public registerGesture(type: string, Gesture: typeof DefaultGesture | Partial<DefaultGesture>) {
-    this.registry.register(type, Gesture);
+  public registerGesture<T extends typeof DefaultGesture>(Gesture: T) {
+    this.registry.register<T>(Gesture);
   }
   public registerFlow(flow: Flow) {
     this.flows.push(flow);
@@ -39,8 +39,9 @@ export class Engine {
     flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
     flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
   }
-  public registerListener(element: Element, type: string, listener: Partial<DefaultListener>): () => void {
-    const handle = new ListenerHandle(element, type, listener);
+  public registerListener<T extends typeof DefaultGesture>(
+    Type: T, element: Element, listener: Partial<DefaultListener>): () => void {
+    const handle = new ListenerHandle(Type, element, listener);
 
     this.handles.push(handle);
 
@@ -212,14 +213,16 @@ export class Engine {
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
   }
-  private addGesture(element: Element, handle: ListenerHandle): DefaultGesture {
-    const gesture = this.registry.create(element, handle.type, handle.listener);
+  private addGesture<T extends typeof DefaultGesture>(
+    Type: T, element: Element, handle: ListenerHandle<T>): DefaultGesture {
+    const gesture = this.registry.create<T>(Type, element, handle.listener);
     gesture.bind(handle.element,
       this.registerListener.bind(this),
       this.removeGesture.bind(this, gesture, this.gestures, this.composedGestures));
     return gesture;
   }
-  private composeGesture(element: Element, handle: ListenerHandle): DefaultGesture {
+  private composeGesture<T extends typeof DefaultGesture>(
+    Type: T, element: Element, handle: ListenerHandle<T>): DefaultGesture {
     let gesture;
     while (gesture = this.composedGestures.shift()) {
       if (gesture.listener === handle.listener) {
@@ -227,11 +230,11 @@ export class Engine {
       }
     }
     if (!gesture) {
-      gesture = this.addGesture(element, handle);
+      gesture = this.addGesture(Type, element, handle);
     }
     return gesture;
   }
-  private matchesHandle(element: Element, handle: ListenerHandle): boolean {
+  private matchesHandle<T extends typeof DefaultGesture>(element: Element, handle: ListenerHandle<T>): boolean {
     const { element: refElement, listener: { selector } } = handle;
 
     if (!refElement.contains(element)) {
@@ -248,15 +251,16 @@ export class Engine {
     }
     return true;
   }
-  private matchHandle(element: Element, handle: ListenerHandle): DefaultGesture|undefined {
+  private matchHandle<T extends typeof DefaultGesture>(
+    Type: T, element: Element, handle: ListenerHandle<T>): DefaultGesture|undefined {
     if (!this.matchesHandle(element, handle)) {
       return;
     }
-    return this.composeGesture(element, handle);
+    return this.composeGesture(Type, element, handle);
   }
   private matchHandles(element: Element, gestures: DefaultGesture[]): DefaultGesture[] {
-    for (let handle of this.handles) { // Always evaluate length since gestures could bind gestures
-      const gesture = this.matchHandle(element, handle);
+    for (const handle of this.handles) { // Always evaluate length since gestures could bind gestures
+      const gesture = this.matchHandle(handle.Type, element, handle);
       if (gesture) {
         gestures.push(gesture);
       }

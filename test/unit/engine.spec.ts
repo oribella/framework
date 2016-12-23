@@ -47,8 +47,8 @@ describe('Engine', () => {
 
   it('should register a gesture', () => {
     registry.register = sandbox.spy();
-    instance.registerGesture('test', DefaultGesture);
-    expect(registry.register).to.have.been.calledWithExactly('test', DefaultGesture);
+    instance.registerGesture(DefaultGesture);
+    expect(registry.register).to.have.been.calledWithExactly(DefaultGesture);
   });
 
   it('should register flows', () => {
@@ -500,9 +500,8 @@ describe('Engine', () => {
   describe('Listener handle', () => {
     const add = () => {
       const element = {} as Element;
-      const type = 'foo';
       const subscriber = {} as DefaultListener;
-      return instance['registerListener'](element, type, subscriber);
+      return instance['registerListener'](DefaultGesture, element, subscriber);
     };
     it('should add a handle', () => {
       add();
@@ -531,9 +530,9 @@ describe('Engine', () => {
       const listener = new DefaultListener();
       const gesture = new DefaultGesture(element, listener);
       const create = sandbox.stub(instance['registry'], 'create').returns(gesture);
-      const handle = new ListenerHandle(element, 'foo', listener);
-      instance['addGesture'](element, handle);
-      expect(create).to.have.been.calledWithExactly(element, handle.type, handle.listener);
+      const handle = new ListenerHandle(DefaultGesture, element, listener);
+      instance['addGesture'](DefaultGesture, element, handle);
+      expect(create).to.have.been.calledWithExactly(DefaultGesture, element, handle.listener);
     });
 
     it('should call gesture bind', () => {
@@ -542,8 +541,8 @@ describe('Engine', () => {
       const gesture = new DefaultGesture(element, listener);
       const bind = sandbox.stub(gesture, 'bind');
       sandbox.stub(instance['registry'], 'create').returns(gesture);
-      const handle = new ListenerHandle(element, 'foo', listener);
-      instance['addGesture'](element, handle);
+      const handle = new ListenerHandle(DefaultGesture, element, listener);
+      instance['addGesture'](DefaultGesture, element, handle);
       expect(bind).to.have.been.calledWithExactly(handle.element, sinon.match.func, sinon.match.func);
     });
 
@@ -579,10 +578,10 @@ describe('Engine', () => {
       const element = {} as Element;
       const gestures = [] as DefaultGesture[];
       const listener = {} as DefaultListener;
-      instance['registerListener'](element, 'foo', listener);
+      instance['registerListener'](DefaultGesture, element, listener);
       const matchHandle = sandbox.stub(instance, 'matchHandle');
       instance['matchHandles'](element, gestures);
-      expect(matchHandle).to.have.been.calledWithExactly(element, instance['handles'][0]);
+      expect(matchHandle).to.have.been.calledWithExactly(DefaultGesture, element, instance['handles'][0]);
     });
 
     it('should add gesture', () => {
@@ -590,7 +589,7 @@ describe('Engine', () => {
       const gesture = {} as DefaultGesture;
       const gestures = [] as DefaultGesture[];
       const listener = {} as DefaultListener;
-      instance['registerListener'](element, 'foo', listener);
+      instance['registerListener'](DefaultGesture, element, listener);
       sandbox.stub(instance, 'matchHandle').returns(gesture);
       expect(instance['matchHandles'](element, gestures)).to.equal(gestures);
       expect(gestures).to.have.length(1);
@@ -599,18 +598,18 @@ describe('Engine', () => {
 
     it('should return undefined if not matches handle', () => {
       const element = {} as Element;
-      const handle = {} as ListenerHandle;
+      const handle = {} as ListenerHandle<typeof DefaultGesture>;
       sandbox.stub(instance, 'matchesHandle').returns(false);
-      expect(instance['matchHandle'](element, handle)).be.undefined;
+      expect(instance['matchHandle'](DefaultGesture, element, handle)).be.undefined;
     });
 
     it('should call composeGesture', () => {
       const element = {} as Element;
-      const handle = {} as ListenerHandle;
+      const handle = {} as ListenerHandle<typeof DefaultGesture>;
       sandbox.stub(instance, 'matchesHandle').returns(true);
       const composeGesture = sandbox.stub(instance, 'composeGesture');
-      instance['matchHandle'](element, handle);
-      expect(composeGesture).to.have.been.calledWithExactly(element, handle);
+      instance['matchHandle'](DefaultGesture, element, handle);
+      expect(composeGesture).to.have.been.calledWithExactly(DefaultGesture, element, handle);
     });
 
     describe('Matches handle', () => {
@@ -620,7 +619,7 @@ describe('Engine', () => {
         const refElement = {} as Element;
         element.webkitMatchesSelector = sandbox.stub().returns(false);
         refElement.contains = sandbox.stub().returns(true);
-        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
+        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle<typeof DefaultGesture>;
         expect(instance['matchesHandle'](element, handle)).to.be.false;
       });
 
@@ -629,7 +628,7 @@ describe('Engine', () => {
         const refElement = {} as Element;
         element.webkitMatchesSelector = sandbox.stub().returns(true);
         refElement.contains = sandbox.stub().returns(true);
-        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        const handle = { element: refElement, listener: {} } as ListenerHandle<typeof DefaultGesture>;
         expect(instance['matchesHandle'](element, handle)).to.be.false;
       });
 
@@ -637,14 +636,14 @@ describe('Engine', () => {
         const element = {} as Element;
         const refElement = {} as Element;
         refElement.contains = sandbox.stub().returns(false); ;
-        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        const handle = { element: refElement, listener: {} } as ListenerHandle<typeof DefaultGesture>;
         expect(instance['matchesHandle'](element, handle)).to.be.false;
       });
 
       it('should return false if a selector is defined and the handle element is the current element', () => {
         const refElement = {} as Element;
         refElement.contains = sandbox.stub().returns(true); ;
-        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle;
+        const handle = { element: refElement, listener: { selector: 'foo' } } as ListenerHandle<typeof DefaultGesture>;
         expect(instance['matchesHandle'](refElement, handle)).to.be.false;
       });
 
@@ -652,7 +651,7 @@ describe('Engine', () => {
         const refElement = {} as Element;
         refElement.webkitMatchesSelector = sandbox.stub().returns(true);
         refElement.contains = sandbox.stub().returns(true); ;
-        const handle = { element: refElement, listener: {} } as ListenerHandle;
+        const handle = { element: refElement, listener: {} } as ListenerHandle<typeof DefaultGesture>;
         expect(instance['matchesHandle'](refElement, handle)).to.be.true;
       });
 
@@ -663,29 +662,29 @@ describe('Engine', () => {
       it('should use gesture that wants to be composed', () => {
         const element = {} as Element;
         const listener = {} as DefaultListener;
-        const handle = { listener } as ListenerHandle;
+        const handle = { listener } as ListenerHandle<typeof DefaultGesture>;
         const gesture = { listener } as DefaultGesture;
         instance['composedGestures'].push(gesture);
-        expect(instance['composeGesture'](element, handle)).to.equal(gesture); ;
+        expect(instance['composeGesture'](DefaultGesture, element, handle)).to.equal(gesture); ;
       });
 
       it('should add gesture if no gesture wants to be composed', () => {
         const element = {} as Element;
         const listener = {} as DefaultListener;
-        const handle = { listener } as ListenerHandle;
+        const handle = { listener } as ListenerHandle<typeof DefaultGesture>;
         const gesture = {} as DefaultGesture;
         sandbox.stub(instance, 'addGesture').returns(gesture);
         instance['composedGestures'].push(gesture);
-        expect(instance['composeGesture'](element, handle)).to.equal(gesture); ;
+        expect(instance['composeGesture'](DefaultGesture, element, handle)).to.equal(gesture); ;
       });
 
       it('should add gesture', () => {
         const element = {} as Element;
-        const handle = {} as ListenerHandle;
+        const handle = {} as ListenerHandle<typeof DefaultGesture>;
         const gesture = {} as DefaultGesture;
         const addGesture = sandbox.stub(instance, 'addGesture').returns(gesture);
-        expect(instance['composeGesture'](element, handle)).to.equal(gesture);
-        expect(addGesture).to.have.been.calledWithExactly(element, handle);
+        expect(instance['composeGesture'](DefaultGesture, element, handle)).to.equal(gesture);
+        expect(addGesture).to.have.been.calledWithExactly(DefaultGesture, element, handle);
       });
 
     });
