@@ -63,14 +63,14 @@ export function matchesSelector(element: any, selector: string) {
 export type PointerDataMap = Map<string, PointerData>;
 export type Pointers = { all: PointerDataMap, changed: PointerDataMap };
 export type PointerData = { page: Point, client: Point };
-export type GestureOptions = { pointers: number, which: number, prio: number, strategy: number };
+
 export interface Supports {
   msPointerEnabled: boolean;
   pointerEnabled: boolean;
   touchEnabled: boolean;
 }
 
-export class DefaultGestureOptions {
+export class Options {
   public pointers: number = 1;
   public which: number = 1;
   public prio: number = 100;

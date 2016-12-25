@@ -1,13 +1,14 @@
-import {Engine} from './engine';
-import {MSPointerFlow} from './flows/ms-pointer';
-import {PointerFlow} from './flows/pointer';
-import {TouchFlow} from './flows/touch';
-import {MouseFlow} from './flows/mouse';
-import {Supports} from './utils';
-import {DefaultGesture} from './default-gesture';
-import {DefaultListener} from './default-listener';
+import { Engine } from './engine';
+import { MSPointerFlow } from './flows/ms-pointer';
+import { PointerFlow } from './flows/pointer';
+import { TouchFlow } from './flows/touch';
+import { MouseFlow } from './flows/mouse';
+import { Supports } from './utils';
+import { Gesture } from './gesture';
+import { Listener } from './listener';
+import { Options } from './utils';
 
-export type ListenerType = { type: string, listener: Partial<DefaultListener> };
+export type ListenerType = { type: string, listener: Partial<Listener<& Options>> };
 
 export class Oribella {
   private engine: Engine;
@@ -18,7 +19,8 @@ export class Oribella {
     private supports: Supports = {
       touchEnabled: ('ontouchstart' in window),
       pointerEnabled: (window && window.navigator.pointerEnabled),
-      msPointerEnabled: (window && window.navigator.msPointerEnabled) }
+      msPointerEnabled: (window && window.navigator.msPointerEnabled)
+    }
   ) {
     this.engine = new Engine(this.element, this.supports);
   }
@@ -34,8 +36,8 @@ export class Oribella {
     }
     this.engine.registerFlow(new MouseFlow(this.element));
   }
-  public registerGesture<T extends typeof DefaultGesture>(Gesture: T) {
-    this.engine.registerGesture(Gesture);
+  public registerGesture<T extends typeof Gesture, U extends typeof Options>(Gesture: T, Options: U) {
+    this.engine.registerGesture(Gesture, Options);
   }
   public activate() {
     this.deactivateFlows = this.engine.activate();
@@ -46,7 +48,7 @@ export class Oribella {
       this.deactivateFlows = null;
     }
   }
-  public on<T extends typeof DefaultGesture>(Type: T, element: Element, listener: Partial<DefaultListener>) {
+  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<Listener<& Options>>) {
     return this.engine.registerListener(Type, element, listener);
   }
 }

@@ -1,10 +1,11 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
-import {Oribella} from '../../src/oribella';
-import {MSPointerFlow} from '../../src/flows/ms-pointer';
-import {PointerFlow} from '../../src/flows/pointer';
-import {TouchFlow} from '../../src/flows/touch';
-import {DefaultGesture} from '../../src/default-gesture';
+import { Oribella } from '../../src/oribella';
+import { MSPointerFlow } from '../../src/flows/ms-pointer';
+import { PointerFlow } from '../../src/flows/pointer';
+import { TouchFlow } from '../../src/flows/touch';
+import { Gesture } from '../../src/gesture';
+import { Options } from '../../src/utils';
 
 describe('Oribella', () => {
   let instance: Oribella;
@@ -76,11 +77,11 @@ describe('Oribella', () => {
 
   });
 
-  it('should register gestures', () => {
+  it('should register gesture', () => {
     const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
-    const gesture = {} as typeof DefaultGesture;
-    instance.registerGesture(gesture);
-    expect(registerGesture).to.have.been.calledWithExactly(gesture);
+    const gesture = {} as typeof Gesture;
+    instance.registerGesture(gesture, Options);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options);
   });
 
   it('should activate', () => {
@@ -92,9 +93,9 @@ describe('Oribella', () => {
   });
 
   it('should deactivate', () => {
-    const f1 =  sandbox.spy();
-    const f2 =  sandbox.spy();
-    const f3 =  sandbox.spy();
+    const f1 = sandbox.spy();
+    const f2 = sandbox.spy();
+    const f3 = sandbox.spy();
     const deactivateFlows: Array<Array<() => void>> = [[f1, f2, f3]];
     sandbox.stub(instance['engine'], 'activate').returns(deactivateFlows);
     instance.activate();
@@ -114,8 +115,8 @@ describe('Oribella', () => {
     const element = {} as Element;
     const listener = {};
     const registerListener = sandbox.stub(instance['engine'], 'registerListener');
-    instance.on(DefaultGesture, element, listener);
-    expect(registerListener).to.have.been.calledWithExactly(DefaultGesture, element, listener);
+    instance.on(Gesture, element, listener);
+    expect(registerListener).to.have.been.calledWithExactly(Gesture, element, listener);
   });
 
 });

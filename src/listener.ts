@@ -1,18 +1,18 @@
-import {GESTURE_STRATEGY_FLAG, PointerData} from './utils';
+import {Options, GESTURE_STRATEGY_FLAG, PointerData} from './utils';
 
 export interface ListenerData {
   pointers: PointerData[];
 }
 
-export class DefaultListener {
+export class Listener<T extends Options> {
   public pointers: number = 1;
   public which: number = 1;
   public prio: number = 100;
   public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
   public selector: string;
 
-  constructor(defaultOptions?: Partial<DefaultListener>, listener?: Partial<DefaultListener>) {
-    Object.assign(this, defaultOptions, listener);
+  constructor(public options: T, listener?: Partial<Listener<T>>) {
+    Object.assign(this, listener);
   }
 
   public down(): number { return 0; }
@@ -24,12 +24,4 @@ export class DefaultListener {
   public update(): number { return 0; }
   public end(): number { return 0; }
   public cancel(): number { return 0; }
-}
-
-// tslint:disable-next-line:max-classes-per-file
-export class Listener<TOptions> {
-  public options: TOptions;
-  constructor(options?: TOptions, listener?: Partial<Listener<TOptions>>) {
-    Object.assign(this, options, listener);
-  }
 }

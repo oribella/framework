@@ -1,8 +1,9 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
-import {Registry} from '../../src/registry';
-import {DefaultGesture} from '../../src/default-gesture';
-import {GESTURE_STRATEGY_FLAG} from '../../src/utils';
+import { Registry } from '../../src/registry';
+import { Gesture } from '../../src/gesture';
+import { GESTURE_STRATEGY_FLAG } from '../../src/utils';
+import { Options } from '../../src/utils';
 // import {Point} from '../../src/point';
 
 describe('Registry', () => {
@@ -23,21 +24,21 @@ describe('Registry', () => {
   });
 
   it('should get registered gestures', () => {
-    class Foo extends DefaultGesture {}
+    class Foo extends Gesture<Options> { }
     // tslint:disable-next-line:max-classes-per-file
-    class Bar extends DefaultGesture {}
+    class Bar extends Gesture<Options> { }
     // tslint:disable-next-line:max-classes-per-file
-    class Baz extends DefaultGesture {}
-    instance.register(Foo);
-    instance.register(Bar);
-    instance.register(Baz);
+    class Baz extends Gesture<Options> { }
+    instance.register(Foo, Options);
+    instance.register(Bar, Options);
+    instance.register(Baz, Options);
     expect(instance.getTypes()).to.deep.equal([Foo, Bar, Baz]);
   });
 
   it('should create gesture', () => {
-    instance.register(DefaultGesture);
-    const gesture = instance.create(DefaultGesture, {} as Element, {});
-    expect(gesture).to.be.an.instanceOf(DefaultGesture);
+    instance.register(Gesture, Options);
+    const gesture = instance.create(Gesture, {} as Element, {});
+    expect(gesture).to.be.an.instanceOf(Gesture);
   });
 
   it('should create gesture from object literal', () => {
@@ -58,9 +59,9 @@ describe('Registry', () => {
   });
 
   it('should create default options', () => {
-    instance.register(DefaultGesture);
+    instance.register(Gesture, Options);
     const listener = {};
-    const gesture = instance.create(DefaultGesture, {} as Element, listener);
+    const gesture = instance.create(Gesture, {} as Element, listener);
     expect(gesture.listener.pointers).to.equal(1);
     expect(gesture.listener.which).to.equal(1);
     expect(gesture.listener.prio).to.equal(100);
@@ -68,9 +69,9 @@ describe('Registry', () => {
   });
 
   it('should create custom options', () => {
-    instance.register(DefaultGesture);
+    instance.register(Gesture, Options);
     const listener = { pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT };
-    const gesture = instance.create(DefaultGesture, {} as Element, listener);
+    const gesture = instance.create(Gesture, {} as Element, listener);
     expect(gesture.listener.pointers).to.equal(100);
     expect(gesture.listener.which).to.equal(3);
     expect(gesture.listener.prio).to.equal(2);
