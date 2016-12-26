@@ -46,7 +46,7 @@ export class Engine {
   public registerListener<T extends typeof Gesture>(
     Type: T,
     element: Element,
-    listener: Partial<Listener<& Options>>): () => void {
+    listener: Partial<Listener<Options>>): () => void {
     const handle = new ListenerHandle(Type, element, listener);
 
     this.handles.push(handle);
@@ -121,7 +121,7 @@ export class Engine {
 
     let gesture;
     while (gesture = gestures.shift()) {
-      const { pointers: configuredPointers, which, strategy } = gesture.listener;
+      const { pointers: configuredPointers, which, strategy } = gesture.listener.options;
       const pointersDelta = this.getPointersDelta(evt, pointers, configuredPointers, which);
       if (pointersDelta.all > 0 && strategy === GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT) {
         this.removeGesture(gesture, this.gestures, this.composedGestures);
@@ -189,12 +189,13 @@ export class Engine {
       return false;
     }
     this.activeFlow = flow;
+    this.activeFlow.continue();
 
     this.gestures = this.gestures
       .concat(this.match(evt.target as Node))
       .sort((g1, g2) => {
-        return g1.listener.prio -
-          g2.listener.prio;
+        return g1.listener.options.prio -
+          g2.listener.options.prio;
       });
 
     if (!this.gestures.length) {

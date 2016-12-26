@@ -14,13 +14,14 @@ export class Registry {
   }
   public create<T extends typeof Gesture>(
     Type: T, element: Element,
-    listener: Partial<Listener<& Options>>) {
+    listener: Partial<Listener<Options>>) {
 
     const val = this.gestures.get(Type);
     if (!val) {
       throw new Error(`The type ${typeof Type} has not been registered`);
     }
     const options = Object.assign(new val.Options(), listener.options);
+    console.log(options); //tslint:disable-line
     return new val.Ctor(options, element, new Listener(options, listener));
   }
 }

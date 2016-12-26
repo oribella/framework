@@ -1,16 +1,11 @@
-import {Options, GESTURE_STRATEGY_FLAG, PointerData} from './utils';
+import {Options, PointerData} from './utils';
 
 export interface ListenerData {
   pointers: PointerData[];
 }
 
 export class Listener<T extends Options> {
-  public pointers: number = 1;
-  public which: number = 1;
-  public prio: number = 100;
-  public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
-  public selector: string;
-
+  public selector: string = '';
   constructor(public options: T, listener?: Partial<Listener<T>>) {
     Object.assign(this, listener);
   }

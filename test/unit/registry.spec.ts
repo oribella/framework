@@ -62,20 +62,24 @@ describe('Registry', () => {
     instance.register(Gesture, Options);
     const listener = {};
     const gesture = instance.create(Gesture, {} as Element, listener);
-    expect(gesture.listener.pointers).to.equal(1);
-    expect(gesture.listener.which).to.equal(1);
-    expect(gesture.listener.prio).to.equal(100);
-    expect(gesture.listener.strategy).to.equal(GESTURE_STRATEGY_FLAG.KEEP);
+    expect(gesture.listener.options.pointers).to.equal(1);
+    expect(gesture.listener.options.which).to.equal(1);
+    expect(gesture.listener.options.prio).to.equal(100);
+    expect(gesture.listener.options.strategy).to.equal(GESTURE_STRATEGY_FLAG.KEEP);
   });
 
   it('should create custom options', () => {
     instance.register(Gesture, Options);
-    const listener = { pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT };
+    const listener = {
+      options: {
+        pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT
+      }
+    };
     const gesture = instance.create(Gesture, {} as Element, listener);
-    expect(gesture.listener.pointers).to.equal(100);
-    expect(gesture.listener.which).to.equal(3);
-    expect(gesture.listener.prio).to.equal(2);
-    expect(gesture.listener.strategy).to.equal(GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT);
+    expect(gesture.listener.options.pointers).to.equal(100);
+    expect(gesture.listener.options.which).to.equal(3);
+    expect(gesture.listener.options.prio).to.equal(2);
+    expect(gesture.listener.options.strategy).to.equal(GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT);
   });
 
 });

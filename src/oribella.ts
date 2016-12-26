@@ -8,7 +8,7 @@ import { Gesture } from './gesture';
 import { Listener } from './listener';
 import { Options } from './utils';
 
-export type ListenerType = { type: string, listener: Partial<Listener<& Options>> };
+export type ListenerType = { type: string, listener: Partial<Listener<Options>> };
 
 export class Oribella {
   private engine: Engine;
@@ -48,7 +48,7 @@ export class Oribella {
       this.deactivateFlows = null;
     }
   }
-  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<Listener<& Options>>) {
+  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<Listener<Options>>) {
     return this.engine.registerListener(Type, element, listener);
   }
 }

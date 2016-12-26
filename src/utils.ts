@@ -75,4 +75,4 @@ export class Options {
   public which: number = 1;
   public prio: number = 100;
   public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
-};
+}

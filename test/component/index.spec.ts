@@ -8,14 +8,15 @@ import { jsdom } from 'jsdom';
 import { Options } from '../../src/utils';
 
 class TapOptions extends Options {
-  public radiusThreshold: 2;
+  public radiusThreshold: number = 2;
 }
+
 // tslint:disable-next-line:max-classes-per-file
 class Tap extends Gesture<TapOptions> {
   public startPoint: Point;
   public start(evt: Event, pointers: PointerData[]): number {
     this.startPoint = pointers[0].page;
-    console.log(pointers); //tslint:disable-line
+    // console.log(pointers); //tslint:disable-line
     const result = this.listener.start(evt, { pointers }, this.target);
     return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
   }
@@ -25,6 +26,9 @@ class Tap extends Gesture<TapOptions> {
       return RETURN_FLAG.REMOVE;
     }
     return RETURN_FLAG.IDLE;
+  }
+  public cancel() {
+    return RETURN_FLAG.map(this.listener.cancel());
   }
 }
 
@@ -84,7 +88,8 @@ describe('Scenario', () => {
     instance.registerGesture(Tap, TapOptions);
     instance.activate();
     listener = {
-      start: sandbox.spy()
+      start: sandbox.spy(),
+      cancel: sandbox.spy()
     };
   });
 
@@ -93,7 +98,7 @@ describe('Scenario', () => {
     sandbox.restore();
   });
 
-  it('call Tap start', () => {
+  it('should call Tap start', () => {
     target = document.querySelector('.target');
     if (!target) {
       throw new Error(`target not found ${html}`);
@@ -104,4 +109,16 @@ describe('Scenario', () => {
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }, target);
   });
+
+  it('should call Tap cancel', () => {
+    target = document.querySelector('.target');
+    if (!target) {
+      throw new Error(`target not found ${html}`);
+    }
+    instance.on(Tap, target, listener);
+    dispatchEvent(document, target);
+    dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
+    expect(listener.cancel).to.have.been.calledWithExactly();
+  });
+
 });

@@ -4,7 +4,7 @@ import { Listener } from '../../src/listener';
 import { Options, GESTURE_STRATEGY_FLAG } from '../../src/utils';
 
 describe('Default listener', () => {
-  let instance: Listener<& Options>;
+  let instance: Listener<Options>;
   let sandbox: Sinon.SinonSandbox;
 
   beforeEach(() => {
@@ -30,6 +30,7 @@ describe('Default listener', () => {
 
   it('should mixin partial', () => {
     const listener = {
+      selector: '',
       down: sandbox.stub().returns(1),
       start: sandbox.stub().returns(2),
       update: sandbox.stub().returns(3),
