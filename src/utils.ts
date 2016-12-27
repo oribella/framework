@@ -28,7 +28,8 @@ export const RETURN_FLAG = {
   START_EMITTED: 1,
   REMOVE: 2,
   REMOVE_OTHERS: 4,
-  REMOVE_AND_CONTINUE: 8
+  REMOVE_AND_CONTINUE: 8,
+  COMPOSE: 16
 };
 
 export function isMouse(supports: Supports, evt: any) {

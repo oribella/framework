@@ -17,6 +17,8 @@ export class Listener<T extends Options> {
   public update(evt: Event, data: ListenerData, target: Element): number;
   public update(): number;
   public update(): number { return 0; }
+  public end(evt: Event, data: ListenerData, target: Element): number;
+  public end(): number;
   public end(): number { return 0; }
   public cancel(): number { return 0; }
 }

@@ -1,0 +1,54 @@
+import { Options, PointerData } from '../../../src/utils';
+import { Listener } from '../../../src/listener';
+import { Gesture } from '../../../src/gesture';
+import { Tap } from './tap';
+import { RETURN_FLAG } from '../../../src/utils';
+
+export class DoubletapOptions extends Options {
+  public timeThreshold: number = 250;
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class Doubletap extends Gesture<DoubletapOptions> {
+  public unregisterTap: () => void;
+  public remove: () => void;
+  public timeoutId: number = 0;
+  public count: number = 0;
+
+  public bind(
+    target: Element,
+    registerListener: <T extends typeof Gesture>(
+      Type: T,
+      element: Element,
+      listener: Partial<Listener<Options>>
+    ) => () => void,
+    remove: () => void) {
+    this.unregisterTap = registerListener(Tap, target, {
+      selector: this.listener.selector,
+      options: this.listener.options,
+      end: this.tapend.bind(this)
+    });
+    this.remove = remove;
+  }
+  public unbind() {
+    if (this.count > 1) {
+      this.unregisterTap();
+      return RETURN_FLAG.REMOVE;
+    }
+    return RETURN_FLAG.COMPOSE;
+  }
+  public tapend(evt: Event, pointers: PointerData[]) {
+    ++this.count;
+    if (this.count === 1) {
+      this.timeoutId = window.setTimeout(() => {
+        this.remove();
+        this.unregisterTap();
+      }, this.listener.options.timeThreshold);
+    } else if (this.count === 2) {
+      window.clearTimeout(this.timeoutId);
+      const result = this.listener.end(evt, { pointers }, this.target);
+      return RETURN_FLAG.map(result);
+    }
+    return RETURN_FLAG.IDLE;
+  }
+}

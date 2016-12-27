@@ -1,54 +1,9 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
-import { PointerData, RETURN_FLAG } from '../../src/utils';
-import { Gesture } from '../../src/gesture';
-import { Point } from '../../src/point';
 import { jsdom } from 'jsdom';
-import { Options } from '../../src/utils';
-
-class TapOptions extends Options {
-  public radiusThreshold: number = 2;
-}
-
-// tslint:disable-next-line:max-classes-per-file
-class Tap extends Gesture<TapOptions> {
-  public startPoint: Point;
-  public start(evt: Event, pointers: PointerData[]): number {
-    this.startPoint = pointers[0].page;
-    // console.log(pointers); //tslint:disable-line
-    const result = this.listener.start(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
-  }
-  public update(_: Event, pointers: PointerData[]): number {
-    const p = pointers[0].page;
-    if (p.distanceTo(this.startPoint) > this.listener.options.radiusThreshold) {
-      return RETURN_FLAG.REMOVE;
-    }
-    return RETURN_FLAG.IDLE;
-  }
-  public cancel() {
-    return RETURN_FLAG.map(this.listener.cancel());
-  }
-}
-
-function dispatchEvent(
-  document: Document,
-  target: Element,
-  type: string = 'mousedown',
-  pageX: number = 100,
-  pageY: number = 100,
-  clientX: number = 100,
-  clientY: number = 100,
-  button: number = 1) {
-  const evt = document.createEvent('MouseEvents');
-  (evt as any).pageX = pageX;
-  (evt as any).pageY = pageY;
-  evt.initMouseEvent(type,
-    true, true, document.defaultView, 0, 0, 0, clientX, clientY, false, false, false, false, button, null);
-  target.dispatchEvent(evt);
-  return evt;
-}
+import { Tap, TapOptions } from './gestures/tap';
+import {dispatchEvent} from './utils';
 
 describe('Scenario', () => {
   let sandbox: Sinon.SinonSandbox;

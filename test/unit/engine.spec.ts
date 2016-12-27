@@ -95,6 +95,13 @@ describe('Engine', () => {
     expect(onStart).to.have.been.calledWithExactly(mouseFlow, evt, pointers);
   });
 
+  it('should call onStop', () => {
+    const onStop = sandbox.stub(instance, 'onStop');
+    instance.registerFlow(mouseFlow);
+    mouseFlow.emit('stop');
+    expect(onStop).to.have.been.calledWithExactly();
+  });
+
   it('should activate', () => {
     instance.registerFlow(mouseFlow);
     instance.registerFlow(touchFlow);
@@ -501,6 +508,34 @@ describe('Engine', () => {
       const pointers = {} as Pointers;
       instance['onCancel'](flow, evt, pointers);
       expect(whileGestures).to.have.been.calledWithExactly(evt, instance['gestures'], pointers, sinon.match.func);
+    });
+
+  });
+
+  describe('On stop', () => {
+
+    it('should reset current gestures and active flow', () => {
+      instance['gestures'] = [new Gesture(new Options(), element, {} as Listener<Options>)];
+      instance['activeFlow'] = mouseFlow;
+      instance['onStop']();
+      expect(instance['gestures']).to.have.length(0);
+      expect(instance['activeFlow']).to.be.null;
+    });
+
+    it('should compose gestures', () => {
+      const g = {} as Gesture<Options>;
+      g.unbind = sandbox.stub().returns(RETURN_FLAG.COMPOSE);
+      instance['gestures'] = [g];
+      instance['onStop']();
+      expect(instance['composedGestures']).to.deep.equal([g]);
+    });
+
+    it('should not compose gestures', () => {
+      const g = {} as Gesture<Options>;
+      g.unbind = sandbox.stub().returns(RETURN_FLAG.REMOVE);
+      instance['gestures'] = [g];
+      instance['onStop']();
+      expect(instance['composedGestures']).to.have.length(0);
     });
 
   });

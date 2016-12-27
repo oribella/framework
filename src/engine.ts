@@ -42,6 +42,7 @@ export class Engine {
     flow.on('update', (e: Event, p: Pointers) => this.onUpdate(flow, e, p));
     flow.on('end', (e: Event, p: Pointers) => this.onEnd(flow, e, p));
     flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
+    flow.on('stop', () => this.onStop());
   }
   public registerListener<T extends typeof Gesture>(
     Type: T,
@@ -223,6 +224,20 @@ export class Engine {
       return;
     }
     this.whileGestures(evt, this.gestures.slice(), pointers, this.cancelStrategy.bind(this));
+  }
+  private onStop() {
+    const gestures = this.gestures.slice();
+    let gesture;
+
+    // Check for composing gestures for example Doubletap
+    while (gesture = gestures.shift()) {
+      if (RETURN_FLAG.COMPOSE === gesture.unbind()) {
+        this.composedGestures.push(gesture);
+      }
+    }
+
+    this.gestures.length = 0;
+    this.activeFlow = null;
   }
   private addGesture<T extends typeof Gesture>(
     Type: T, element: Element, handle: ListenerHandle<T>): Gesture<Options> {

@@ -14,12 +14,16 @@ export class Gesture<T extends Options> {
     Object.assign(this, gesture);
   }
   public bind(
-    element: Element,
-    registerListener: <U extends Options>(element: Element, type: string, listener: Listener<U>) => () => void,
-    remove: <U extends Options>(gesture: Gesture<U>, ...arr: Array<Gesture<U>>) => void
+    target: Element,
+    registerListener: <T extends typeof Gesture>(
+      Type: T,
+      element: Element,
+      listener: Partial<Listener<Options>>
+    ) => () => void,
+    remove: () => void
     ): void;
   public bind() {} // tslint:disable-line:no-empty
-  public unbind() {} // tslint:disable-line:no-empty
+  public unbind(): number { return 0; }
   public start(evt: Event, pointers: PointerData[]): number;
   public start() { return 0; }
   public update(evt: Event, pointers: PointerData[]): number;
