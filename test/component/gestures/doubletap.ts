@@ -26,7 +26,7 @@ export class Doubletap extends Gesture<DoubletapOptions> {
     this.unregisterTap = registerListener(Tap, target, {
       selector: this.listener.selector,
       options: this.listener.options,
-      end: this.tapend.bind(this)
+      end: this.tapEnd.bind(this)
     });
     this.remove = remove;
   }
@@ -37,7 +37,7 @@ export class Doubletap extends Gesture<DoubletapOptions> {
     }
     return RETURN_FLAG.COMPOSE;
   }
-  public tapend(evt: Event, pointers: PointerData[]) {
+  public tapEnd(evt: Event, data: { pointers: PointerData[] }) {
     ++this.count;
     if (this.count === 1) {
       this.timeoutId = window.setTimeout(() => {
@@ -46,7 +46,7 @@ export class Doubletap extends Gesture<DoubletapOptions> {
       }, this.listener.options.timeThreshold);
     } else if (this.count === 2) {
       window.clearTimeout(this.timeoutId);
-      const result = this.listener.end(evt, { pointers }, this.target);
+      const result = this.listener.end(evt, data, this.target);
       return RETURN_FLAG.map(result);
     }
     return RETURN_FLAG.IDLE;

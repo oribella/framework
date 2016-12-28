@@ -9,9 +9,9 @@ export class Gesture<T extends Options> {
   constructor(
     public options: T,
     public target: Element,
-    public listener: Listener<T>,
-    gesture?: Partial<Gesture<T>>) {
-    Object.assign(this, gesture);
+    public listener: Listener<T>
+    /*gesture?: Partial<Gesture<T>>*/) {
+    // Object.assign(this, gesture);
   }
   public bind(
     target: Element,

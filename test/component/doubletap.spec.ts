@@ -3,9 +3,10 @@ import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { Tap, TapOptions } from './gestures/tap';
-import {dispatchEvent} from './utils';
+import { Doubletap, DoubletapOptions } from './gestures/doubletap';
+import { dispatchEvent } from './utils';
 
-describe('Scenario', () => {
+describe('Doubletap', () => {
   let sandbox: Sinon.SinonSandbox;
   let instance: Oribella;
   let msPointerEnabled = false;
@@ -23,29 +24,43 @@ describe('Scenario', () => {
     </html>
   `;
   let document: Document;
-  let target: Element | null;
+  let target: Element;
   let listener: any;
+  let setTimeout: Sinon.SinonStub;
+  let clearTimeout: Sinon.SinonSpy;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     document = jsdom(html);
     const g = global as any;
+    setTimeout = sandbox.stub().returns(1);
+    clearTimeout = sandbox.spy();
+
     g.window = {
       ontouchstart: '',
       document,
       navigator: {
         msPointerEnabled,
         pointerEnabled
-      }
+      },
+      setTimeout,
+      clearTimeout
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
     instance.registerGesture(Tap, TapOptions);
+    instance.registerGesture(Doubletap, DoubletapOptions);
     instance.activate();
     listener = {
       start: sandbox.spy(),
+      end: sandbox.spy(),
       cancel: sandbox.spy()
     };
+
+    target = document.querySelector('.target') as Element;
+    if (!target) {
+      throw new Error(`target not found ${html}`);
+    }
   });
 
   afterEach(() => {
@@ -53,27 +68,24 @@ describe('Scenario', () => {
     sandbox.restore();
   });
 
-  it('should call Tap start', () => {
-    target = document.querySelector('.target');
-    if (!target) {
-      throw new Error(`target not found ${html}`);
-    }
-    instance.on(Tap, target, listener);
-    const evt = dispatchEvent(document, target);
-    expect(listener.start).to.have.been.calledWithExactly(evt, {
+  it('should call listener end', () => {
+    instance.on(Doubletap, target, listener);
+    dispatchEvent(document, target);
+    dispatchEvent(document, target, 'mouseup');
+    dispatchEvent(document, target);
+    const evt = dispatchEvent(document, target, 'mouseup');
+    expect(listener.end).to.have.been.calledWithExactly(evt, {
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }, target);
   });
 
-  it('should call Tap cancel', () => {
-    target = document.querySelector('.target');
-    if (!target) {
-      throw new Error(`target not found ${html}`);
-    }
-    instance.on(Tap, target, listener);
+  it('should reset after time threshold', () => {
+    instance.on(Doubletap, target, listener);
     dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
-    expect(listener.cancel).to.have.been.calledWithExactly();
+    dispatchEvent(document, target, 'mouseup');
+    dispatchEvent(document, target);
+    setTimeout.callArg(0);
+    expect(listener.end).not.to.have.been.calledWithExactly();
   });
 
 });
