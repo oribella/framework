@@ -5,10 +5,10 @@ import { TouchFlow } from './flows/touch';
 import { MouseFlow } from './flows/mouse';
 import { Supports } from './utils';
 import { Gesture } from './gesture';
-import { Listener } from './listener';
+import { Listener, DefaultListener } from './listener';
 import { Options } from './utils';
 
-export type ListenerType = { type: string, listener: Partial<Listener<Options>> };
+export type ListenerType = { type: string, listener: Partial<DefaultListener> };
 
 export class Oribella {
   private engine: Engine;
@@ -36,8 +36,8 @@ export class Oribella {
     }
     this.engine.registerFlow(new MouseFlow(this.element));
   }
-  public registerGesture<T extends typeof Gesture, U extends typeof Options>(Gesture: T, Options: U) {
-    this.engine.registerGesture(Gesture, Options);
+  public registerGesture<T extends typeof Gesture, U extends typeof Options, V extends typeof Listener>(Gesture: T, GestureOptions: U = Options as U, GestureListener: V = Listener as V) {
+    this.engine.registerGesture(Gesture, GestureOptions, GestureListener);
   }
   public activate() {
     this.deactivateFlows = this.engine.activate();
@@ -48,7 +48,7 @@ export class Oribella {
       this.deactivateFlows = null;
     }
   }
-  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<Listener<Options>>) {
+  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) {
     return this.engine.registerListener(Type, element, listener);
   }
 }

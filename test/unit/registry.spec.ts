@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Registry } from '../../src/registry';
 import { Gesture } from '../../src/gesture';
+import { Listener, DefaultListener } from '../../src/listener';
 import { GESTURE_STRATEGY_FLAG } from '../../src/utils';
 import { Options } from '../../src/utils';
 // import {Point} from '../../src/point';
@@ -24,34 +25,42 @@ describe('Registry', () => {
   });
 
   it('should get registered gestures', () => {
-    class Foo extends Gesture<Options> { }
-    // tslint:disable-next-line:max-classes-per-file
-    class Bar extends Gesture<Options> { }
-    // tslint:disable-next-line:max-classes-per-file
-    class Baz extends Gesture<Options> { }
+    class Foo extends Gesture<DefaultListener> { }
+    class Bar extends Gesture<DefaultListener> { }
+    class Baz extends Gesture<DefaultListener> { }
     instance.register(Foo, Options);
     instance.register(Bar, Options);
     instance.register(Baz, Options);
     expect(instance.getTypes()).to.deep.equal([Foo, Bar, Baz]);
   });
 
+  it('should register gesture', () => {
+    const set = sandbox.stub(instance['gestures'], 'set');
+    const MyGesture = {} as typeof Gesture;
+    instance.register(MyGesture);
+    expect(set).to.have.been.calledWithExactly(MyGesture, { Gesture: MyGesture, Options, Listener});
+  });
+
+  it('should register gesture with custom options', () => {
+    const set = sandbox.stub(instance['gestures'], 'set');
+    const MyGesture = {} as typeof Gesture;
+    class MyOptions extends Options {};
+    instance.register(MyGesture, MyOptions);
+    expect(set).to.have.been.calledWithExactly(MyGesture, { Gesture: MyGesture, Options: MyOptions, Listener});
+  });
+
+  it('should register gesture with custom listener', () => {
+    const set = sandbox.stub(instance['gestures'], 'set');
+    const MyGesture = {} as typeof Gesture;
+    class MyListener extends Listener<Options> {};
+    instance.register(MyGesture, undefined, MyListener);
+    expect(set).to.have.been.calledWithExactly(MyGesture, { Gesture: MyGesture, Options, Listener: MyListener});
+  });
+
   it('should create gesture', () => {
     instance.register(Gesture, Options);
     const gesture = instance.create(Gesture, {} as Element, {});
     expect(gesture).to.be.an.instanceOf(Gesture);
-  });
-
-  it('should create gesture from object literal', () => {
-    // const evt = {} as Event;
-    // const pointers = [{ page: new Point(1, 2), client: new Point(3, 4) }];
-    // const g => { options: { pointers: 100 }, start: sandbox.spy() };
-    // class Foo extends g(Object){}
-    // instance.register(Foo);
-    // const gesture = instance.create({} as Element, 'bar', {});
-    // gesture.start(evt, pointers);
-    // expect(gesture).to.be.an.instanceOf(DefaultGesture);
-    // expect(gesture.listener.pointers).to.equal(100);
-    // expect(gesture.start).to.have.been.calledWithExactly(evt, pointers);
   });
 
   it('should throw if type is not registered when trying to create gesture', () => {

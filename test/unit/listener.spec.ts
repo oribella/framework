@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { Listener } from '../../src/listener';
+import { Listener, DefaultListener } from '../../src/listener';
 import { Options, GESTURE_STRATEGY_FLAG } from '../../src/utils';
 
 describe('Default listener', () => {
-  let instance: Listener<Options>;
+  let instance: DefaultListener;
   let sandbox: Sinon.SinonSandbox;
 
   beforeEach(() => {

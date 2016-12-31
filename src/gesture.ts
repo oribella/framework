@@ -1,28 +1,16 @@
-import {PointerData, Options} from './utils';
-import {Listener} from './listener';
+import {PointerData} from './utils';
+import {DefaultListener} from './listener';
 
-// tslint:disable-next-line:max-classes-per-file
-export class Gesture<T extends Options> {
+export interface DefaultGesture extends Gesture<DefaultListener> {}
+
+export class Gesture<T extends DefaultListener> {
   public __POINTERIDS__: string[] = [];
   public startEmitted: boolean = false;
 
-  constructor(
-    public options: T,
-    public target: Element,
-    public listener: Listener<T>
-    /*gesture?: Partial<Gesture<T>>*/) {
-    // Object.assign(this, gesture);
-  }
-  public bind(
-    target: Element,
-    registerListener: <T extends typeof Gesture>(
-      Type: T,
-      element: Element,
-      listener: Partial<Listener<Options>>
-    ) => () => void,
-    remove: () => void
-    ): void;
-  public bind() {} // tslint:disable-line:no-empty
+  constructor(public listener: T, public target: Element) {}
+
+  public bind(target: Element, registerListener: <T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) => () => void, remove: () => void): void;
+  public bind() {}
   public unbind(): number { return 0; }
   public start(evt: Event, pointers: PointerData[]): number;
   public start() { return 0; }

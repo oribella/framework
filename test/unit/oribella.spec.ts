@@ -5,6 +5,7 @@ import { MSPointerFlow } from '../../src/flows/ms-pointer';
 import { PointerFlow } from '../../src/flows/pointer';
 import { TouchFlow } from '../../src/flows/touch';
 import { Gesture } from '../../src/gesture';
+import { Listener } from '../../src/listener';
 import { Options } from '../../src/utils';
 
 describe('Oribella', () => {
@@ -80,8 +81,25 @@ describe('Oribella', () => {
   it('should register gesture', () => {
     const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
     const gesture = {} as typeof Gesture;
-    instance.registerGesture(gesture, Options);
-    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options);
+    instance.registerGesture(gesture);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, Listener);
+  });
+
+  it('should register gesture with custom options', () => {
+    const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
+    const gesture = {} as typeof Gesture;
+    class MyOptions extends Options {};
+    const listener = {} as typeof Listener;
+    instance.registerGesture(gesture, MyOptions, listener);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, MyOptions, listener);
+  });
+
+  it('should register gesture with custom listener', () => {
+    const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
+    const gesture = {} as typeof Gesture;
+    const listener = {} as typeof Listener;
+    instance.registerGesture(gesture, undefined, listener);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, listener);
   });
 
   it('should activate', () => {

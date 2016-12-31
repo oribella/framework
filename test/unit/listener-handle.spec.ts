@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import { ListenerHandle } from '../../src/listener-handle';
-import { Listener } from '../../src/listener';
+import { DefaultListener } from '../../src/listener';
 import { Gesture } from '../../src/gesture';
-import { Options } from '../../src/utils';
 
 describe('Listener handle', () => {
 
@@ -14,7 +13,7 @@ describe('Listener handle', () => {
     const element = {};
     const listener = {};
     // class Foo extends DefaultGesture {};
-    const handle = new ListenerHandle(Gesture, element as Element, listener as Listener<Options>);
+    const handle = new ListenerHandle(Gesture, element as Element, listener as DefaultListener);
     expect(handle.element).to.equal(element);
     expect(handle.Type).to.equal(Gesture);
     expect(handle.listener).to.equal(listener);

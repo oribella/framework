@@ -4,6 +4,8 @@ export interface ListenerData {
   pointers: PointerData[];
 }
 
+export interface DefaultListener extends Listener<Options> {}
+
 export class Listener<T extends Options> {
   public selector: string = '';
   constructor(public options: T, listener?: Partial<Listener<T>>) {

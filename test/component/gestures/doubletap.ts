@@ -1,5 +1,5 @@
 import { Options, PointerData } from '../../../src/utils';
-import { Listener } from '../../../src/listener';
+import { Listener, DefaultListener } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
 import { Tap } from './tap';
 import { RETURN_FLAG } from '../../../src/utils';
@@ -8,8 +8,7 @@ export class DoubletapOptions extends Options {
   public timeThreshold: number = 250;
 }
 
-// tslint:disable-next-line:max-classes-per-file
-export class Doubletap extends Gesture<DoubletapOptions> {
+export class Doubletap extends Gesture<Listener<DoubletapOptions>> {
   public unregisterTap: () => void;
   public remove: () => void;
   public timeoutId: number = 0;
@@ -17,11 +16,7 @@ export class Doubletap extends Gesture<DoubletapOptions> {
 
   public bind(
     target: Element,
-    registerListener: <T extends typeof Gesture>(
-      Type: T,
-      element: Element,
-      listener: Partial<Listener<Options>>
-    ) => () => void,
+    registerListener: <T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) => () => void,
     remove: () => void) {
     this.unregisterTap = registerListener(Tap, target, {
       selector: this.listener.selector,

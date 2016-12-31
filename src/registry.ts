@@ -1,26 +1,27 @@
 import { Gesture } from './gesture';
-import { Listener } from './listener';
+import { Listener, DefaultListener } from './listener';
 import { Options } from './utils';
 
+interface Value {
+  Gesture: typeof Gesture;
+  Listener: typeof Listener;
+  Options: typeof Options;
+}
+
 export class Registry {
-  private gestures: Map<typeof Gesture,
-  { Ctor: typeof Gesture, Options: typeof Options }> =
-  new Map<typeof Gesture, { Ctor: typeof Gesture, Options: typeof Options }>();
-  public register<T extends typeof Gesture, U extends typeof Options>(Ctor: T, Options: U) {
-    this.gestures.set(Ctor, { Ctor, Options });
+  private gestures: Map<typeof Gesture, Value> = new Map<typeof Gesture, Value>();
+  public register<T extends typeof Gesture, U extends typeof Options, V extends typeof Listener>(Gesture: T, GestureOptions: U = Options as U, GestureListener: V = Listener as V) {
+    this.gestures.set(Gesture, { Gesture, Options: GestureOptions, Listener: GestureListener });
   }
   public getTypes() {
     return Array.from(this.gestures.keys());
   }
-  public create<T extends typeof Gesture>(
-    Type: T, element: Element,
-    listener: Partial<Listener<Options>>) {
-
+  public create<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) {
     const val = this.gestures.get(Type);
     if (!val) {
       throw new Error(`The type ${typeof Type} has not been registered`);
     }
     const options = Object.assign(new val.Options(), listener.options);
-    return new val.Ctor(options, element, new Listener(options, listener));
+    return new val.Gesture(new val.Listener(options, listener), element);
   }
 }

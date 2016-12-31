@@ -21,7 +21,6 @@ export class EventEmitter {
   // }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class EventConfig {
   private events: string[];
   constructor(...events: string[]) { this.events = events; }
@@ -37,7 +36,6 @@ export interface FlowConfig {
   cancel: EventConfig;
 }
 
-// tslint:disable-next-line:max-classes-per-file
 export class Flow extends EventEmitter {
   public config: FlowConfig;
   public startListen: Array<() => () => void> = [];
