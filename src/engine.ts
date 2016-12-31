@@ -40,10 +40,7 @@ export class Engine {
     flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
     flow.on('stop', () => this.onStop());
   }
-  public registerListener<T extends typeof Gesture>(
-    Type: T,
-    element: Element,
-    listener: Partial<DefaultListener>): () => void {
+  public registerListener<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>): () => void {
     const handle = new ListenerHandle(Type, element, listener);
 
     this.handles.push(handle);
@@ -61,12 +58,7 @@ export class Engine {
   private canActivateFlow(flow: Flow) {
     return (this.activeFlow === null || this.activeFlow === flow);
   }
-  private getPointersDelta(
-    evt: Event,
-    pointers: Pointers,
-    configuredPointers: number,
-    configuredWhich: number[] | number): PointersDelta {
-
+  private getPointersDelta(evt: Event, pointers: Pointers, configuredPointers: number, configuredWhich: number[] | number): PointersDelta {
     if (isMouse(this.supports, evt) &&
       !isValidMouseButton(evt as MouseEvent, configuredWhich)) {
       return { all: -1, changed: -1 };
@@ -89,10 +81,7 @@ export class Engine {
       }
     }
   }
-  private evaluateStrategyReturnFlag(
-    gestures: DefaultGesture[],
-    gesture: DefaultGesture,
-    flag: number) {
+  private evaluateStrategyReturnFlag(gestures: DefaultGesture[], gesture: DefaultGesture, flag: number) {
     if (flag & RETURN_FLAG.START_EMITTED) {
       gesture.startEmitted = true;
     }
@@ -110,12 +99,7 @@ export class Engine {
       }
     }
   }
-  private whileGestures(
-    evt: Event,
-    gestures: DefaultGesture[],
-    pointers: Pointers,
-    execStrategy: ExecStrategy) {
-
+  private whileGestures(evt: Event, gestures: DefaultGesture[], pointers: Pointers, execStrategy: ExecStrategy) {
     let gesture;
     while (gesture = gestures.shift()) {
       const { pointers: configuredPointers, which, strategy } = gesture.listener.options;
