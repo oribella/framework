@@ -4,14 +4,14 @@ import { Options } from './utils';
 
 interface Value {
   Gesture: typeof Gesture;
-  Listener: typeof Listener;
-  Options: typeof Options;
+  GestureOptions: typeof Options;
+  GestureListener: typeof Listener;
 }
 
 export class Registry {
   private gestures: Map<typeof Gesture, Value> = new Map<typeof Gesture, Value>();
   public register<T extends typeof Gesture, U extends typeof Options, V extends typeof Listener>(Gesture: T, GestureOptions: U = Options as U, GestureListener: V = Listener as V) {
-    this.gestures.set(Gesture, { Gesture, Options: GestureOptions, Listener: GestureListener });
+    this.gestures.set(Gesture, { Gesture, GestureOptions, GestureListener });
   }
   public getTypes() {
     return Array.from(this.gestures.keys());
@@ -21,7 +21,7 @@ export class Registry {
     if (!val) {
       throw new Error(`The type ${typeof Type} has not been registered`);
     }
-    const options = Object.assign(new val.Options(), listener.options);
-    return new val.Gesture(new val.Listener(options, listener), element);
+    const options = Object.assign(new val.GestureOptions(), listener.options);
+    return new val.Gesture(new val.GestureListener(options, listener), element);
   }
 }

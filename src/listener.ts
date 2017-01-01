@@ -13,6 +13,7 @@ export class Listener<T extends Options> {
   }
 
   public down(evt: Event, data: ListenerData, target: Element): number;
+  public down(): number;
   public down(): number { return 0; }
   public start(evt: Event, data: ListenerData, target: Element): number;
   public start(): number;
