@@ -14,7 +14,7 @@ export class Swipe extends Gesture<Listener<SwipeOptions>> {
   public start(evt: Event, pointers: PointerData[]): number {
     this.startPoint = pointers[0].page;
     const result = this.listener.down(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
+    return RETURN_FLAG.map(result);
   }
   public update(evt: Event, pointers: PointerData[]): number {
     const p = pointers[0].page;
