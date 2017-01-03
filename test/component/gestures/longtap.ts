@@ -41,7 +41,6 @@ export class Longtap extends Gesture<LongtapListener> {
     return RETURN_FLAG.IDLE;
   }
   public end(evt: Event, pointers: PointerData[]): number {
-    console.log('hej', this); //tslint:disable-line
     window.clearTimeout(this.timeoutId);
     if (!this.timeEndEmitted) {
       return RETURN_FLAG.REMOVE;
