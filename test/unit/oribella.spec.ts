@@ -5,7 +5,7 @@ import { MSPointerFlow } from '../../src/flows/ms-pointer';
 import { PointerFlow } from '../../src/flows/pointer';
 import { TouchFlow } from '../../src/flows/touch';
 import { Gesture } from '../../src/gesture';
-import { Listener } from '../../src/listener';
+import { Listener, DefaultListener } from '../../src/listener';
 import { Options } from '../../src/utils';
 
 describe('Oribella', () => {
@@ -131,7 +131,7 @@ describe('Oribella', () => {
 
   it('should register listeners', () => {
     const element = {} as Element;
-    const listener = {};
+    const listener = {} as DefaultListener;
     const registerListener = sandbox.stub(instance['engine'], 'registerListener');
     instance.on(Gesture, element, listener);
     expect(registerListener).to.have.been.calledWithExactly(Gesture, element, listener);

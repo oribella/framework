@@ -10,7 +10,14 @@ export class LongtapOptions extends Options {
 }
 
 export class LongtapListener extends Listener<LongtapOptions> {
-  public timeEnd() { }
+  public listener: LongtapListener;
+  constructor(public options: LongtapOptions, listener: LongtapListener) {
+    super(options, listener);
+    this.listener = Object.assign({
+      timeEnd() { }
+    } as LongtapListener, this.listener);
+  }
+  public timeEnd(): number { return RETURN_FLAG.map(this.listener.timeEnd()); }
 }
 
 export class Longtap extends Gesture<LongtapListener> {
@@ -24,8 +31,7 @@ export class Longtap extends Gesture<LongtapListener> {
       this.listener.timeEnd();
       this.timeEndEmitted = true;
     }, this.listener.options.timeThreshold);
-    const result = this.listener.start(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
+    return this.listener.start(evt, { pointers }, this.target);
   }
   public update(_: Event, pointers: PointerData[]): number {
     const p = pointers[0].page;
@@ -35,15 +41,15 @@ export class Longtap extends Gesture<LongtapListener> {
     return RETURN_FLAG.IDLE;
   }
   public end(evt: Event, pointers: PointerData[]): number {
+    console.log('hej', this); //tslint:disable-line
     window.clearTimeout(this.timeoutId);
     if (!this.timeEndEmitted) {
       return RETURN_FLAG.REMOVE;
     }
-    const result = this.listener.end(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result);
+    return this.listener.end(evt, { pointers }, this.target);
   }
   public cancel() {
     window.clearTimeout(this.timeoutId);
-    return RETURN_FLAG.map(this.listener.cancel());
+    return this.listener.cancel();
   }
 }

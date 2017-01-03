@@ -13,8 +13,7 @@ export class Tap extends Gesture<Listener<TapOptions>> {
 
   public start(evt: Event, pointers: PointerData[]): number {
     this.startPoint = pointers[0].page;
-    const result = this.listener.start(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
+    return this.listener.start(evt, { pointers }, this.target);
   }
   public update(_: Event, pointers: PointerData[]): number {
     const p = pointers[0].page;
@@ -24,10 +23,9 @@ export class Tap extends Gesture<Listener<TapOptions>> {
     return RETURN_FLAG.IDLE;
   }
   public end(evt: Event, pointers: PointerData[]): number {
-    const result = this.listener.end(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result);
+    return this.listener.end(evt, { pointers }, this.target);
   }
   public cancel() {
-    return RETURN_FLAG.map(this.listener.cancel());
+    return this.listener.cancel();
   }
 }

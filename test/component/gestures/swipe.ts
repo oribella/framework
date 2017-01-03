@@ -13,28 +13,23 @@ export class Swipe extends Gesture<Listener<SwipeOptions>> {
 
   public start(evt: Event, pointers: PointerData[]): number {
     this.startPoint = pointers[0].page;
-    const result = this.listener.down(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result);
+    return this.listener.down(evt, { pointers }, this.target);
   }
   public update(evt: Event, pointers: PointerData[]): number {
     const p = pointers[0].page;
     if (p.distanceTo(this.startPoint) < this.listener.options.radiusThreshold) {
       return RETURN_FLAG.IDLE;
     }
-    let result;
     if (!this.startEmitted) {
-      result = this.listener.start(evt, { pointers }, this.target);
-      return RETURN_FLAG.map(result) + RETURN_FLAG.START_EMITTED;
+      return this.listener.start(evt, { pointers }, this.target);
     } else {
-      result = this.listener.update(evt, { pointers }, this.target);
-      return RETURN_FLAG.map(result);
+      return this.listener.update(evt, { pointers }, this.target);
     }
   }
   public end(evt: Event, pointers: PointerData[]): number {
-    const result = this.listener.end(evt, { pointers }, this.target);
-    return RETURN_FLAG.map(result);
+    return this.listener.end(evt, { pointers }, this.target);
   }
   public cancel() {
-    return RETURN_FLAG.map(this.listener.cancel());
+    return this.listener.cancel();
   }
 }

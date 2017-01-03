@@ -40,7 +40,7 @@ export class Engine {
     flow.on('cancel', (e: Event, p: Pointers) => this.onCancel(flow, e, p));
     flow.on('stop', () => this.onStop());
   }
-  public registerListener<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>): () => void {
+  public registerListener<T extends typeof Gesture>(Type: T, element: Element, listener: DefaultListener): () => void {
     const handle = new ListenerHandle(Type, element, listener);
 
     this.handles.push(handle);

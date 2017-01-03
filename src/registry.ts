@@ -16,7 +16,7 @@ export class Registry {
   public getTypes() {
     return Array.from(this.gestures.keys());
   }
-  public create<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) {
+  public create<T extends typeof Gesture>(Type: T, element: Element, listener: DefaultListener) {
     const val = this.gestures.get(Type);
     if (!val) {
       throw new Error(`The type ${typeof Type} has not been registered`);

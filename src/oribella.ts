@@ -48,7 +48,7 @@ export class Oribella {
       this.deactivateFlows = null;
     }
   }
-  public on<T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) {
+  public on<T extends typeof Gesture>(Type: T, element: Element, listener: DefaultListener) {
     return this.engine.registerListener(Type, element, listener);
   }
 }

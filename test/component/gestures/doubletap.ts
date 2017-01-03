@@ -41,8 +41,7 @@ export class Doubletap extends Gesture<Listener<DoubletapOptions>> {
       }, this.listener.options.timeThreshold);
     } else if (this.count === 2) {
       window.clearTimeout(this.timeoutId);
-      const result = this.listener.end(evt, data, this.target);
-      return RETURN_FLAG.map(result);
+      return this.listener.end(evt, data, this.target);
     }
     return RETURN_FLAG.IDLE;
   }

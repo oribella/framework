@@ -59,7 +59,7 @@ describe('Registry', () => {
 
   it('should create gesture', () => {
     instance.register(Gesture, Options);
-    const gesture = instance.create(Gesture, {} as Element, {});
+    const gesture = instance.create(Gesture, {} as Element, {} as DefaultListener);
     expect(gesture).to.be.an.instanceOf(Gesture);
   });
 
@@ -69,7 +69,7 @@ describe('Registry', () => {
 
   it('should create default options', () => {
     instance.register(Gesture, Options);
-    const listener = {};
+    const listener = {} as DefaultListener;
     const gesture = instance.create(Gesture, {} as Element, listener);
     expect(gesture.listener.options.pointers).to.equal(1);
     expect(gesture.listener.options.which).to.equal(1);
@@ -83,7 +83,7 @@ describe('Registry', () => {
       options: {
         pointers: 100, which: 3, prio: 2, strategy: GESTURE_STRATEGY_FLAG.REMOVE_IF_POINTERS_GT
       }
-    };
+    } as DefaultListener;
     const gesture = instance.create(Gesture, {} as Element, listener);
     expect(gesture.listener.options.pointers).to.equal(100);
     expect(gesture.listener.options.which).to.equal(3);
