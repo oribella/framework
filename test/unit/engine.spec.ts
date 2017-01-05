@@ -53,21 +53,21 @@ describe('Engine', () => {
 
   it('should register a gesture with custom options', () => {
     registry.register = sandbox.spy();
-    class MyOptions extends Options {};
+    class MyOptions extends Options { };
     instance.registerGesture(Gesture, MyOptions);
     expect(registry.register).to.have.been.calledWithExactly(Gesture, MyOptions, Listener, Data);
   });
 
   it('should register a gesture with custom listener', () => {
     registry.register = sandbox.spy();
-    class MyListener extends DefaultListener {};
+    class MyListener extends DefaultListener { };
     instance.registerGesture(Gesture, undefined, MyListener);
     expect(registry.register).to.have.been.calledWithExactly(Gesture, Options, MyListener, Data);
   });
 
   it('should register a gesture with custom data', () => {
     registry.register = sandbox.spy();
-    class MyData extends Data {};
+    class MyData extends Data { };
     instance.registerGesture(Gesture, undefined, undefined, MyData);
     expect(registry.register).to.have.been.calledWithExactly(Gesture, Options, Listener, MyData);
   });
@@ -340,7 +340,7 @@ describe('Engine', () => {
       } as Pointers;
       const state = { gesture, pointers, pointersDelta: { all: 0 } } as ExecStrategyState;
       instance['startStrategy'](state);
-      expect(gesture.start).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer]);
+      expect(gesture.start).to.have.been.calledWithExactly(state.evt, { pointers: [fooPointer, barPointer, bazPointer] });
     });
 
   });
@@ -372,7 +372,7 @@ describe('Engine', () => {
       instance['addPointerId'](gesture, 'bar');
       instance['addPointerId'](gesture, 'baz');
       instance['updateStrategy'](state);
-      expect(gesture.update).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer]);
+      expect(gesture.update).to.have.been.calledWithExactly(state.evt, { pointers: [fooPointer, barPointer, bazPointer] });
     });
 
   });
@@ -413,7 +413,7 @@ describe('Engine', () => {
       instance['addPointerId'](gesture, 'bar');
       instance['addPointerId'](gesture, 'baz');
       instance['endStrategy'](state);
-      expect(gesture.end).to.have.been.calledWithExactly(state.evt, [fooPointer, barPointer, bazPointer]);
+      expect(gesture.end).to.have.been.calledWithExactly(state.evt, { pointers: [fooPointer, barPointer, bazPointer] });
     });
 
   });

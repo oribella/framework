@@ -1,5 +1,5 @@
 export class Point {
-  constructor(private x: number, private y: number) {}
+  constructor(public x: number, public y: number) {}
   public distanceTo(p: Point) {
     const xdist = this.x - p.x;
     const ydist = this.y - p.y;

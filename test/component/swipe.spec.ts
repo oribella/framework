@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
-import { Swipe, SwipeOptions } from './gestures/swipe';
+import { Swipe, SwipeOptions, SwipeData } from './gestures/swipe';
 import { dispatchEvent } from './utils';
 
 describe('Swipe', () => {
@@ -40,7 +40,7 @@ describe('Swipe', () => {
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
-    instance.registerGesture(Swipe, SwipeOptions);
+    instance.registerGesture(Swipe, SwipeOptions, undefined, SwipeData);
     instance.activate();
     listener = {
       down: sandbox.spy(),
@@ -64,18 +64,18 @@ describe('Swipe', () => {
   it('should call listener down', () => {
     instance.on(Swipe, target, listener);
     const evt = dispatchEvent(document, target);
-    expect(listener.down).to.have.been.calledWithExactly(evt, {
+    expect(listener.down).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener start', () => {
     instance.on(Swipe, target, listener);
     dispatchEvent(document, target);
     const evt = dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
-    expect(listener.start).to.have.been.calledWithExactly(evt, {
+    expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 200, y: 200 }, page: { x: 200, y: 200 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener update', () => {
@@ -83,9 +83,9 @@ describe('Swipe', () => {
     dispatchEvent(document, target);
     dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
     const evt = dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
-    expect(listener.update).to.have.been.calledWithExactly(evt, {
+    expect(listener.update).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 300, y: 300 }, page: { x: 300, y: 300 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener end', () => {
@@ -94,9 +94,9 @@ describe('Swipe', () => {
     dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
     dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
     const evt = dispatchEvent(document, target, 'mouseup', 350, 350, 350, 350);
-    expect(listener.end).to.have.been.calledWithExactly(evt, {
+    expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 350, y: 350 }, page: { x: 350, y: 350 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener cancel', () => {
