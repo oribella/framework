@@ -1,3 +1,4 @@
+import { Oribella } from '../../../src/oribella';
 import { Options, Data } from '../../../src/utils';
 import { Listener, DefaultListener } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
@@ -60,4 +61,8 @@ export class LongtapSwipe extends Gesture<Data, Listener<LongtapSwipeOptions, Da
   public swipeCancel() {
     return this.listener.cancel();
   }
+}
+
+export function register(oribella: Oribella) {
+  oribella.registerGesture(LongtapSwipe, LongtapSwipeOptions);
 }

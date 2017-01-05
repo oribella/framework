@@ -1,3 +1,4 @@
+import { Oribella } from '../../../src/oribella';
 import { Options, Data } from '../../../src/utils';
 import { RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
@@ -51,4 +52,8 @@ export class Longtap extends Gesture<Data, LongtapListener> {
     window.clearTimeout(this.timeoutId);
     return this.listener.cancel();
   }
+}
+
+export function register(oribella: Oribella) {
+  oribella.registerGesture(Longtap, LongtapOptions, LongtapListener);
 }

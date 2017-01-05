@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
-import { Tap, TapOptions } from './gestures/tap';
+import { Tap, register as registerTap } from './gestures/tap';
 import { dispatchEvent } from './utils';
 
 describe('Tap', () => {
@@ -40,7 +40,7 @@ describe('Tap', () => {
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
-    instance.registerGesture(Tap, TapOptions);
+    registerTap(instance);
     instance.activate();
     listener = {
       start: sandbox.spy(),

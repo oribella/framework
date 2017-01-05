@@ -1,8 +1,8 @@
-import { Options, PointerData } from '../../../src/utils';
+import { Oribella } from '../../../src/oribella';
+import { Options, Data, RETURN_FLAG } from '../../../src/utils';
 import { Listener, DefaultListener } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
 import { Tap } from './tap';
-import { RETURN_FLAG, Data } from '../../../src/utils';
 
 export class DoubletapOptions extends Options {
   public timeThreshold: number = 250;
@@ -29,7 +29,7 @@ export class Doubletap extends Gesture<Data, Listener<DoubletapOptions, Data>> {
     }
     return RETURN_FLAG.COMPOSE;
   }
-  public tapEnd(evt: Event, data: { pointers: PointerData[] }) {
+  public tapEnd(evt: Event, data: Data) {
     ++this.count;
     if (this.count === 1) {
       this.timeoutId = window.setTimeout(() => {
@@ -42,4 +42,8 @@ export class Doubletap extends Gesture<Data, Listener<DoubletapOptions, Data>> {
     }
     return RETURN_FLAG.IDLE;
   }
+}
+
+export function register(oribella: Oribella) {
+  oribella.registerGesture(Doubletap, DoubletapOptions);
 }

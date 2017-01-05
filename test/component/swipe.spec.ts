@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
-import { Swipe, SwipeOptions, SwipeData } from './gestures/swipe';
+import { Swipe, register as registerSwipe } from './gestures/swipe';
 import { dispatchEvent } from './utils';
 
 describe('Swipe', () => {
@@ -40,7 +40,7 @@ describe('Swipe', () => {
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
-    instance.registerGesture(Swipe, SwipeOptions, undefined, SwipeData);
+    registerSwipe(instance);
     instance.activate();
     listener = {
       down: sandbox.spy(),

@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
-import { Longtap, LongtapOptions, LongtapListener } from './gestures/longtap';
+import { register as registerLongtap } from './gestures/longtap';
 import { register as registerSwipe } from './gestures/swipe';
-import { LongtapSwipe, LongtapSwipeOptions } from './gestures/longtap-swipe';
+import { LongtapSwipe, register as registerLongtapSwipe } from './gestures/longtap-swipe';
 import { dispatchEvent } from './utils';
 
 describe('LongtapSwipe', () => {
@@ -49,9 +49,9 @@ describe('LongtapSwipe', () => {
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
-    instance.registerGesture(Longtap, LongtapOptions, LongtapListener);
+    registerLongtap(instance);
     registerSwipe(instance);
-    instance.registerGesture(LongtapSwipe, LongtapSwipeOptions);
+    registerLongtapSwipe(instance);
     instance.activate();
     listener = {
       down: sandbox.spy(),

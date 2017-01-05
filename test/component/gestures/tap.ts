@@ -1,3 +1,4 @@
+import { Oribella } from '../../../src/oribella';
 import { Options, Data } from '../../../src/utils';
 import { RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
@@ -28,4 +29,8 @@ export class Tap extends Gesture<Data, Listener<TapOptions, Data>> {
   public cancel() {
     return this.listener.cancel();
   }
+}
+
+export function register(oribella: Oribella) {
+  oribella.registerGesture(Tap, TapOptions);
 }

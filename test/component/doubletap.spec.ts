@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
-import { Tap, TapOptions } from './gestures/tap';
-import { Doubletap, DoubletapOptions } from './gestures/doubletap';
+import { register as registerTap } from './gestures/tap';
+import { Doubletap, register as registerDoubletap } from './gestures/doubletap';
 import { dispatchEvent } from './utils';
 
 describe('Doubletap', () => {
@@ -48,8 +48,8 @@ describe('Doubletap', () => {
     };
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
-    instance.registerGesture(Tap, TapOptions);
-    instance.registerGesture(Doubletap, DoubletapOptions);
+    registerTap(instance);
+    registerDoubletap(instance);
     instance.activate();
     listener = {
       start: sandbox.spy(),
