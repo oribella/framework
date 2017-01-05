@@ -24,7 +24,7 @@ export class Listener<T extends Options, U extends Data> {
     }
     return result;
   }
-  public update(evt: Event, data: U, target: Element): number { return RETURN_FLAG.map(this.listener.update(evt, data, target)); } //tslint:disable-line
+  public update(evt: Event, data: U, target: Element): number { return RETURN_FLAG.map(this.listener.update(evt, data, target)); }
   public end(evt: Event, data: U, target: Element): number { return RETURN_FLAG.map(this.listener.end(evt, data, target)); }
   public cancel(): number { return RETURN_FLAG.map(this.listener.cancel()); }
 }

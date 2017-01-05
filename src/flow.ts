@@ -88,8 +88,7 @@ export class Flow extends EventEmitter {
   public activate(): Array<() => void> {
     return this.bind(this.config).startListen.map((f) => f());
   }
-  public setPointers(evt: Event) {
-    evt; // tslint:disable-line:no-unused-expression
+  public setPointers(_EVT: Event) {
   }
   public start(evt: Event) {
     this.emit('start', evt, this.pointers);

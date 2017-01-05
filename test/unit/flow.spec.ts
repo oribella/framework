@@ -188,8 +188,8 @@ describe('Flow', () => {
   });
 
   it('should continue', () => {
-    const spy1 = sandbox.stub().returns(() => {}); // tslint:disable-line
-    const spy2 = sandbox.stub().returns(() => {}); // tslint:disable-line
+    const spy1 = sandbox.stub().returns(() => {});
+    const spy2 = sandbox.stub().returns(() => {});
     instance.continueListen = [spy1, spy2];
     instance.continue();
     expect(spy1).to.have.been.calledOnce;
