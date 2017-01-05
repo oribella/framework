@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { Longtap, LongtapOptions, LongtapListener } from './gestures/longtap';
-import { Swipe, SwipeOptions } from './gestures/swipe';
+import { register as registerSwipe } from './gestures/swipe';
 import { LongtapSwipe, LongtapSwipeOptions } from './gestures/longtap-swipe';
 import { dispatchEvent } from './utils';
 
@@ -50,7 +50,7 @@ describe('LongtapSwipe', () => {
     instance = new Oribella();
     instance.registerDefaultFlowStrategy();
     instance.registerGesture(Longtap, LongtapOptions, LongtapListener);
-    instance.registerGesture(Swipe, SwipeOptions);
+    registerSwipe(instance);
     instance.registerGesture(LongtapSwipe, LongtapSwipeOptions);
     instance.activate();
     listener = {
@@ -75,9 +75,9 @@ describe('LongtapSwipe', () => {
   it('should call listener down', () => {
     instance.on(LongtapSwipe, target, listener);
     const evt = dispatchEvent(document, target);
-    expect(listener.down).to.have.been.calledWithExactly(evt, {
+    expect(listener.down).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
-    }, target);
+    }), target);
   });
 
   it('should remove gesture if not longtap time threshold is met', () => {
@@ -92,9 +92,9 @@ describe('LongtapSwipe', () => {
     dispatchEvent(document, target);
     setTimeout.callArg(0);
     const evt = dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
-    expect(listener.start).to.have.been.calledWithExactly(evt, {
+    expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 250, y: 250 }, page: { x: 250, y: 250 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener update', () => {
@@ -103,9 +103,9 @@ describe('LongtapSwipe', () => {
     setTimeout.callArg(0);
     dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
     const evt = dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
-    expect(listener.update).to.have.been.calledWithExactly(evt, {
+    expect(listener.update).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 300, y: 300 }, page: { x: 300, y: 300 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener end', () => {
@@ -115,9 +115,9 @@ describe('LongtapSwipe', () => {
     dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
     dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
     const evt = dispatchEvent(document, target, 'mouseup', 350, 350, 350, 350);
-    expect(listener.end).to.have.been.calledWithExactly(evt, {
+    expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 350, y: 350 }, page: { x: 350, y: 350 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener cancel', () => {

@@ -1,3 +1,4 @@
+import { Oribella } from '../../../src/oribella';
 import { Options, Data } from '../../../src/utils';
 import { RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
@@ -30,8 +31,7 @@ export class Swipe extends Gesture<SwipeData, Listener<SwipeOptions, SwipeData>>
 
   public start(evt: Event, data: SwipeData): number {
     this.startPoint = data.pointers[0].page;
-    console.log(data.add); //tslint:disable-line
-    // data.add(this.startPoint, evt.timeStamp);
+    data.add(this.startPoint, evt.timeStamp);
     return this.listener.down(evt, data, this.target);
   }
   public update(evt: Event, data: SwipeData): number {
@@ -51,4 +51,8 @@ export class Swipe extends Gesture<SwipeData, Listener<SwipeOptions, SwipeData>>
   public cancel() {
     return this.listener.cancel();
   }
+}
+
+export function register(oribella: Oribella) {
+  oribella.registerGesture(Swipe, SwipeOptions, undefined, SwipeData);
 }
