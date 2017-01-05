@@ -278,7 +278,7 @@ describe('Engine', () => {
     instance['addPointerId'](gesture, 1);
     instance['addPointerId'](gesture, 2);
     instance['addPointerId'](gesture, 3);
-    expect(instance['removePointerIds'](gesture, [1, 2])).to.deep.equal([1, 2]);
+    expect(instance['removePointerIds'](gesture, [1, 2, 6])).to.deep.equal([1, 2]);
     expect(instance['getPointerIds'](gesture)).to.deep.equal([3]);
   });
 
