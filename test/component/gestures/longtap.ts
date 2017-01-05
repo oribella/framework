@@ -1,7 +1,7 @@
-import { Options } from '../../../src/utils';
+import { Options, Data } from '../../../src/utils';
 import { PointerData, RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
-import { Listener, Data } from '../../../src/listener';
+import { Listener } from '../../../src/listener';
 import { Point } from '../../../src/point';
 
 export class LongtapOptions extends Options {
@@ -20,7 +20,7 @@ export class LongtapListener extends Listener<LongtapOptions, Data> {
   public timeEnd(): number { return RETURN_FLAG.map(this.listener.timeEnd()); }
 }
 
-export class Longtap extends Gesture<LongtapListener> {
+export class Longtap extends Gesture<Data, LongtapListener> {
   public startPoint: Point;
   public timeoutId: number = 0;
   public timeEndEmitted: boolean = false;

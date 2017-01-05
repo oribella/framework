@@ -1,14 +1,14 @@
 import { Options, PointerData } from '../../../src/utils';
-import { Listener, DefaultListener, Data } from '../../../src/listener';
+import { Listener, DefaultListener } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
 import { Tap } from './tap';
-import { RETURN_FLAG } from '../../../src/utils';
+import { RETURN_FLAG, Data } from '../../../src/utils';
 
 export class DoubletapOptions extends Options {
   public timeThreshold: number = 250;
 }
 
-export class Doubletap extends Gesture<Listener<DoubletapOptions, Data>> {
+export class Doubletap extends Gesture<Data, Listener<DoubletapOptions, Data>> {
   public unregisterTap: () => void;
   public remove: () => void;
   public timeoutId: number = 0;

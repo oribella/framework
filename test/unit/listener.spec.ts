@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { Listener, DefaultListener, Data } from '../../src/listener';
-import { Options, GESTURE_STRATEGY_FLAG, RETURN_FLAG } from '../../src/utils';
+import { Listener, DefaultListener } from '../../src/listener';
+import { Options, Data, GESTURE_STRATEGY_FLAG, RETURN_FLAG } from '../../src/utils';
 
 describe('Default listener', () => {
   let instance: DefaultListener;

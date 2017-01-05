@@ -1,5 +1,5 @@
-import { Options } from '../../../src/utils';
-import { Listener, DefaultListener, Data } from '../../../src/listener';
+import { Options, Data } from '../../../src/utils';
+import { Listener, DefaultListener } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
 import { Longtap, LongtapListener, LongtapOptions } from './longtap';
 import { Swipe } from './swipe';
@@ -9,7 +9,7 @@ export class LongtapSwipeOptions extends Options {
   public timeThreshold: number = 500;
 }
 
-export class LongtapSwipe extends Gesture<Listener<LongtapSwipeOptions, Data>> {
+export class LongtapSwipe extends Gesture<Data, Listener<LongtapSwipeOptions, Data>> {
   public unregisterLongtap: () => void;
   public unregisterSwipe: () => void;
   public remove: () => void;

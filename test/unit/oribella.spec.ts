@@ -6,7 +6,7 @@ import { PointerFlow } from '../../src/flows/pointer';
 import { TouchFlow } from '../../src/flows/touch';
 import { Gesture } from '../../src/gesture';
 import { Listener, DefaultListener } from '../../src/listener';
-import { Options } from '../../src/utils';
+import { Options, Data } from '../../src/utils';
 
 describe('Oribella', () => {
   let instance: Oribella;
@@ -82,7 +82,7 @@ describe('Oribella', () => {
     const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
     const gesture = {} as typeof Gesture;
     instance.registerGesture(gesture);
-    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, Listener);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, Listener, Data);
   });
 
   it('should register gesture with custom options', () => {
@@ -91,7 +91,7 @@ describe('Oribella', () => {
     class MyOptions extends Options {};
     const listener = {} as typeof Listener;
     instance.registerGesture(gesture, MyOptions, listener);
-    expect(registerGesture).to.have.been.calledWithExactly(gesture, MyOptions, listener);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, MyOptions, listener, Data);
   });
 
   it('should register gesture with custom listener', () => {
@@ -99,7 +99,15 @@ describe('Oribella', () => {
     const gesture = {} as typeof Gesture;
     const listener = {} as typeof Listener;
     instance.registerGesture(gesture, undefined, listener);
-    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, listener);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, listener, Data);
+  });
+
+  it('should register gesture with custom data', () => {
+    const registerGesture = sandbox.stub(instance['engine'], 'registerGesture');
+    const gesture = {} as typeof Gesture;
+    class MyData extends Data {}
+    instance.registerGesture(gesture, undefined, undefined, MyData);
+    expect(registerGesture).to.have.been.calledWithExactly(gesture, Options, Listener, MyData);
   });
 
   it('should activate', () => {

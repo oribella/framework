@@ -2,26 +2,25 @@ import { Registry } from './registry';
 import { Gesture, DefaultGesture } from './gesture';
 import { Listener, DefaultListener } from './listener';
 import { Flow } from './flow';
-import { Pointers, PointerDataMap, PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG, Options } from './utils';
+import { Options, Data, Pointers, PointerDataMap, PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG, Supports, matchesSelector } from './utils';
 import { ListenerHandle } from './listener-handle';
-import { Supports, matchesSelector } from './utils';
 
 export type PointersDelta = { all: number, changed: number };
-export interface ExecStrategyState<T extends DefaultListener> {
+export interface ExecStrategyState {
   evt: Event;
-  gestures: Array<Gesture<T>>;
-  gesture: Gesture<T>;
+  gestures: DefaultGesture[];
+  gesture: DefaultGesture;
   pointers: Pointers;
   pointersDelta: PointersDelta;
 }
-export type ExecStrategy = <T extends DefaultListener>(state: ExecStrategyState<T>) => number;
+export type ExecStrategy = (state: ExecStrategyState) => number;
 
 export class Engine {
   private flows: Flow[] = [];
   private activeFlow: Flow | null = null;
   private handles: Array<ListenerHandle<& typeof Gesture>> = [];
   private gestures: DefaultGesture[] = [];
-  private composedGestures: Array<Gesture<DefaultListener>> = [];
+  private composedGestures: DefaultGesture[] = [];
 
   constructor(
     private element: Element | Document,
@@ -29,8 +28,8 @@ export class Engine {
     private registry: Registry = new Registry(),
   ) { }
 
-  public registerGesture<T extends typeof Gesture, U extends typeof Options, V extends typeof Listener>(Gesture: T, GestureOptions: U = Options as U, GestureListener: V = Listener as V) {
-    this.registry.register(Gesture, GestureOptions, GestureListener);
+  public registerGesture<G extends typeof Gesture, O extends typeof Options, L extends typeof Listener, D extends typeof Data>(Gesture: G, GestureOptions: O = Options as O, GestureListener: L = Listener as L, GestureData: D = Data as D) {
+    this.registry.register(Gesture, GestureOptions, GestureListener, GestureData);
   }
   public registerFlow(flow: Flow) {
     this.flows.push(flow);
@@ -68,7 +67,7 @@ export class Engine {
     return { all, changed };
   }
   private removeGesture(
-    gesture: Gesture<DefaultListener>, ...arr: DefaultGesture[][]) {
+    gesture: DefaultGesture, ...arr: DefaultGesture[][]) {
     if (gesture.startEmitted) {
       gesture.cancel();
     }
@@ -138,7 +137,7 @@ export class Engine {
     const pointerIds = this.getPointerIds(gesture);
     return !!pointerIds.filter((pointerId) => map.has(pointerId)).length;
   }
-  private startStrategy(state: ExecStrategyState<DefaultListener>): number {
+  private startStrategy(state: ExecStrategyState): number {
     if (state.pointersDelta.all !== 0) {
       return RETURN_FLAG.IDLE;
     }
@@ -146,13 +145,13 @@ export class Engine {
     state.pointers.all.forEach((_, pointerId) => this.addPointerId(state.gesture, pointerId));
     return state.gesture.start(state.evt, this.getPointers(state.pointers.all, this.getPointerIds(state.gesture)));
   }
-  private updateStrategy(state: ExecStrategyState<DefaultListener>): number {
+  private updateStrategy(state: ExecStrategyState): number {
     if (!this.hasPointer(state.gesture, state.pointers.changed)) {
       return RETURN_FLAG.IDLE;
     }
     return state.gesture.update(state.evt, this.getPointers(state.pointers.all, this.getPointerIds(state.gesture)));
   }
-  private endStrategy(state: ExecStrategyState<DefaultListener>): number {
+  private endStrategy(state: ExecStrategyState): number {
     if (!state.gesture.startEmitted) {
       return RETURN_FLAG.REMOVE;
     }
@@ -162,7 +161,7 @@ export class Engine {
     }
     return state.gesture.end(state.evt, this.getPointers(state.pointers.changed, removedPointerIds));
   }
-  private cancelStrategy(state: ExecStrategyState<DefaultListener>): number {
+  private cancelStrategy(state: ExecStrategyState): number {
     return state.gesture.cancel();
   }
   private onStart(flow: Flow, evt: Event, pointers: Pointers): boolean {

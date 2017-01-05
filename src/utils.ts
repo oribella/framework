@@ -77,3 +77,7 @@ export class Options {
   public prio: number = 100;
   public strategy: number = GESTURE_STRATEGY_FLAG.KEEP;
 }
+
+export class Data {
+  public pointers: PointerData[];
+}
