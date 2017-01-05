@@ -52,7 +52,7 @@ describe('Registry', () => {
   it('should register gesture with custom listener', () => {
     const set = sandbox.stub(instance['gestures'], 'set');
     const MyGesture = {} as typeof Gesture;
-    class MyListener extends Listener<Options> {};
+    class MyListener extends DefaultListener {};
     instance.register(MyGesture, undefined, MyListener);
     expect(set).to.have.been.calledWithExactly(MyGesture, { Gesture: MyGesture, GestureOptions: Options, GestureListener: MyListener});
   });

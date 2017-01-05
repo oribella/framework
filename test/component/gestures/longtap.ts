@@ -1,7 +1,7 @@
 import { Options } from '../../../src/utils';
 import { PointerData, RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
-import { Listener } from '../../../src/listener';
+import { Listener, Data } from '../../../src/listener';
 import { Point } from '../../../src/point';
 
 export class LongtapOptions extends Options {
@@ -9,7 +9,7 @@ export class LongtapOptions extends Options {
   public timeThreshold: number = 500;
 }
 
-export class LongtapListener extends Listener<LongtapOptions> {
+export class LongtapListener extends Listener<LongtapOptions, Data> {
   public listener: LongtapListener;
   constructor(public options: LongtapOptions, listener: LongtapListener) {
     super(options, listener);

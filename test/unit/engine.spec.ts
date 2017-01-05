@@ -60,7 +60,7 @@ describe('Engine', () => {
 
   it('should register a gesture with custom listener', () => {
     registry.register = sandbox.spy();
-    class MyListener extends Listener<Options> {};
+    class MyListener extends DefaultListener {};
     instance.registerGesture(Gesture, undefined, MyListener);
     expect(registry.register).to.have.been.calledWithExactly(Gesture, Options, MyListener);
   });

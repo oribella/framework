@@ -1,14 +1,14 @@
 import { Options } from '../../../src/utils';
 import { PointerData, RETURN_FLAG } from '../../../src/utils';
 import { Gesture } from '../../../src/gesture';
-import { Listener } from '../../../src/listener';
+import { Listener, Data } from '../../../src/listener';
 import { Point } from '../../../src/point';
 
 export class SwipeOptions extends Options {
   public radiusThreshold: number = 2;
 }
 
-export class Swipe extends Gesture<Listener<SwipeOptions>> {
+export class Swipe extends Gesture<Listener<SwipeOptions, Data>> {
   public startPoint: Point;
 
   public start(evt: Event, pointers: PointerData[]): number {

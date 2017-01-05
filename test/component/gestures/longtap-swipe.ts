@@ -1,5 +1,5 @@
 import { Options } from '../../../src/utils';
-import { Listener, DefaultListener, ListenerData } from '../../../src/listener';
+import { Listener, DefaultListener, Data } from '../../../src/listener';
 import { Gesture } from '../../../src/gesture';
 import { Longtap, LongtapListener, LongtapOptions } from './longtap';
 import { Swipe } from './swipe';
@@ -9,7 +9,7 @@ export class LongtapSwipeOptions extends Options {
   public timeThreshold: number = 500;
 }
 
-export class LongtapSwipe extends Gesture<Listener<LongtapSwipeOptions>> {
+export class LongtapSwipe extends Gesture<Listener<LongtapSwipeOptions, Data>> {
   public unregisterLongtap: () => void;
   public unregisterSwipe: () => void;
   public remove: () => void;
@@ -25,10 +25,10 @@ export class LongtapSwipe extends Gesture<Listener<LongtapSwipeOptions>> {
     this.unregisterSwipe = registerListener(Swipe, target, {
       selector: this.listener.selector,
       options: this.listener.options,
-      down: (evt: Event, data: ListenerData) => this.swipeDown(evt, data),
-      start: (evt: Event, data: ListenerData) => this.swipeStart(evt, data),
-      update: (evt: Event, data: ListenerData) => this.swipeUpdate(evt, data),
-      end: (evt: Event, data: ListenerData) => this.swipeEnd(evt, data),
+      down: (evt: Event, data: Data) => this.swipeDown(evt, data),
+      start: (evt: Event, data: Data) => this.swipeStart(evt, data),
+      update: (evt: Event, data: Data) => this.swipeUpdate(evt, data),
+      end: (evt: Event, data: Data) => this.swipeEnd(evt, data),
       cancel: () => this.swipeCancel()
     });
     this.remove = remove;
@@ -41,20 +41,20 @@ export class LongtapSwipe extends Gesture<Listener<LongtapSwipeOptions>> {
     this.allowSwipe = true;
     return RETURN_FLAG.IDLE;
   }
-  public swipeDown(evt: Event, data: ListenerData) {
+  public swipeDown(evt: Event, data: Data) {
     return this.listener.down(evt, data, this.target);
   }
-  public swipeStart(evt: Event, data: ListenerData) {
+  public swipeStart(evt: Event, data: Data) {
     if (!this.allowSwipe) {
       this.remove();
       return RETURN_FLAG.REMOVE;
     }
     return this.listener.start(evt, data, this.target);
   }
-  public swipeUpdate(evt: Event, data: ListenerData) {
+  public swipeUpdate(evt: Event, data: Data) {
     return this.listener.update(evt, data, this.target);
   }
-  public swipeEnd(evt: Event, data: ListenerData) {
+  public swipeEnd(evt: Event, data: Data) {
     return this.listener.end(evt, data, this.target);
   }
   public swipeCancel() {

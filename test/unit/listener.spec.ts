@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { Listener, DefaultListener, ListenerData } from '../../src/listener';
+import { Listener, DefaultListener, Data } from '../../src/listener';
 import { Options, GESTURE_STRATEGY_FLAG, RETURN_FLAG } from '../../src/utils';
 
 describe('Default listener', () => {
@@ -18,7 +18,7 @@ describe('Default listener', () => {
   it('should use defaults', () => {
     instance = new Listener(new Options());
     const evt = {} as Event;
-    const data = {} as ListenerData;
+    const data = {} as Data;
     const target = {} as Element;
     expect(instance.options.pointers).to.equal(1);
     expect(instance.options.which).to.equal(1);
@@ -33,7 +33,7 @@ describe('Default listener', () => {
 
   it('should mixin partial', () => {
     const evt = {} as Event;
-    const data = {} as ListenerData;
+    const data = {} as Data;
     const target = {} as Element;
     const listener = {
       selector: '',
