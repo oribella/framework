@@ -278,7 +278,8 @@ describe('Engine', () => {
     instance['addPointerId'](gesture, 1);
     instance['addPointerId'](gesture, 2);
     instance['addPointerId'](gesture, 3);
-    expect(instance['removePointerIds'](gesture, [1, 2, 6])).to.deep.equal([1, 2]);
+    instance['removePointerIds'](gesture, [1, 2, 6]);
+    expect(instance['getRemovedPointerIds'](gesture)).to.deep.equal([1, 2]);
     expect(instance['getPointerIds'](gesture)).to.deep.equal([3]);
   });
 
@@ -387,13 +388,13 @@ describe('Engine', () => {
       expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.REMOVE);
     });
 
-    it('should remove gesture if no pointers was removed', () => {
+    it('should idle gesture if not all locked pointers was removed', () => {
       const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
       gesture.startEmitted = true;
-      sandbox.stub(instance, 'removePointerIds').returns([]);
+      sandbox.stub(instance, 'getPointerIds').returns([1]);
       const pointers = { changed: new Map() } as Pointers;
       const state = { gesture, pointers } as ExecStrategyState;
-      expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.REMOVE);
+      expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.IDLE);
     });
 
     it('should call end', () => {

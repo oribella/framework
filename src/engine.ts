@@ -114,21 +114,22 @@ export class Engine {
   private addPointerId(gesture: DefaultGesture, pointerId: number) {
     gesture.__POINTERIDS__.push(pointerId);
   }
-  private removePointerIds(gesture: DefaultGesture, changed: number[]): number[] {
+  private removePointerIds(gesture: DefaultGesture, changed: number[]) {
     const pointerIds = this.getPointerIds(gesture);
-    const removedPointerIds = [];
     let pointerId;
     while (pointerId = changed.shift()) {
       const ix = pointerIds.indexOf(pointerId);
       if (ix !== -1) {
         const removed = pointerIds.splice(ix, 1)[0];
-        removedPointerIds.push(removed);
+        gesture.__REMOVED_POINTERIDS__.push(removed);
       }
     }
-    return removedPointerIds;
   }
   private getPointerIds(gesture: DefaultGesture) {
     return gesture.__POINTERIDS__;
+  }
+  private getRemovedPointerIds(gesture: DefaultGesture) {
+    return gesture.__REMOVED_POINTERIDS__;
   }
   private getPointers(map: PointerDataMap, pointerIds: number[]): PointerData[] {
     return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
@@ -157,11 +158,11 @@ export class Engine {
     if (!state.gesture.startEmitted) {
       return RETURN_FLAG.REMOVE;
     }
-    const removedPointerIds = this.removePointerIds(state.gesture, Array.from(state.pointers.changed.keys()));
-    if (removedPointerIds.length === 0) {
-      return RETURN_FLAG.REMOVE;
+    this.removePointerIds(state.gesture, Array.from(state.pointers.changed.keys()));
+    if (this.getPointerIds(state.gesture).length !== 0) {
+      return RETURN_FLAG.IDLE;
     }
-    state.gesture.data.pointers = this.getPointers(state.pointers.changed, removedPointerIds);
+    state.gesture.data.pointers = this.getPointers(state.pointers.changed, this.getRemovedPointerIds(state.gesture));
     return state.gesture.end(state.evt, state.gesture.data);
   }
   private cancelStrategy(state: ExecStrategyState): number {
