@@ -15,7 +15,7 @@ export class PointerFlow extends Flow {
     this.changedPointers.clear();
     const page = new Point(evt.pageX, evt.pageY);
     const client = new Point(evt.clientX, evt.clientY);
-    const pointerId = evt.pointerId.toString();
+    const pointerId = evt.pointerId;
     const pointers = { page, client };
     this.changedPointers.set(pointerId, pointers);
 

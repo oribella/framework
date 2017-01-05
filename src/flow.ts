@@ -41,8 +41,8 @@ export class Flow extends EventEmitter {
   public startListen: Array<() => () => void> = [];
   public continueListen: Array<() => () => void> = [];
   public removeListeners: Array<() => void> = [];
-  public allPointers: Map<string, PointerData> = new Map<string, PointerData>();
-  public changedPointers: Map<string, PointerData> = new Map<string, PointerData>();
+  public allPointers: Map<number, PointerData> = new Map<number, PointerData>();
+  public changedPointers: Map<number, PointerData> = new Map<number, PointerData>();
   public pointers: Pointers = { all: this.allPointers, changed: this.changedPointers };
 
   constructor(private element: Element | Document, config: FlowConfig) {

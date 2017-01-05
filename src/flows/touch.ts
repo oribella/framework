@@ -13,12 +13,12 @@ export class TouchFlow extends Flow {
   constructor(element: Element | Document) {
     super(element, TouchConfig);
   }
-  public setPointerMapFromList(list: TouchList, pointerMap: Map<string, PointerData>) {
+  public setPointerMapFromList(list: TouchList, pointerMap: Map<number, PointerData>) {
     for (let i = 0, len = list.length; i < len; ++i) {
       const touch = list[i];
       const page = new Point(touch.pageX, touch.pageY);
       const client = new Point(touch.clientX, touch.clientY);
-      const pointerId = touch.identifier.toString();
+      const pointerId = touch.identifier;
       const pointers = { page, client };
       pointerMap.set(pointerId, pointers);
     }

@@ -27,7 +27,7 @@ describe('MouseFlow', () => {
   it('should set pointers on mousedown', () => {
     const evt = { type: 'mousedown', pageX: 1, pageY: 2, clientX: 3, clientY: 4 } as MouseEvent;
     instance.setPointers(evt);
-    expect(instance.allPointers.get('1')).deep.equal({ page: new Point(1, 2), client: new Point(3, 4) });
+    expect(instance.allPointers.get(1)).deep.equal({ page: new Point(1, 2), client: new Point(3, 4) });
     expect(instance.allPointers).to.deep.equal(instance.changedPointers);
     expect(instance.pointers.all).to.equal(instance.allPointers);
     expect(instance.pointers.changed).to.equal(instance.changedPointers);
@@ -36,7 +36,7 @@ describe('MouseFlow', () => {
   it('should set pointers on mousemove', () => {
     const evt = { type: 'mousemove', pageX: 5, pageY: 6, clientX: 7, clientY: 8 } as MouseEvent;
     instance.setPointers(evt);
-    expect(instance.allPointers.get('1')).deep.equal({ page: new Point(5, 6), client: new Point(7, 8) });
+    expect(instance.allPointers.get(1)).deep.equal({ page: new Point(5, 6), client: new Point(7, 8) });
     expect(instance.allPointers).to.deep.equal(instance.changedPointers);
     expect(instance.pointers.all).to.equal(instance.allPointers);
     expect(instance.pointers.changed).to.equal(instance.changedPointers);

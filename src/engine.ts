@@ -111,10 +111,10 @@ export class Engine {
       this.evaluateStrategyReturnFlag(gestures, gesture, flag);
     }
   }
-  private addPointerId(gesture: DefaultGesture, pointerId: string) {
+  private addPointerId(gesture: DefaultGesture, pointerId: number) {
     gesture.__POINTERIDS__.push(pointerId);
   }
-  private removePointerIds(gesture: DefaultGesture, changed: string[]): string[] {
+  private removePointerIds(gesture: DefaultGesture, changed: number[]): number[] {
     const pointerIds = this.getPointerIds(gesture);
     const removedPointerIds = [];
     let pointerId;
@@ -130,12 +130,12 @@ export class Engine {
   private getPointerIds(gesture: DefaultGesture) {
     return gesture.__POINTERIDS__;
   }
-  private getPointers(map: PointerDataMap, pointerIds: string[]): PointerData[] {
+  private getPointers(map: PointerDataMap, pointerIds: number[]): PointerData[] {
     return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
   }
-  private hasPointer(gesture: DefaultGesture, map: PointerDataMap): boolean {
+  private isLockedPointers(gesture: DefaultGesture, map: PointerDataMap): boolean {
     const pointerIds = this.getPointerIds(gesture);
-    return !!pointerIds.filter((pointerId) => map.has(pointerId)).length;
+    return pointerIds.filter((pointerId) => map.has(pointerId)).length === map.size;
   }
   private startStrategy(state: ExecStrategyState): number {
     if (state.pointersDelta.all !== 0) {
@@ -147,7 +147,7 @@ export class Engine {
     return state.gesture.start(state.evt, state.gesture.data);
   }
   private updateStrategy(state: ExecStrategyState): number {
-    if (!this.hasPointer(state.gesture, state.pointers.changed)) {
+    if (!this.isLockedPointers(state.gesture, state.pointers.all)) {
       return RETURN_FLAG.IDLE;
     }
     state.gesture.data.pointers = this.getPointers(state.pointers.all, this.getPointerIds(state.gesture));

@@ -9,7 +9,7 @@ import { MouseFlow } from '../../src/flows/mouse';
 import { TouchFlow } from '../../src/flows/touch';
 import { PointerFlow } from '../../src/flows/pointer';
 import { MSPointerFlow } from '../../src/flows/ms-pointer';
-import { Options, Data, RETURN_FLAG, Supports, PointerData, Pointers, GESTURE_STRATEGY_FLAG } from '../../src/utils';
+import { Options, Data, RETURN_FLAG, Supports, Pointers, GESTURE_STRATEGY_FLAG } from '../../src/utils';
 import { Point } from '../../src/point';
 import { jsdom } from 'jsdom';
 
@@ -256,17 +256,17 @@ describe('Engine', () => {
 
   it('should add pointer id', () => {
     const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
-    instance['addPointerId'](gesture, 'foo');
-    expect(instance['getPointerIds'](gesture)).to.deep.equal(['foo']);
+    instance['addPointerId'](gesture, 1);
+    expect(instance['getPointerIds'](gesture)).to.deep.equal([1]);
   });
 
   it('should get pointers', () => {
-    const map = new Map<string, PointerData>([
-      ['foo', { page: new Point(1, 2), client: new Point(3, 4) }],
-      ['bar', { page: new Point(5, 6), client: new Point(7, 8) }],
-      ['baz', { page: new Point(9, 10), client: new Point(11, 12) }]
+    const map = new Map([
+      [1, { page: new Point(1, 2), client: new Point(3, 4) }],
+      [2, { page: new Point(5, 6), client: new Point(7, 8) }],
+      [3, { page: new Point(9, 10), client: new Point(11, 12) }]
     ]);
-    expect(instance['getPointers'](map, ['foo', 'bar', 'baz'])).to.deep.equal([
+    expect(instance['getPointers'](map, [1, 2, 3])).to.deep.equal([
       { page: new Point(1, 2), client: new Point(3, 4) },
       { page: new Point(5, 6), client: new Point(7, 8) },
       { page: new Point(9, 10), client: new Point(11, 12) }
@@ -275,33 +275,35 @@ describe('Engine', () => {
 
   it('should remove pointer ids', () => {
     const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
-    instance['addPointerId'](gesture, 'foo');
-    instance['addPointerId'](gesture, 'bar');
-    instance['addPointerId'](gesture, 'baz');
-    expect(instance['removePointerIds'](gesture, ['foo', 'baz', 'foobar'])).to.deep.equal(['foo', 'baz']);
-    expect(instance['getPointerIds'](gesture)).to.deep.equal(['bar']);
+    instance['addPointerId'](gesture, 1);
+    instance['addPointerId'](gesture, 2);
+    instance['addPointerId'](gesture, 3);
+    expect(instance['removePointerIds'](gesture, [1, 2])).to.deep.equal([1, 2]);
+    expect(instance['getPointerIds'](gesture)).to.deep.equal([3]);
   });
 
-  it('should return true if gesture has pointer', () => {
+  it('should return true if matches locked pointers', () => {
     const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
-    instance['addPointerId'](gesture, 'bar');
-    const map = new Map<string, PointerData>([
-      ['foo', { page: new Point(1, 2), client: new Point(3, 4) }],
-      ['bar', { page: new Point(5, 6), client: new Point(7, 8) }],
-      ['baz', { page: new Point(9, 10), client: new Point(11, 12) }]
+    instance['addPointerId'](gesture, 1);
+    instance['addPointerId'](gesture, 2);
+    instance['addPointerId'](gesture, 3);
+    const map = new Map([
+      [1, { page: new Point(1, 2), client: new Point(3, 4) }],
+      [2, { page: new Point(5, 6), client: new Point(7, 8) }],
+      [3, { page: new Point(9, 10), client: new Point(11, 12) }]
     ]);
-    expect(instance['hasPointer'](gesture, map)).to.be.true;
+    expect(instance['isLockedPointers'](gesture, map)).to.be.true;
   });
 
   it('should return false if gesture has pointer', () => {
     const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
-    instance['addPointerId'](gesture, 'foobarbaz');
-    const map = new Map<string, PointerData>([
-      ['foo', { page: new Point(1, 2), client: new Point(3, 4) }],
-      ['bar', { page: new Point(5, 6), client: new Point(7, 8) }],
-      ['baz', { page: new Point(9, 10), client: new Point(11, 12) }]
+    instance['addPointerId'](gesture, 1);
+    const map = new Map([
+      [1, { page: new Point(1, 2), client: new Point(3, 4) }],
+      [2, { page: new Point(5, 6), client: new Point(7, 8) }],
+      [3, { page: new Point(9, 10), client: new Point(11, 12) }]
     ]);
-    expect(instance['hasPointer'](gesture, map)).to.be.false;
+    expect(instance['isLockedPointers'](gesture, map)).to.be.false;
   });
 
   describe('Start strategy', () => {
@@ -314,15 +316,15 @@ describe('Engine', () => {
     it('should lock pointers', () => {
       const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
       const pointers = {
-        all: new Map<string, PointerData>([
-          ['foo', { page: new Point(1, 2), client: new Point(3, 4) }],
-          ['bar', { page: new Point(5, 6), client: new Point(7, 8) }],
-          ['baz', { page: new Point(9, 10), client: new Point(11, 12) }]
+        all: new Map([
+          [1, { page: new Point(1, 2), client: new Point(3, 4) }],
+          [2, { page: new Point(5, 6), client: new Point(7, 8) }],
+          [3, { page: new Point(9, 10), client: new Point(11, 12) }]
         ])
       } as Pointers;
       const state = { gesture, pointers, pointersDelta: { all: 0 } } as ExecStrategyState;
       instance['startStrategy'](state);
-      expect(instance['getPointerIds'](gesture)).to.deep.equal(['foo', 'bar', 'baz']);
+      expect(instance['getPointerIds'](gesture)).to.deep.equal([1, 2, 3]);
     });
 
     it('should call start', () => {
@@ -332,10 +334,10 @@ describe('Engine', () => {
       const barPointer = { page: new Point(5, 6), client: new Point(7, 8) };
       const bazPointer = { page: new Point(9, 10), client: new Point(11, 12) };
       const pointers = {
-        all: new Map<string, PointerData>([
-          ['foo', fooPointer],
-          ['bar', barPointer],
-          ['baz', bazPointer]
+        all: new Map([
+          [1, fooPointer],
+          [2, barPointer],
+          [3, bazPointer]
         ])
       } as Pointers;
       const state = { gesture, pointers, pointersDelta: { all: 0 } } as ExecStrategyState;
@@ -349,7 +351,7 @@ describe('Engine', () => {
 
     it('should be idle if no pointer changed', () => {
       const state = { pointers: {} } as ExecStrategyState;
-      sandbox.stub(instance, 'hasPointer').returns(false);
+      sandbox.stub(instance, 'isLockedPointers').returns(false);
       expect(instance['updateStrategy'](state)).to.equal(RETURN_FLAG.IDLE);
     });
 
@@ -360,17 +362,17 @@ describe('Engine', () => {
       const barPointer = { page: new Point(5, 6), client: new Point(7, 8) };
       const bazPointer = { page: new Point(9, 10), client: new Point(11, 12) };
       const pointers = {
-        all: new Map<string, PointerData>([
-          ['foo', fooPointer],
-          ['bar', barPointer],
-          ['baz', bazPointer]
+        all: new Map([
+          [1, fooPointer],
+          [2, barPointer],
+          [3, bazPointer]
         ])
       } as Pointers;
       const state = { gesture, pointers } as ExecStrategyState;
-      sandbox.stub(instance, 'hasPointer').returns(true);
-      instance['addPointerId'](gesture, 'foo');
-      instance['addPointerId'](gesture, 'bar');
-      instance['addPointerId'](gesture, 'baz');
+      sandbox.stub(instance, 'isLockedPointers').returns(true);
+      instance['addPointerId'](gesture, 1);
+      instance['addPointerId'](gesture, 2);
+      instance['addPointerId'](gesture, 3);
       instance['updateStrategy'](state);
       expect(gesture.update).to.have.been.calledWithExactly(state.evt, { pointers: [fooPointer, barPointer, bazPointer] });
     });
@@ -389,7 +391,7 @@ describe('Engine', () => {
       const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
       gesture.startEmitted = true;
       sandbox.stub(instance, 'removePointerIds').returns([]);
-      const pointers = { changed: new Map<string, PointerData>() } as Pointers;
+      const pointers = { changed: new Map() } as Pointers;
       const state = { gesture, pointers } as ExecStrategyState;
       expect(instance['endStrategy'](state)).to.equal(RETURN_FLAG.REMOVE);
     });
@@ -402,16 +404,16 @@ describe('Engine', () => {
       const barPointer = { page: new Point(5, 6), client: new Point(7, 8) };
       const bazPointer = { page: new Point(9, 10), client: new Point(11, 12) };
       const pointers = {
-        changed: new Map<string, PointerData>([
-          ['foo', fooPointer],
-          ['bar', barPointer],
-          ['baz', bazPointer]
+        changed: new Map([
+          [1, fooPointer],
+          [2, barPointer],
+          [3, bazPointer]
         ])
       } as Pointers;
       const state = { gesture, pointers } as ExecStrategyState;
-      instance['addPointerId'](gesture, 'foo');
-      instance['addPointerId'](gesture, 'bar');
-      instance['addPointerId'](gesture, 'baz');
+      instance['addPointerId'](gesture, 1);
+      instance['addPointerId'](gesture, 2);
+      instance['addPointerId'](gesture, 3);
       instance['endStrategy'](state);
       expect(gesture.end).to.have.been.calledWithExactly(state.evt, { pointers: [fooPointer, barPointer, bazPointer] });
     });

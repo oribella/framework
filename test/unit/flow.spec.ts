@@ -154,11 +154,11 @@ describe('Flow', () => {
   it('should emit end', () => {
     const emitSpy = sandbox.spy(instance, 'emit');
     const e = {} as Event;
-    instance.allPointers.set('dummy');
+    instance.allPointers.set(1);
     instance.end(e);
     expect(emitSpy).to.have.been.calledWithExactly('end', e, {
-      all: new Map<string, PointerData>(),
-      changed: new Map<string, PointerData>()
+      all: new Map<number, PointerData>(),
+      changed: new Map<number, PointerData>()
     });
   });
 

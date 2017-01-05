@@ -70,9 +70,9 @@ describe('Longtap', () => {
   it('should call listener start', () => {
     instance.on(Longtap, target, listener);
     const evt = dispatchEvent(document, target);
-    expect(listener.start).to.have.been.calledWithExactly(evt, {
+    expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
-    }, target);
+    }), target);
   });
 
   it('should call listener cancel', () => {
@@ -88,9 +88,9 @@ describe('Longtap', () => {
     setTimeout.callArg(0);
     expect(listener.timeEnd).to.have.been.calledWithExactly();
     const evt = dispatchEvent(document, target, 'mouseup');
-    expect(listener.end).to.have.been.calledWithExactly(evt, {
+    expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
-    }, target);
+    }), target);
   });
 
 });

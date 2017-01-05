@@ -2,7 +2,8 @@ import { Data } from './utils';
 import { DefaultListener } from './listener';
 
 export class Gesture<D extends Data, L extends DefaultListener> {
-  public __POINTERIDS__: string[] = [];
+  public __POINTERIDS__: number[] = [];
+  public __REMOVED_POINTERIDS__: number[] = [];
   public startEmitted: boolean = false;
   constructor(public listener: L, public data: D, public target: Element) { }
 

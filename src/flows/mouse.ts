@@ -15,12 +15,12 @@ export class MouseFlow extends Flow {
   public setPointers(evt: MouseEvent) {
     const page = new Point(evt.pageX, evt.pageY);
     const client = new Point(evt.clientX, evt.clientY);
-    this.changedPointers.set('1', { page, client });
+    this.changedPointers.set(1, { page, client });
 
     switch (evt.type) {
       case 'mousedown':
       case 'mousemove':
-        this.allPointers.set('1', { page, client });
+        this.allPointers.set(1, { page, client });
         break;
       default:
         this.allPointers.clear();

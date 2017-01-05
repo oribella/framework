@@ -1,4 +1,4 @@
-import {Point} from './point';
+import { Point } from './point';
 
 export const GESTURE_STRATEGY_FLAG = {
   KEEP: 0,
@@ -6,20 +6,20 @@ export const GESTURE_STRATEGY_FLAG = {
 };
 
 export const RETURN_FLAG = {
-  map(result: number|boolean): number {
+  map(result: number | boolean): number {
     switch (result) {
-    case true:
-      result = this.REMOVE_OTHERS;
-      break;
-    case false:
-      result = this.REMOVE;
-      break;
-    case 1:
-    case 2:
-    case 4:
-      break;
-    default:
-      result = 0;
+      case true:
+        result = this.REMOVE_OTHERS;
+        break;
+      case false:
+        result = this.REMOVE;
+        break;
+      case 1:
+      case 2:
+      case 4:
+        break;
+      default:
+        result = 0;
     }
 
     return result as number;
@@ -43,10 +43,10 @@ export function isMouse(supports: Supports, evt: any) {
 }
 
 export function isValidMouseButton(
-  { button, which }: { button?: number|undefined, which?: number|undefined }, allowedBtn: number[]|number) {
+  { button, which }: { button?: number | undefined, which?: number | undefined }, allowedBtn: number[] | number) {
   const actualBtn = (!which && button !== undefined) ?
-                (button & 1 ? 1 : (button & 2 ? 3 : (button & 4 ? 2 : 0))) :
-                which;
+    (button & 1 ? 1 : (button & 2 ? 3 : (button & 4 ? 2 : 0))) :
+    which;
   return Array.isArray(allowedBtn) ? allowedBtn.some((val) => {
     return actualBtn === val;
   }) : actualBtn === allowedBtn;
@@ -61,7 +61,7 @@ export function matchesSelector(element: any, selector: string) {
   ).call(element, selector);
 }
 
-export type PointerDataMap = Map<string, PointerData>;
+export type PointerDataMap = Map<number, PointerData>;
 export type Pointers = { all: PointerDataMap, changed: PointerDataMap };
 export type PointerData = { page: Point, client: Point };
 
@@ -80,4 +80,8 @@ export class Options {
 
 export class Data {
   public pointers: PointerData[];
+  public startPoint0: Point = new Point(0, 0);
+  public startPoint1: Point = new Point(0, 0);
+  public currentPoint0: Point = new Point(0, 0);
+  public currentPoint1: Point = new Point(0, 0);
 }

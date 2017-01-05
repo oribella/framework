@@ -74,9 +74,9 @@ describe('Doubletap', () => {
     dispatchEvent(document, target, 'mouseup');
     dispatchEvent(document, target);
     const evt = dispatchEvent(document, target, 'mouseup');
-    expect(listener.end).to.have.been.calledWithExactly(evt, {
+    expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
-    }, target);
+    }), target);
   });
 
   it('should reset after time threshold', () => {
