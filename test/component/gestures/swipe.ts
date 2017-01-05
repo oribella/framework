@@ -35,10 +35,11 @@ export class Swipe extends Gesture<SwipeData, Listener<SwipeOptions, SwipeData>>
     return this.listener.down(evt, data, this.target);
   }
   public update(evt: Event, data: SwipeData): number {
-    const p = data.pointers[0].page;
-    if (p.distanceTo(this.startPoint) < this.listener.options.radiusThreshold) {
+    const currentPoint = data.pointers[0].page;
+    if (currentPoint.distanceTo(this.startPoint) < this.listener.options.radiusThreshold) {
       return RETURN_FLAG.IDLE;
     }
+    data.add(currentPoint, evt.timeStamp);
     if (!this.startEmitted) {
       return this.listener.start(evt, data, this.target);
     } else {
@@ -46,6 +47,8 @@ export class Swipe extends Gesture<SwipeData, Listener<SwipeOptions, SwipeData>>
     }
   }
   public end(evt: Event, data: SwipeData): number {
+    const currentPoint = data.pointers[0].page;
+    data.add(currentPoint, evt.timeStamp);
     return this.listener.end(evt, data, this.target);
   }
   public cancel() {
