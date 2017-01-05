@@ -14,10 +14,7 @@ export class Doubletap extends Gesture<Listener<DoubletapOptions>> {
   public timeoutId: number = 0;
   public count: number = 0;
 
-  public bind(
-    target: Element,
-    registerListener: <T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) => () => void,
-    remove: () => void) {
+  public bind(target: Element, registerListener: <T extends typeof Gesture>(Type: T, element: Element, listener: Partial<DefaultListener>) => () => void, remove: () => void) {
     this.unregisterTap = registerListener(Tap, target, {
       selector: this.listener.selector,
       options: this.listener.options,

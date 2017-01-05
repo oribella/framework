@@ -19,8 +19,14 @@ export class Listener<T extends Options> {
     } as Listener<T>, listener);
   }
   public down(evt: Event, data: ListenerData, target: Element): number { return RETURN_FLAG.map(this.listener.down(evt, data, target)); }
-  public start(evt: Event, data: ListenerData, target: Element): number { return RETURN_FLAG.map(this.listener.start(evt, data, target)) + RETURN_FLAG.START_EMITTED; }
-  public update(evt: Event, data: ListenerData, target: Element): number { return RETURN_FLAG.map(this.listener.update(evt, data, target)); }
+  public start(evt: Event, data: ListenerData, target: Element): number {
+    let result = RETURN_FLAG.map(this.listener.start(evt, data, target));
+    if (!(result & RETURN_FLAG.START_EMITTED)) {
+      result += RETURN_FLAG.START_EMITTED;
+    }
+    return result;
+  }
+  public update(evt: Event, data: ListenerData, target: Element): number { return RETURN_FLAG.map(this.listener.update(evt, data, target)); } //tslint:disable-line
   public end(evt: Event, data: ListenerData, target: Element): number { return RETURN_FLAG.map(this.listener.end(evt, data, target)); }
   public cancel(): number { return RETURN_FLAG.map(this.listener.cancel()); }
 }
