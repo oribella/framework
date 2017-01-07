@@ -80,8 +80,4 @@ export class Options {
 
 export class Data {
   public pointers: PointerData[];
-  public startPoint0: Point = new Point(0, 0);
-  public startPoint1: Point = new Point(0, 0);
-  public currentPoint0: Point = new Point(0, 0);
-  public currentPoint1: Point = new Point(0, 0);
 }
