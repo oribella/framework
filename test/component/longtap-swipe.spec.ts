@@ -5,7 +5,7 @@ import { jsdom } from 'jsdom';
 import { register as registerLongtap } from './gestures/longtap';
 import { register as registerSwipe } from './gestures/swipe';
 import { LongtapSwipe, register as registerLongtapSwipe } from './gestures/longtap-swipe';
-import { dispatchEvent } from './utils';
+import { dispatchMouseEvent } from './utils';
 
 describe('LongtapSwipe', () => {
   let sandbox: Sinon.SinonSandbox;
@@ -74,7 +74,7 @@ describe('LongtapSwipe', () => {
 
   it('should call listener down', () => {
     instance.on(LongtapSwipe, target, listener);
-    const evt = dispatchEvent(document, target);
+    const evt = dispatchMouseEvent(document, target);
     expect(listener.down).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
@@ -82,16 +82,16 @@ describe('LongtapSwipe', () => {
 
   it('should remove gesture if not longtap time threshold is met', () => {
     instance.on(LongtapSwipe, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
     expect(listener.start).not.to.have.been.calledWithExactly();
   });
 
   it('should call listener start', () => {
     instance.on(LongtapSwipe, target, listener);
-    dispatchEvent(document, target);
+    dispatchMouseEvent(document, target);
     setTimeout.callArg(0);
-    const evt = dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    const evt = dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
     expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 250, y: 250 }, page: { x: 250, y: 250 } }]
     }), target);
@@ -99,10 +99,10 @@ describe('LongtapSwipe', () => {
 
   it('should call listener update', () => {
     instance.on(LongtapSwipe, target, listener);
-    dispatchEvent(document, target);
+    dispatchMouseEvent(document, target);
     setTimeout.callArg(0);
-    dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
-    const evt = dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
+    dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    const evt = dispatchMouseEvent(document, target, 'mousemove', 300, 300, 300, 300);
     expect(listener.update).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 300, y: 300 }, page: { x: 300, y: 300 } }]
     }), target);
@@ -110,11 +110,11 @@ describe('LongtapSwipe', () => {
 
   it('should call listener end', () => {
     instance.on(LongtapSwipe, target, listener);
-    dispatchEvent(document, target);
+    dispatchMouseEvent(document, target);
     setTimeout.callArg(0);
-    dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
-    dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
-    const evt = dispatchEvent(document, target, 'mouseup', 350, 350, 350, 350);
+    dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    dispatchMouseEvent(document, target, 'mousemove', 300, 300, 300, 300);
+    const evt = dispatchMouseEvent(document, target, 'mouseup', 350, 350, 350, 350);
     expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 350, y: 350 }, page: { x: 350, y: 350 } }]
     }), target);
@@ -122,8 +122,8 @@ describe('LongtapSwipe', () => {
 
   it('should call listener cancel', () => {
     instance.on(LongtapSwipe, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'dragstart', 200, 200, 200, 200);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'dragstart', 200, 200, 200, 200);
     expect(listener.cancel).to.have.been.calledWithExactly();
   });
 

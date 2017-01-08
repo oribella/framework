@@ -21,9 +21,9 @@ export class Rotate extends Gesture<RotateData, Listener<RotateOptions, RotateDa
   public currentPoint1: Point;
 
   public calculateRotation(p0: Point, p1: Point, p2: Point, p3: Point) {
-    const a1 = p0.deltaAngleTo(p1);
-    const a2 = p2.deltaAngleTo(p3);
-    return a2 - a1;
+    const a0 = p0.deltaAngleTo(p1);
+    const a1 = p2.deltaAngleTo(p3);
+    return a1 - a0;
   }
   public setData(data: RotateData) {
     this.currentPoint0 = data.pointers[0].page;
@@ -43,9 +43,8 @@ export class Rotate extends Gesture<RotateData, Listener<RotateOptions, RotateDa
     }
     if (!this.startEmitted) {
       return this.listener.start(evt, data, this.target);
-    } else {
-      return this.listener.update(evt, data, this.target);
     }
+    return this.listener.update(evt, data, this.target);
   }
   public end(evt: Event, data: RotateData): number {
     return this.listener.end(evt, data, this.target);

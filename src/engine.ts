@@ -114,25 +114,29 @@ export class Engine {
   private addPointerId(gesture: DefaultGesture, pointerId: number) {
     gesture.__POINTERIDS__.push(pointerId);
   }
-  private removePointerIds(gesture: DefaultGesture, changed: number[]) {
+  private removePointerIds(map: PointerDataMap, gesture: DefaultGesture, changed: number[]) {
     const pointerIds = this.getPointerIds(gesture);
     let pointerId;
     while (pointerId = changed.shift()) {
       const ix = pointerIds.indexOf(pointerId);
       if (ix !== -1) {
         const removed = pointerIds.splice(ix, 1)[0];
-        gesture.__REMOVED_POINTERIDS__.push(removed);
+        const pointer = this.getPointer(map, removed);
+        gesture.__REMOVED_POINTERS__.push(pointer);
       }
     }
   }
   private getPointerIds(gesture: DefaultGesture) {
     return gesture.__POINTERIDS__;
   }
-  private getRemovedPointerIds(gesture: DefaultGesture) {
-    return gesture.__REMOVED_POINTERIDS__;
+  private getRemovedPointers(gesture: DefaultGesture) {
+    return gesture.__REMOVED_POINTERS__;
+  }
+  private getPointer(map: PointerDataMap, pointerId: number): PointerData {
+    return map.get(pointerId) as PointerData;
   }
   private getPointers(map: PointerDataMap, pointerIds: number[]): PointerData[] {
-    return pointerIds.map((pointerId) => map.get(pointerId) as PointerData);
+    return pointerIds.map((pointerId) => this.getPointer(map, pointerId));
   }
   private isLockedPointers(gesture: DefaultGesture, map: PointerDataMap): boolean {
     const pointerIds = this.getPointerIds(gesture);
@@ -158,11 +162,11 @@ export class Engine {
     if (!state.gesture.startEmitted) {
       return RETURN_FLAG.REMOVE;
     }
-    this.removePointerIds(state.gesture, Array.from(state.pointers.changed.keys()));
+    this.removePointerIds(state.pointers.changed, state.gesture, Array.from(state.pointers.changed.keys()));
     if (this.getPointerIds(state.gesture).length !== 0) {
       return RETURN_FLAG.IDLE;
     }
-    state.gesture.data.pointers = this.getPointers(state.pointers.changed, this.getRemovedPointerIds(state.gesture));
+    state.gesture.data.pointers = this.getRemovedPointers(state.gesture);
     return state.gesture.end(state.evt, state.gesture.data);
   }
   private cancelStrategy(state: ExecStrategyState): number {

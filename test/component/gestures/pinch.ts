@@ -60,9 +60,8 @@ export class Pinch extends Gesture<PinchData, Listener<PinchOptions, PinchData>>
     }
     if (!this.startEmitted) {
       return this.listener.start(evt, data, this.target);
-    } else {
-      return this.listener.update(evt, data, this.target);
     }
+    return this.listener.update(evt, data, this.target);
   }
   public end(evt: Event, data: PinchData): number {
     return this.listener.end(evt, data, this.target);

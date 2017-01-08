@@ -273,14 +273,21 @@ describe('Engine', () => {
     ]);
   });
 
-  it('should remove pointer ids', () => {
+  it('should remove pointers', () => {
+    const map = new Map([
+      [1, { page: new Point(1, 2), client: new Point(3, 4) }],
+      [2, { page: new Point(5, 6), client: new Point(7, 8) }],
+      [3, { page: new Point(9, 10), client: new Point(11, 12) }]
+    ]);
     const gesture = new Gesture({} as DefaultListener, {} as Data, {} as Element); ;
     instance['addPointerId'](gesture, 1);
     instance['addPointerId'](gesture, 2);
     instance['addPointerId'](gesture, 3);
-    instance['removePointerIds'](gesture, [1, 2, 6]);
-    expect(instance['getRemovedPointerIds'](gesture)).to.deep.equal([1, 2]);
-    expect(instance['getPointerIds'](gesture)).to.deep.equal([3]);
+    instance['removePointerIds'](map, gesture, [1, 2, 6]);
+    expect(instance['getRemovedPointers'](gesture)).to.deep.equal([
+      { page: new Point(1, 2), client: new Point(3, 4) },
+      { page: new Point(5, 6), client: new Point(7, 8) }
+    ]);
   });
 
   it('should return true if matches locked pointers', () => {

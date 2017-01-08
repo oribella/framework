@@ -42,9 +42,8 @@ export class Swipe extends Gesture<SwipeData, Listener<SwipeOptions, SwipeData>>
     data.add(currentPoint, evt.timeStamp);
     if (!this.startEmitted) {
       return this.listener.start(evt, data, this.target);
-    } else {
-      return this.listener.update(evt, data, this.target);
     }
+    return this.listener.update(evt, data, this.target);
   }
   public end(evt: Event, data: SwipeData): number {
     const currentPoint = data.pointers[0].page;

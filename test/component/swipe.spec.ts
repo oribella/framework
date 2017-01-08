@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { Swipe, register as registerSwipe } from './gestures/swipe';
-import { dispatchEvent } from './utils';
+import { dispatchMouseEvent } from './utils';
 
 describe('Swipe', () => {
   let sandbox: Sinon.SinonSandbox;
@@ -63,7 +63,7 @@ describe('Swipe', () => {
 
   it('should call listener down', () => {
     instance.on(Swipe, target, listener);
-    const evt = dispatchEvent(document, target);
+    const evt = dispatchMouseEvent(document, target);
     expect(listener.down).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
@@ -71,8 +71,8 @@ describe('Swipe', () => {
 
   it('should call listener start', () => {
     instance.on(Swipe, target, listener);
-    dispatchEvent(document, target);
-    const evt = dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
+    dispatchMouseEvent(document, target);
+    const evt = dispatchMouseEvent(document, target, 'mousemove', 200, 200, 200, 200);
     expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 200, y: 200 }, page: { x: 200, y: 200 } }]
     }), target);
@@ -80,9 +80,9 @@ describe('Swipe', () => {
 
   it('should call listener update', () => {
     instance.on(Swipe, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
-    const evt = dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    const evt = dispatchMouseEvent(document, target, 'mousemove', 300, 300, 300, 300);
     expect(listener.update).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 300, y: 300 }, page: { x: 300, y: 300 } }]
     }), target);
@@ -90,10 +90,10 @@ describe('Swipe', () => {
 
   it('should call listener end', () => {
     instance.on(Swipe, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 250, 250, 250, 250);
-    dispatchEvent(document, target, 'mousemove', 300, 300, 300, 300);
-    const evt = dispatchEvent(document, target, 'mouseup', 350, 350, 350, 350);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mousemove', 250, 250, 250, 250);
+    dispatchMouseEvent(document, target, 'mousemove', 300, 300, 300, 300);
+    const evt = dispatchMouseEvent(document, target, 'mouseup', 350, 350, 350, 350);
     expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 350, y: 350 }, page: { x: 350, y: 350 } }]
     }), target);
@@ -101,8 +101,8 @@ describe('Swipe', () => {
 
   it('should call listener cancel', () => {
     instance.on(Swipe, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'dragstart', 200, 200, 200, 200);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'dragstart', 200, 200, 200, 200);
     expect(listener.cancel).to.have.been.calledWithExactly();
   });
 

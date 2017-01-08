@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { Longtap, register as registerLongtap } from './gestures/longtap';
-import { dispatchEvent } from './utils';
+import { dispatchMouseEvent } from './utils';
 
 describe('Longtap', () => {
   let sandbox: Sinon.SinonSandbox;
@@ -69,7 +69,7 @@ describe('Longtap', () => {
 
   it('should call listener start', () => {
     instance.on(Longtap, target, listener);
-    const evt = dispatchEvent(document, target);
+    const evt = dispatchMouseEvent(document, target);
     expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
@@ -77,17 +77,17 @@ describe('Longtap', () => {
 
   it('should call listener cancel', () => {
     instance.on(Longtap, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mousemove', 200, 200, 200, 200);
     expect(listener.cancel).to.have.been.calledWithExactly();
   });
 
   it('should call listener end', () => {
     instance.on(Longtap, target, listener);
-    dispatchEvent(document, target);
+    dispatchMouseEvent(document, target);
     setTimeout.callArg(0);
     expect(listener.timeEnd).to.have.been.calledWithExactly();
-    const evt = dispatchEvent(document, target, 'mouseup');
+    const evt = dispatchMouseEvent(document, target, 'mouseup');
     expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);

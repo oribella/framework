@@ -4,7 +4,7 @@ import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { register as registerTap } from './gestures/tap';
 import { Doubletap, register as registerDoubletap } from './gestures/doubletap';
-import { dispatchEvent } from './utils';
+import { dispatchMouseEvent } from './utils';
 
 describe('Doubletap', () => {
   let sandbox: Sinon.SinonSandbox;
@@ -70,10 +70,10 @@ describe('Doubletap', () => {
 
   it('should call listener end', () => {
     instance.on(Doubletap, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mouseup');
-    dispatchEvent(document, target);
-    const evt = dispatchEvent(document, target, 'mouseup');
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mouseup');
+    dispatchMouseEvent(document, target);
+    const evt = dispatchMouseEvent(document, target, 'mouseup');
     expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
@@ -81,9 +81,9 @@ describe('Doubletap', () => {
 
   it('should reset after time threshold', () => {
     instance.on(Doubletap, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mouseup');
-    dispatchEvent(document, target);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mouseup');
+    dispatchMouseEvent(document, target);
     setTimeout.callArg(0);
     expect(listener.end).not.to.have.been.calledWithExactly();
   });

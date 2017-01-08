@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { Oribella } from '../../src/oribella';
 import { jsdom } from 'jsdom';
 import { Tap, register as registerTap } from './gestures/tap';
-import { dispatchEvent } from './utils';
+import { dispatchMouseEvent } from './utils';
 
 describe('Tap', () => {
   let sandbox: Sinon.SinonSandbox;
@@ -61,7 +61,7 @@ describe('Tap', () => {
 
   it('should call listener start', () => {
     instance.on(Tap, target, listener);
-    const evt = dispatchEvent(document, target);
+    const evt = dispatchMouseEvent(document, target);
     expect(listener.start).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
@@ -69,15 +69,15 @@ describe('Tap', () => {
 
   it('should call listener cancel', () => {
     instance.on(Tap, target, listener);
-    dispatchEvent(document, target);
-    dispatchEvent(document, target, 'mousemove', 200, 200, 200, 200);
+    dispatchMouseEvent(document, target);
+    dispatchMouseEvent(document, target, 'mousemove', 200, 200, 200, 200);
     expect(listener.cancel).to.have.been.calledWithExactly();
   });
 
   it('should call listener end', () => {
     instance.on(Tap, target, listener);
-    dispatchEvent(document, target);
-    const evt = dispatchEvent(document, target, 'mouseup');
+    dispatchMouseEvent(document, target);
+    const evt = dispatchMouseEvent(document, target, 'mouseup');
     expect(listener.end).to.have.been.calledWithExactly(evt, sinon.match({
       pointers: [{ client: { x: 100, y: 100 }, page: { x: 100, y: 100 } }]
     }), target);
