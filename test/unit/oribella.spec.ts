@@ -12,8 +12,8 @@ describe('Oribella', () => {
   let instance: Oribella;
   let sandbox: Sinon.SinonSandbox;
   let document: Document;
-  let msPointerEnabled = false;
-  let pointerEnabled = false;
+  const msPointerEnabled = false;
+  const pointerEnabled = false;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

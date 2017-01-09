@@ -8,7 +8,10 @@ import { Gesture } from './gesture';
 import { Listener, DefaultListener } from './listener';
 import { Options, Data } from './utils';
 
-export type ListenerType = { type: string, listener: Partial<DefaultListener> };
+export interface ListenerType {
+  type: string;
+  listener: Partial<DefaultListener>;
+};
 
 export class Oribella {
   private engine: Engine;

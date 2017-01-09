@@ -61,9 +61,15 @@ export function matchesSelector(element: any, selector: string) {
   ).call(element, selector);
 }
 
-export type PointerDataMap = Map<number, PointerData>;
-export type Pointers = { all: PointerDataMap, changed: PointerDataMap };
-export type PointerData = { page: Point, client: Point };
+export interface PointerData {
+  page: Point;
+  client: Point;
+};
+export class PointerDataMap extends Map<number, PointerData> {};
+export interface Pointers {
+  all: PointerDataMap;
+  changed: PointerDataMap;
+};
 
 export interface Supports {
   msPointerEnabled: boolean;

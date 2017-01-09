@@ -5,7 +5,7 @@ import {Point} from '../../../src/point';
 
 describe('MouseFlow', () => {
   let instance: MouseFlow;
-  let element = {} as Element;
+  const element = {} as Element;
   let sandbox: Sinon.SinonSandbox;
 
   beforeEach(() => {

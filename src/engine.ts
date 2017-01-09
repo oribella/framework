@@ -5,7 +5,10 @@ import { Flow } from './flow';
 import { Options, Data, Pointers, PointerDataMap, PointerData, isMouse, isValidMouseButton, RETURN_FLAG, GESTURE_STRATEGY_FLAG, Supports, matchesSelector } from './utils';
 import { ListenerHandle } from './listener-handle';
 
-export type PointersDelta = { all: number, changed: number };
+export interface PointersDelta {
+  all: number;
+  changed: number;
+};
 export interface ExecStrategyState {
   evt: Event;
   gestures: DefaultGesture[];
@@ -74,7 +77,7 @@ export class Engine {
     gesture.unbind();
     let gestures;
     while (gestures = arr.shift()) {
-      let ix = gestures.indexOf(gesture);
+      const ix = gestures.indexOf(gesture);
       if (ix !== -1) {
         gestures.splice(ix, 1);
       }

@@ -3,7 +3,7 @@ import {MSPointerFlow, MSPointerConfig} from '../../../src/flows/ms-pointer';
 
 describe('MSPointerFlow', () => {
   let instance: MSPointerFlow;
-  let element = {} as Element;
+  const element = {} as Element;
 
   beforeEach(() => {
     instance = new MSPointerFlow(element);

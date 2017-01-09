@@ -51,7 +51,7 @@ describe('Utils', () => {
     evt = { button: 1000 };
     expect(isValidMouseButton(evt, [0])).to.equal(true);
 
-    let evt1 = { which: 1000 };
+    const evt1 = { which: 1000 };
     expect(isValidMouseButton(evt1, [1000])).to.equal(true);
 
   });

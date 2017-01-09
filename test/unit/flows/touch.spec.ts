@@ -6,7 +6,7 @@ import {PointerData} from '../../../src/utils';
 
 describe('TouchFlow', () => {
   let instance: TouchFlow;
-  let element = {} as Element;
+  const element = {} as Element;
   let sandbox: Sinon.SinonSandbox;
 
   beforeEach(() => {

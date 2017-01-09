@@ -14,7 +14,9 @@ export class TouchFlow extends Flow {
     super(element, TouchConfig);
   }
   public setPointerMapFromList(list: TouchList, pointerMap: Map<number, PointerData>) {
-    for (let i = 0, len = list.length; i < len; ++i) {
+    let i;
+    const len = list.length;
+    for (i = 0; i < len; ++i) {
       const touch = list[i];
       const page = new Point(touch.pageX, touch.pageY);
       const client = new Point(touch.clientX, touch.clientY);

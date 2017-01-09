@@ -9,8 +9,8 @@ import { dispatchMouseEvent } from './utils';
 describe('Doubletap', () => {
   let sandbox: Sinon.SinonSandbox;
   let instance: Oribella;
-  let msPointerEnabled = false;
-  let pointerEnabled = false;
+  const msPointerEnabled = false;
+  const pointerEnabled = false;
   const html = `
     <html>
       <body>
