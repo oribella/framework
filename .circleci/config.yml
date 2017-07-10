@@ -15,7 +15,7 @@ jobs:
           command: npm install
       - run:
           name: Install typings
-          command:
+          command: npm run -s typings
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
